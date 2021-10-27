@@ -1,0 +1,62 @@
+Nome Características,Descrição,Activa,Nº Salas,Disponível na Gestão de Aulas,Disponível no Pedido de Sala de Aula
+Anfiteatro aulas,,true,9,true,true
+Apoio técnico eventos,,true,1,false,false
+Arq 1,,true,1,true,true
+Arq 2,,true,1,true,true
+Arq 3,,true,1,true,true
+Arq 4,Sala de Arquitectura para 4º Ano,true,1,true,true
+Arq 5,Sala de Arquitectura para 5º Ano,true,1,true,true
+Arq 6,,true,1,true,true
+Arq 7,,true,0,false,false
+Arq 9,,true,1,true,true
+BYOD (Bring Your Own Device),,true,4,true,true
+Biblioteca,Biblioteca,true,28,false,false
+Cabines de Tradução,,true,5,false,false
+Cantina,Cantina existente no edificio II,true,0,false,false
+Centro Dados,Centro Dados,true,4,false,false
+Focus Group,"A usar por: Laboratório de Psicologia, algumas Unidades de Investigação e para alugar externamente",true,2,false,false
+Gabinete,Gabinete,true,218,false,false
+Horário sala visível portal público,,true,156,false,false
+Lab ISTA,,true,0,false,false
+Laboratório Culturas Visuais,,true,1,false,false
+Laboratório de Arquitectura de Computadores I,C7.05,true,1,true,true
+Laboratório de Arquitectura de Computadores II,C7.10,true,1,true,true
+Laboratório de Bases de Engenharia,C7.07,true,1,true,true
+Laboratório de Electrónica,C7.09,true,1,true,true
+Laboratório de Informática,,true,12,true,true
+Laboratório de Jornalismo,,true,1,true,true
+Laboratório de Redes de Computadores I,C7.06,true,1,true,true
+Laboratório de Redes de Computadores II,,true,1,true,true
+Laboratório de Telecomunicações,C7.08,true,2,true,true
+Não necessita de sala,Não necessita de sala,true,0,true,true
+Rede s/fios,,true,0,false,false
+Sala Aulas Mestrado,Só para Mestrados,true,68,true,true
+Sala Aulas Mestrado Plus,,true,68,true,false
+Sala NEE,,true,1,true,false
+Sala Provas,,true,1,false,false
+Sala Refeição,Sala Refeição,true,2,false,false
+Sala Reunião,Sala Reunião,true,10,false,false
+Sala de Arquitectura,Todas as salas de arquitectura,true,6,false,false
+Sala de Aulas normal,,true,72,true,true
+Sala de grupos,,true,0,true,false
+videoconferencia,,true,30,true,false
+Átrio,Átrio,true,13,false,false
+Arq 123,Sala de Arquitectura para 1º Ano,false,0,false,false
+Arq 8,,false,0,false,false
+Arq Ano2,Sala de Arquitectura para 2º Ano,false,0,false,false
+Arq Ano3,Sala de Arquitectura para 3º Ano,false,0,false,false
+Auditório c/mesas,"C103, C104",false,0,false,false
+Auditório s/mesas,"B203, J. J. Laginha",false,0,false,false
+Cadeiras estofadas,Só para Mestrados,false,0,false,false
+Lab AC1,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Lab AC2,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Lab BE,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Lab Electro,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Lab Redes,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Lab Telecom,"Laboratório do 7º Piso, para os cursos do DCTI",false,0,false,false
+Laboratório Psicologia,,false,0,false,false
+Laboratório Sociologia,,false,0,false,false
+Leitor VHS,,false,0,false,false
+Não necessita de sala,,false,0,false,false
+Rede por cabo,,false,0,false,false
+computador,Só para Mestrados,false,0,false,false
