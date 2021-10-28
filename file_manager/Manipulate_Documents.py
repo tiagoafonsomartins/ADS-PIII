@@ -1,6 +1,6 @@
 import os
 
-input_path = "Input_Documents"
+input_path = "../Input_Documents"
 output_path = "Output_Documents"
 ext = [".csv", ".xml", ".json", ".bd"]
 
