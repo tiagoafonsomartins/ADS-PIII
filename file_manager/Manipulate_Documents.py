@@ -1,5 +1,6 @@
 import csv
 import os
+from classroom import Classroom
 
 from Classroom import Classroom
 
@@ -8,6 +9,7 @@ class Manipulate_Documents:
 
     def __init__(self, input_path="Input_Documents", output_path="Output_Documents",
                  input_classrooms="Input_Classrooms"):
+        """Basic init for Manipulate_Documents"""
         self.ext = [".csv", ".xml", ".json", ".bd"]
         self.input_path = input_path
         self.output_path = output_path
@@ -40,6 +42,20 @@ class Manipulate_Documents:
                             # print(classroom_list)
                     # meter nas classes necessárias
                     f.close()
+
+    '''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
+        """Converts a row from csv file as a list into a Classroom object"""
+        caracteristicas = row[5:]
+        caract_to_add = []
+        for i in len(caracteristicas):
+            if caracteristicas[i] == 'X':
+                caract_to_add.append(nomes_caract[i])
+
+        return Classroom(row[0], row[1], int(row[2]), int(row[3]), caract_to_add)'''
+
+    '''def classroom_to_row(self, classroom: Classroom) -> list:
+        """Converts a Classroom object into a row for a csv file as a list"""
+        return []'''
 
 
 md = Manipulate_Documents()
