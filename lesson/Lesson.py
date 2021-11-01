@@ -1,3 +1,6 @@
+from classroom.Classroom import Classroom
+
+
 class Lesson:
     def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
                  week_day: str, start: str, end: str, day: str, requested_characteristics: str):
@@ -12,7 +15,8 @@ class Lesson:
         self.end = end
         self.day = day
         self.requested_characteristics = requested_characteristics
-        self.classroom = None
+        # self.classroom = None
+        self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
 
     def get_row(self):
         return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),

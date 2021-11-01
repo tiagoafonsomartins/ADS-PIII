@@ -47,9 +47,10 @@ class Manipulate_Documents:
                                 charact_list.append(header[i])
                         classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
                         classroom_list.append(classroom)
+                        print(row)
                     f.close()
-        return classroom_list
 
+        return classroom_list
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
@@ -59,13 +60,13 @@ class Manipulate_Documents:
         :param file_name:
         :return:
         """
-        with open(os.path.join(self.output_path,file_name), 'w', encoding="utf8") as file:
+        with open(os.path.join(self.output_path, file_name) + ".csv", 'w', newline='') as file:
             # create the csv writer
             writer = csv.writer(file)
 
             # write first row with headers
-            header = ["Dia da Semana", "Início", "Fim", "Dia", "Características da sala pedida para a aula",
-                            "Sala de aula", "Lotação", "Características reais da sala"]
+            header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início", "Fim", "Dia", "Características da sala pedida para a aula",
+                      "Sala de aula", "Lotação", "Características reais da sala"]
             writer.writerow(header)
 
             # write rows to the csv file
@@ -74,7 +75,8 @@ class Manipulate_Documents:
 
 
 md = Manipulate_Documents()
-md.import_schedule_documents()
+# md.import_classrooms()
+md.export_schedule(md.import_schedule_documents(), "output")
 
 '''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
     """Converts a row from csv file as a list into a Classroom object"""
@@ -85,5 +87,3 @@ md.import_schedule_documents()
             caract_to_add.append(nomes_caract[i])
 
     return Classroom(row[0], row[1], int(row[2]), int(row[3]), caract_to_add)'''
-
-
