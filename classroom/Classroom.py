@@ -8,22 +8,27 @@ class Classroom:
         self.characteristics = characteristics
 
 
+    def get_row(self):
+        caracteristicas = []
+        for c in self.characteristics:
+            if c != '':
+                pass #TODO we have to figure out how to do this here
+        return [self.building, self.name, str(self.normal_capacity), str(self.exam_capacity), '']
 
-        def get_row(self):
-            caracteristicas = []
-            for c in self.characteristics:
-                if c != '':
-                    pass #TODO we have to figure out how to do this here
-            return [self.building, self.name, str(self.normal_capacity), str(self.exam_capacity), '']
+    def add_lesson(self, lesson):
+        self.schedule.append(lesson)
 
-        def add_lesson(self, lesson):
-            self.schedule.append(lesson)
+    def get_characteristics(self):
+        return self.characteristics
 
+    def get_normal_capacity(self):
+        return self.normal_capacity
 
+    def remove_lesson(self, lesson):
+        self.schedule.remove(lesson)
 
-
-
-
+    def remove_all_lessons(self):
+        self.schedule = []
 
         '''
         Colunas no excell sobre salas
