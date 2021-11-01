@@ -5,6 +5,8 @@ from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
 
+
+
 class Manipulate_Documents:
 
     def __init__(self, input_path="../Input_Documents", output_path="../Output_Documents",
@@ -74,9 +76,9 @@ class Manipulate_Documents:
                 writer.writerow(lesson.get_row())
 
 
-md = Manipulate_Documents()
+#md = Manipulate_Documents()
 # md.import_classrooms()
-md.export_schedule(md.import_schedule_documents(), "output")
+#md.export_schedule(md.import_schedule_documents(), "output")
 
 '''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
     """Converts a row from csv file as a list into a Classroom object"""

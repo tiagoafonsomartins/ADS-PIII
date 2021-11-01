@@ -44,3 +44,6 @@ class Lesson:
 
     def remove_classroom(self):
         self.classroom = None
+
+    def generate_time_blocks(self) -> list: # Retorna lista de blocos de tempo da aula numa lista de strings
+        pass

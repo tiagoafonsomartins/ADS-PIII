@@ -1,3 +1,5 @@
+import time
+
 from file_manager import Manipulate_Documents
 import csv
 
@@ -26,7 +28,21 @@ class Experiments:
             print(i)
 
     def test4(self):
-        pass
+        my_list = []
+        my_set = set()
+        for i in range(10000000):
+            my_list.append(str(i))
+            my_set.add(str(i))
+
+        start = time.time()
+        print("9999999" in my_list)
+        elapsed_time = time.time() - start
+        print("lista: ", elapsed_time)
+
+        start = time.time()
+        print("9999999" in my_set)
+        elapsed_time = time.time() - start
+        print("set: ", elapsed_time)
 
     def test5(self):
         pass
@@ -35,5 +51,5 @@ class Experiments:
         pass
 
 e = Experiments()
-e.test1()
+e.test4()
 
