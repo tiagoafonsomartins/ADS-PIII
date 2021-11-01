@@ -6,9 +6,9 @@ class Experiments:
         pass
 
     def test1(self):
-        my_list = [1,2,3]
-        print(my_list[1:])
-        print(my_list[:2])
+        my_list = [1,2,3,4,5]
+        print(my_list[-1:])
+        print(my_list[:-2])
         print("s" == 's')
         print(range(5))
 
@@ -22,7 +22,8 @@ class Experiments:
         print(caracteristicas)
 
     def test3(self):
-        Classroom
+        for i in range(10):
+            print(i)
 
     def test4(self):
         pass

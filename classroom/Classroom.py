@@ -1,23 +1,12 @@
 class Classroom:
-    def __init__(self, building: str=None, name: str=None, normal_capacity: int=None, exam_capacity: int=None, characteristics: list=None, row: list=None, nomes_caract: list=None):
+    def __init__(self, building: str, name: str, normal_capacity: int, exam_capacity: int, characteristics: list):
         self.schedule = []
-        if row is None:
-            self.building = building
-            self.name = name
-            self.normal_capacity = normal_capacity
-            self.exam_capacity = exam_capacity
-            self.characteristics = characteristics
-        else:
-            caracteristicas = row[5:]
-            caract_to_add = []
-            for i in len(caracteristicas):
-                if caracteristicas[i] == 'X':
-                    caract_to_add.append(nomes_caract[i])
-            self.building = row[0]
-            self.name = row[1]
-            self.normal_capacity = row[2]
-            self.exam_capacity = row[3]
-            self.characteristics = caract_to_add
+        self.building = building
+        self.name = name
+        self.normal_capacity = normal_capacity
+        self.exam_capacity = exam_capacity
+        self.characteristics = characteristics
+
 
 
         def get_row(self):

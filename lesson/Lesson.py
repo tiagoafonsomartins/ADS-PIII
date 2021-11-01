@@ -1,5 +1,6 @@
 class Lesson:
-    def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int, week_day: str, start: str, end: str, day: str, requested_characteristics: str):
+    def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
+                 week_day: str, start: str, end: str, day: str, requested_characteristics: str):
         self.course = course
         self.subject = subject
         self.shift = shift
@@ -12,7 +13,17 @@ class Lesson:
         self.requested_characteristics = requested_characteristics
         self.classroom = None
 
+    def get_row(self):
+        return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
+                self.week_day, self.start, self.end, self.day, self.requested_characteristics, self.classroom.name,
+                self.classroom.normal_capacity, self.list_to_comma_sep_string(self.classroom.characteristics)]
 
+    def list_to_comma_sep_string(self, my_list):
+        str = ""
+        for e in my_list:
+            str += e + ", "
+        str = str[:-2]
+        return str
 
     def add_classroom(self, classroom):
         self.classroom = classroom

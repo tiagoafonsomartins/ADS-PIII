@@ -2,8 +2,6 @@ import csv
 import os
 from classroom import Classroom
 
-from Classroom import Classroom
-
 
 class Manipulate_Documents:
 
@@ -43,6 +41,29 @@ class Manipulate_Documents:
                     # meter nas classes necessárias
                     f.close()
 
+    def export_schedule(self, schedule: list, file_name: str) -> None:
+        """
+        Export to a csv file the list of Lesson objects
+
+        :param schedule:
+        :param file_name:
+        :return:
+        """
+        with open(os.path.join(self.output_path,file_name), 'w', encoding="utf8") as file:
+            # create the csv writer
+            writer = csv.writer(file)
+
+            # write first row with headers
+            header = ["Dia da Semana", "Início", "Fim", "Dia", "Características da sala pedida para a aula",
+                            "Sala de aula", "Lotação", "Características reais da sala"]
+            writer.writerow(header)
+
+            # write rows to the csv file
+            for lesson in schedule:
+                writer.writerow(lesson.get_row())
+
+
+
     '''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
         """Converts a row from csv file as a list into a Classroom object"""
         caracteristicas = row[5:]
@@ -58,5 +79,5 @@ class Manipulate_Documents:
         return []'''
 
 
-md = Manipulate_Documents()
-md.import_classrooms()
+#md = Manipulate_Documents()
+#md.import_classrooms()
