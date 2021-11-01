@@ -1,8 +1,7 @@
 import csv
 import os
-from classroom import Classroom
 
-from Classroom import Classroom
+from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
 
