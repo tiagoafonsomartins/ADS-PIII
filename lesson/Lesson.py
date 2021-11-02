@@ -20,15 +20,7 @@ class Lesson:
 
     def get_row(self):
         return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
-                self.week_day, self.start, self.end, self.day, self.requested_characteristics, self.classroom.name,
-                self.classroom.normal_capacity, self.list_to_comma_sep_string(self.classroom.characteristics)]
-
-    def list_to_comma_sep_string(self, my_list):
-        str = ""
-        for e in my_list:
-            str += e + ", "
-        str = str[:-2]
-        return str
+                self.week_day, self.start, self.end, self.day, self.requested_characteristics]
 
     def add_classroom(self, classroom):
         self.classroom = classroom

@@ -1,6 +1,8 @@
 import csv
 import os
 
+from typing import List
+
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
@@ -11,7 +13,13 @@ class Manipulate_Documents:
 
     def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
                  input_classrooms="./Input_Classrooms"):
-        """Basic init for Manipulate_Documents"""
+        """
+        Basic init for Manipulate_Documents
+
+        :param input_path:
+        :param output_path:
+        :param input_classrooms:
+        """
         self.ext = [".csv", ".xml", ".json", ".bd"]
         self.input_path = input_path
         self.output_path = output_path
@@ -57,7 +65,7 @@ class Manipulate_Documents:
         """
         Export to a csv file the list of Lesson objects
 
-        :param schedule:
+        :param schedule: it's a list of tuples like this (Lesson, Classroom)
         :param file_name:
         :return:
         """
@@ -71,8 +79,17 @@ class Manipulate_Documents:
             writer.writerow(header)
 
             # write rows to the csv file
-            for lesson in schedule:
-                writer.writerow(lesson.get_row())
+            for tuple in schedule:
+                row = tuple[0].get_row().extend( [ tuple[1].name, tuple[1].normal_capacity, self.list_to_comma_sep_string(tuple[1].characteristics) ] )
+                print("row: ", row)
+                writer.writerow()
+
+    def list_to_comma_sep_string(self, my_list):
+        str = ""
+        for e in my_list:
+            str += e + ", "
+        str = str[:-2]
+        return str
 
 
 #md = Manipulate_Documents()

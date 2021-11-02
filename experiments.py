@@ -62,7 +62,7 @@ class Experiments:
 
         simple_schedule = a.simple_allocation()
 
-        #md.export_schedule(simple_schedule)
+        md.export_schedule(simple_schedule, "outputMens")
 
 
     def test6(self):

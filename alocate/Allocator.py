@@ -7,7 +7,6 @@ class Allocator:
     def add_classroom(self, classroom):
         self.classrooms.append(classroom)
         for characteristic in classroom.get_characteristics():
-            print(characteristic)
             if characteristic in self.sum_classroom_characteristics:
                 number_of_characteristic = self.sum_classroom_characteristics[characteristic]
             else:
