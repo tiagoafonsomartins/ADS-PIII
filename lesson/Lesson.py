@@ -38,4 +38,43 @@ class Lesson:
         self.classroom = None
 
     def generate_time_blocks(self) -> list: # Retorna lista de blocos de tempo da aula numa lista de strings
-        pass
+        start_split = self.start.split(":")
+        start_hour = int(start_split[0])
+        start_minute = int(start_split[1])
+        end_split = self.end.split(":")
+        end_hour = int(end_split[0])
+        end_minute = int(end_split[1])
+
+        cur_hour = int(start_hour)
+        cur_minute = int(start_minute)
+        next_hour = None
+        next_minute = None
+
+        time_blocks = []
+        while cur_hour < end_hour or (cur_hour == end_hour and cur_minute < end_minute):
+            if cur_minute == 0:
+                next_hour = cur_hour
+                next_minute = 30
+            else:
+                next_hour = cur_hour + 1
+                next_minute = 0
+
+            time_blocks.append(self.datetime_to_string(self.day, self.time_to_string(cur_hour) + ":" + self.time_to_string(cur_minute) + ":00", self.time_to_string(next_hour) + ":" + self.time_to_string(next_minute) + ":00"))
+
+            cur_hour = next_hour
+            cur_minute = next_minute
+
+        return time_blocks
+
+    def time_to_string(self, time: int):
+        return str(time) if time > 9 else "0" + str(time)
+
+    # "3/24/2050_13:00:00-13:30:00"
+    def datetime_to_string(self, day: str, start: str, end: str) -> str:
+        return day + "_" + start + "-" + end
+
+    def string_to_datetime(self, block: str):
+        split = block.split("_")
+        time_split = split[1].split("-")
+
+        return (split[0], time_split[0], time_split[1])
