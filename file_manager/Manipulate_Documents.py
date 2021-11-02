@@ -7,8 +7,6 @@ from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
 
-
-
 class Manipulate_Documents:
 
     def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
@@ -74,7 +72,8 @@ class Manipulate_Documents:
             writer = csv.writer(file)
 
             # write first row with headers
-            header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início", "Fim", "Dia", "Características da sala pedida para a aula",
+            header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
+                      "Fim", "Dia", "Características da sala pedida para a aula",
                       "Sala de aula", "Lotação", "Características reais da sala"]
             writer.writerow(header)
 
@@ -82,8 +81,9 @@ class Manipulate_Documents:
             for tuple in schedule:
                 row = tuple[0].get_row()
                 if tuple[1] is not None:
-                    row.extend( [ tuple[1].name, tuple[1].normal_capacity, self.list_to_comma_sep_string(tuple[1].characteristics) ] )
-                print("row: ", row)
+                    row.extend([tuple[1].name, tuple[1].normal_capacity,
+                                self.list_to_comma_sep_string(tuple[1].characteristics)])
+                # print("row: ", row)
                 writer.writerow(row)
 
     def list_to_comma_sep_string(self, my_list):
@@ -94,9 +94,9 @@ class Manipulate_Documents:
         return str
 
 
-#md = Manipulate_Documents()
+# md = Manipulate_Documents()
 # md.import_classrooms()
-#md.export_schedule(md.import_schedule_documents(), "output")
+# md.export_schedule(md.import_schedule_documents(), "output")
 
 '''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
     """Converts a row from csv file as a list into a Classroom object"""
