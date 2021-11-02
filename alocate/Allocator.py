@@ -33,51 +33,52 @@ class Allocator:
         '''
         self.lessons.append(lesson)
 
-    def sort_lessons(self) -> list[Lesson]:
+    def sort_lessons(self) -> list:
         '''
         Sort lessons by day, start time and number of enrolled students
 
         :return list[Lesson]:
         '''
-        return sorted(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
+        self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
 
-    def sort_classrooms(self) -> list[Classroom]:
+    def sort_classrooms(self) -> list:
         '''
         Sort classrooms by normal capacity
 
         :return list[Classroom]:
         '''
+        self.classrooms.sort(key=lambda x: x.normal_capacity)
 
-        return sorted(self.classrooms, key=lambda x: x.normal_capacity)
-
-    def simple_allocation(self) -> list[(Lesson, Classroom)]:
+    def simple_allocation(self) -> list:
         '''
         Simple allocation algorithm that allocates first room that accommodates the lessons requested characteristics
         and is available at that time
 
         :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
         '''
-        sorted_lessons = self.sort_lessons()
-        sorted_classrooms = self.sort_classrooms()
+        self.sort_lessons()
+        self.sort_classrooms()
 
         number_of_roomless_lessons = 0
 
         schedule = []
 
-        for lesson in sorted_lessons:
-            for classroom in sorted_classrooms:
+        for lesson in self.lessons:
+            for classroom in self.classrooms:
                 if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                         (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                         (classroom.is_available(lesson.generate_time_blocks())):
                     self.add_classroom_to_lesson(lesson, classroom)
                     schedule.append((lesson, classroom))
+                    break
 
             if lesson.get_classroom() is None:
                 schedule.append((lesson, None))
                 number_of_roomless_lessons += 1
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+
         return schedule
 
     def add_classroom_to_lesson(self, lesson: Lesson, classroom: Classroom) -> None:

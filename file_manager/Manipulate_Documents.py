@@ -80,9 +80,11 @@ class Manipulate_Documents:
 
             # write rows to the csv file
             for tuple in schedule:
-                row = tuple[0].get_row().extend( [ tuple[1].name, tuple[1].normal_capacity, self.list_to_comma_sep_string(tuple[1].characteristics) ] )
+                row = tuple[0].get_row()
+                if tuple[1] is not None:
+                    row.extend( [ tuple[1].name, tuple[1].normal_capacity, self.list_to_comma_sep_string(tuple[1].characteristics) ] )
                 print("row: ", row)
-                writer.writerow()
+                writer.writerow(row)
 
     def list_to_comma_sep_string(self, my_list):
         str = ""

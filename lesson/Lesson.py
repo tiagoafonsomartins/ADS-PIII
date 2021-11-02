@@ -15,8 +15,8 @@ class Lesson:
         self.end = end
         self.day = day
         self.requested_characteristics = requested_characteristics
-        # self.classroom = None
-        self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
+        self.classroom = None
+        #self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
 
     def get_row(self):
         return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
@@ -38,6 +38,8 @@ class Lesson:
         self.classroom = None
 
     def generate_time_blocks(self) -> list: # Retorna lista de blocos de tempo da aula numa lista de strings
+        if self.day == "" or self.start == "" or self.end == "":
+            return []
         start_split = self.start.split(":")
         start_hour = int(start_split[0])
         start_minute = int(start_split[1])
@@ -78,3 +80,7 @@ class Lesson:
         time_split = split[1].split("-")
 
         return (split[0], time_split[0], time_split[1])
+
+    def __str__(self):
+        return "(" + self.subject + " | " + self.day + " | " + self.start + ")"
+    
