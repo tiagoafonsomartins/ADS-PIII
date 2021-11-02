@@ -9,8 +9,8 @@ from lesson.Lesson import Lesson
 
 class Manipulate_Documents:
 
-    def __init__(self, input_path="../Input_Documents", output_path="../Output_Documents",
-                 input_classrooms="../Input_Classrooms"):
+    def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
+                 input_classrooms="./Input_Classrooms"):
         """Basic init for Manipulate_Documents"""
         self.ext = [".csv", ".xml", ".json", ".bd"]
         self.input_path = input_path
@@ -49,7 +49,6 @@ class Manipulate_Documents:
                                 charact_list.append(header[i])
                         classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
                         classroom_list.append(classroom)
-                        print(row)
                     f.close()
 
         return classroom_list

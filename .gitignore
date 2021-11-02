@@ -1,3 +1,5 @@
 
 *.pyc
 *.pyc
+.idea/ADS-PIII.iml
+.idea/misc.xml
