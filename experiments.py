@@ -45,7 +45,10 @@ class Experiments:
         print("set: ", elapsed_time)
 
     def test5(self):
-        pass
+        md = Manipulate_Documents()
+        md.
+
+
 
     def test6(self):
         pass

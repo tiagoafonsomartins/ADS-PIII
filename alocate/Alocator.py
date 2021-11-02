@@ -15,19 +15,22 @@ class Allocator:
 
     def sort_lessons(self):
         # sort by day, time, requested characteristics and number of students
-        self.lessons.sort(key=lambda x: (x.day, x.start, x.requested_characteristics, x.number_of_enrolled_students))
+        self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
     def sort_classrooms(self):
         # sort by type of classroom then by capacity
-        self.classrooms.sort(key=lambda x: (x.characteristics, x.normal_capacity))
+        self.classrooms.sort(key=lambda x: x.normal_capacity)
 
     def simple_allocation(self):
+        self.sort_lessons()
+        self.sort_classrooms()
         number_of_roomless_lessons = 0
 
         for lesson in self.lessons:
             for classroom in self.classrooms:
                 if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
-                        (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()):
+                        (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
+                        (classroom.is_available(lesson.generate_time_blocks())):
                     self.add_classroom_to_lesson(lesson, classroom)
 
             if lesson.get_classroom() is None:
@@ -35,9 +38,12 @@ class Allocator:
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
+    def get_schedule(self):
+        return self.lessons
+
     def add_classroom_to_lesson(self, lesson, classroom):
         lesson.add_classroom(classroom)
-        classroom.add_lesson(lesson)
+        classroom.set_unavailable(lesson.generate_time_blocks())
 
     def remove_classroom_from_lesson(self, lesson, classroom):
         lesson.remove_classroom()
@@ -47,4 +53,4 @@ class Allocator:
         for lesson in self.lessons:
             lesson.remove_classroom()
         for classroom in self.classrooms:
-            classroom.remove_all_lessons()
+            classroom.empty_schedule()
