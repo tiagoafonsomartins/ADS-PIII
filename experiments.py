@@ -1,17 +1,17 @@
 import time
 
-
 import csv
 
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
+
 
 class Experiments:
     def __init__(self):
         pass
 
     def test1(self):
-        my_list = [1,2,3,4,5]
+        my_list = [1, 2, 3, 4, 5]
         print(my_list[-1:])
         print(my_list[:-2])
         print("s" == 's')
@@ -51,8 +51,8 @@ class Experiments:
         md = Manipulate_Documents()
         lessons = md.import_schedule_documents()
         classrooms = md.import_classrooms()
-        #print(lessons)
-        #print(classrooms)
+        # print(lessons)
+        # print(classrooms)
 
         a = Allocator()
         for lesson in lessons:
@@ -64,10 +64,9 @@ class Experiments:
 
         md.export_schedule(simple_schedule, "outputMens")
 
-
     def test6(self):
         pass
 
+
 e = Experiments()
 e.test5()
-

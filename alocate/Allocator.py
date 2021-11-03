@@ -41,7 +41,6 @@ class Allocator:
         '''
         self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
-
     def sort_classrooms(self) -> list:
         '''
         Sort classrooms by normal capacity

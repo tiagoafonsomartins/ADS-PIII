@@ -1,6 +1,6 @@
 class Classroom:
     def __init__(self, building: str, name: str, normal_capacity: int, exam_capacity: int, characteristics: list):
-        self.schedule = set() #set("24d13:00-13:30", "13:30-14:00", "14:00-14:30")
+        self.schedule = set()  # set("24d13:00-13:30", "13:30-14:00", "14:00-14:30")
         self.building = building
         self.name = name
         self.normal_capacity = normal_capacity
@@ -11,12 +11,14 @@ class Classroom:
         caracteristicas = []
         for c in self.characteristics:
             if c != '':
-                pass #TODO we have to figure out how to do this here
+                pass  # TODO we have to figure out how to do this here
         return [self.building, self.name, str(self.normal_capacity), str(self.exam_capacity), '']
+
     '''
     def add_lesson(self, lesson):
         self.schedule.append(lesson)
     '''
+
     def get_characteristics(self):
         return self.characteristics
 

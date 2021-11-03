@@ -92,18 +92,3 @@ class Manipulate_Documents:
             str += e + ", "
         str = str[:-2]
         return str
-
-
-# md = Manipulate_Documents()
-# md.import_classrooms()
-# md.export_schedule(md.import_schedule_documents(), "output")
-
-'''def row_to_classroom(self, row: list, nomes_caract: list) -> Classroom:
-    """Converts a row from csv file as a list into a Classroom object"""
-    caracteristicas = row[5:]
-    caract_to_add = []
-    for i in len(caracteristicas):
-        if caracteristicas[i] == 'X':
-            caract_to_add.append(nomes_caract[i])
-
-    return Classroom(row[0], row[1], int(row[2]), int(row[3]), caract_to_add)'''
