@@ -6,7 +6,7 @@ from typing import List
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
-
+'''Nuno'''
 class Manipulate_Documents:
 
     def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
@@ -59,6 +59,9 @@ class Manipulate_Documents:
 
         return classroom_list
 
+'''End Nuno'''
+'''André'''
+
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
         Export to a csv file the list of Lesson objects
@@ -92,3 +95,5 @@ class Manipulate_Documents:
             str += e + ", "
         str = str[:-2]
         return str
+
+'''End André'''

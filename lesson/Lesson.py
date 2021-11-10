@@ -1,7 +1,6 @@
-from classroom.Classroom import Classroom
-
-
+    '''Carlos'''
 class Lesson:
+
     def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
                  week_day: str, start: str, end: str, day: str, requested_characteristics: str):
 
@@ -18,9 +17,6 @@ class Lesson:
         self.classroom = None
         # self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
 
-    def get_row(self):
-        return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
-                self.week_day, self.start, self.end, self.day, self.requested_characteristics]
 
     def add_classroom(self, classroom):
         self.classroom = classroom
@@ -36,6 +32,13 @@ class Lesson:
 
     def remove_classroom(self):
         self.classroom = None
+
+    '''End Carlos'''
+
+    '''André'''
+    def get_row(self):
+        return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
+                self.week_day, self.start, self.end, self.day, self.requested_characteristics]
 
     def generate_time_blocks(self) -> list:  # Retorna lista de blocos de tempo da aula numa lista de strings
         if self.day == "" or self.start == "" or self.end == "":
@@ -87,3 +90,5 @@ class Lesson:
 
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + ")"
+
+    '''End André'''

@@ -1,6 +1,6 @@
 from classroom import Classroom
 from lesson import Lesson
-
+    '''Carlos'''
 
 class Allocator:
     def __init__(self):
@@ -112,3 +112,5 @@ class Allocator:
             lesson.remove_classroom()
         for classroom in self.classrooms:
             classroom.empty_schedule()
+
+    '''End Carlos'''
