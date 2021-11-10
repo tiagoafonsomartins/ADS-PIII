@@ -1,4 +1,4 @@
-    '''Carlos'''
+
 class Lesson:
 
     def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
@@ -33,14 +33,20 @@ class Lesson:
     def remove_classroom(self):
         self.classroom = None
 
-    '''End Carlos'''
 
-    '''André'''
-    def get_row(self):
+    def get_row(self)-> list:
+        """
+        Returns a list of strings with the correct order and informations to use on the export function in the Manipulate_Documents class.
+        :return:
+        """
         return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
                 self.week_day, self.start, self.end, self.day, self.requested_characteristics]
 
     def generate_time_blocks(self) -> list:  # Retorna lista de blocos de tempo da aula numa lista de strings
+        """
+        Returns a list of strings with the following format: "10/16/2015_09:30:00-10:00:00", one for every 30 minutes that is inside the time interval of the lesson.
+        :return:
+        """
         if self.day == "" or self.start == "" or self.end == "":
             return []
         start_split = self.start.split(":")
@@ -75,14 +81,37 @@ class Lesson:
 
         return time_blocks
 
-    def time_to_string(self, time: int):
+    def time_to_string(self, time: int) -> str:
+        """
+        Takes a number that represents either hours or minutes and turns it into a string. If it's a single digit, it puts a 0 in the beginning.
+        :param time:
+        :return:
+        """
+        if not isinstance(time, int): return ""
+        if time < 0: return ""
         return str(time) if time > 9 else "0" + str(time)
 
-    # "3/24/2050_13:00:00-13:30:00"
-    def datetime_to_string(self, day: str, start: str, end: str) -> str:
-        return day + "_" + start + "-" + end
+    # "10/16/2015_09:30:00-10:00:00"
+    def datetime_to_string(self, date: str, start: str, end: str) -> str:
+        """
+        Takes a string with the date, the beginning and finishing hour of this lesson and turns it into a string with this format: "10/16/2015_09:30:00-10:00:00"
+        :param day:
+        :param start:
+        :param end:
+        :return:
+        """
+        if not isinstance(date, str) or not isinstance(start, str) or not isinstance(end, str): return ""
+        return date + "_" + start + "-" + end
 
-    def string_to_datetime(self, block: str):
+    def string_to_datetime(self, block: str) -> (str, str, str):
+        """
+        Takes a string with this format: "10/16/2015_09:30:00-10:00:00" and returns in string format the date and the beginning and finishing hour
+        :param block:
+        :return:
+        """
+        if not isinstance(block, str): return ("","","")
+        if "_" not in block or "-" not in block: return ("","","")
+        if block.find("_") > block.find("-"): return ("","","")
         split = block.split("_")
         time_split = split[1].split("-")
 
@@ -90,5 +119,3 @@ class Lesson:
 
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + ")"
-
-    '''End André'''

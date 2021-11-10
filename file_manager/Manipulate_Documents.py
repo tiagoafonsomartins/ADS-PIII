@@ -6,11 +6,10 @@ from typing import List
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
-'''Nuno'''
 class Manipulate_Documents:
 
-    def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
-                 input_classrooms="./Input_Classrooms"):
+    def __init__(self, input_path="Input_Documents", output_path="Output_Documents",
+                 input_classrooms="Input_Classrooms"):
         """
         Basic init for Manipulate_Documents
 
@@ -59,9 +58,6 @@ class Manipulate_Documents:
 
         return classroom_list
 
-'''End Nuno'''
-'''André'''
-
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
         Export to a csv file the list of Lesson objects
@@ -70,30 +66,40 @@ class Manipulate_Documents:
         :param file_name:
         :return:
         """
-        with open(os.path.join(self.output_path, file_name) + ".csv", 'w', newline='') as file:
-            # create the csv writer
-            writer = csv.writer(file)
+        try:
+            print(1)
+            print(os.path.join(self.output_path, file_name) + ".csv")
+            with open(os.path.join(self.output_path, file_name) + ".csv", 'w+', newline='') as file:
+                print(2)
+                # create the csv writer
+                writer = csv.writer(file)
 
-            # write first row with headers
-            header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
-                      "Fim", "Dia", "Características da sala pedida para a aula",
-                      "Sala de aula", "Lotação", "Características reais da sala"]
-            writer.writerow(header)
+                # write first row with headers
+                header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
+                          "Fim", "Dia", "Características da sala pedida para a aula",
+                          "Sala de aula", "Lotação", "Características reais da sala"]
+                writer.writerow(header)
 
-            # write rows to the csv file
-            for tuple in schedule:
-                row = tuple[0].get_row()
-                if tuple[1] is not None:
-                    row.extend([tuple[1].name, tuple[1].normal_capacity,
-                                self.list_to_comma_sep_string(tuple[1].characteristics)])
-                # print("row: ", row)
-                writer.writerow(row)
+                # write rows to the csv file
+                for tuple in schedule:
+                    row = tuple[0].get_row()
+                    if tuple[1] is not None:
+                        row.extend([tuple[1].name, tuple[1].normal_capacity,
+                                    self.list_to_comma_sep_string(tuple[1].characteristics)])
+                    # print("row: ", row)
+                    writer.writerow(row)
+        except EnvironmentError as e:  # parent of IOError, OSError *and* WindowsError where available
+            print("Something went wrong with creating a file to export the results into")
+            print(e)
 
-    def list_to_comma_sep_string(self, my_list):
-        str = ""
+    def list_to_comma_sep_string(self, my_list: list) -> str:
+        """
+        Takes a list and returns a string with all its values concatenated with a comma and a space
+        :param my_list:
+        :return:
+        """
+        string = ""
         for e in my_list:
-            str += e + ", "
-        str = str[:-2]
-        return str
-
-'''End André'''
+            string += str(e) + ", "
+        string = string[:-2]
+        return string
