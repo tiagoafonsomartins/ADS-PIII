@@ -1,4 +1,4 @@
-    '''Nuno'''
+'''Nuno'''
 
 class Classroom:
     def __init__(self, building: str, name: str, normal_capacity: int, exam_capacity: int, characteristics: list):

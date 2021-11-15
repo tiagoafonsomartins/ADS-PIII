@@ -1,8 +1,13 @@
+from os import read
+
 from django.shortcuts import render
 
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from file_manager.Manipulate_Documents import *
+from alocate.Allocator import *
 from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
+
 
 def index(request):
     return render(request, 'index.html')
@@ -21,14 +26,18 @@ def results(request):
             a = Allocator()
             for lesson in lessons:
                 a.add_lesson(lesson)
-            for classroom in classrooms:
+            for classroom in classes:
                 a.add_classroom(classroom)
 
             schedule = a.simple_allocation()
-
-            
-            response = FileResponse(open(filename, 'rb'))
-            return render(response)
+            output_file = open("Output_Documents\Output_Schedule.csv")
+            request.FILES['file2'] = output_file
+            #object.save()
+            #context = upload.objects.all()
+            request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
+            return render(request, 'results.html', {"context": output_file})
+            #response = FileResponse(open(filename, 'rb'))
+            #return render(response, 'results.html')
     return render(request, 'index.html')
     #return HttpResponse(s.nice())
     
@@ -45,14 +54,14 @@ def importFile(request):
             a = Allocator()
             for lesson in lessons:
                 a.add_lesson(lesson)
-            for classroom in classrooms:
+            for classroom in classes:
                 a.add_classroom(classroom)
 
             schedule = a.simple_allocation()
 
             
             response = FileResponse(open(filename, 'rb'))
-            return render(response)
+            return render(response, 'results.html')
             #request.FILES['myFile'] = md.export_schedule(schedule, "Output_Schedule")
             #return render(request, 'results.html')
             
