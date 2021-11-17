@@ -18,19 +18,40 @@ class Lesson:
         # self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
 
 
-    def add_classroom(self, classroom):
+    def add_classroom(self, classroom: Classroom) -> None:
+        '''
+        Allocates classroom to lesson
+        :param classroom:
+        :return:
+        '''
         self.classroom = classroom
 
-    def get_requested_characteristics(self):
+    def get_requested_characteristics(self) -> list:
+        '''
+        Returns classroom characteristics requested by the lesson
+        :return:
+        '''
         return self.requested_characteristics
 
-    def get_number_of_enrolled_students(self):
+    def get_number_of_enrolled_students(self) -> int:
+        '''
+        Returns number of enrolled students in the lesson
+        :return:
+        '''
         return self.number_of_enrolled_students
 
-    def get_classroom(self):
+    def get_classroom(self) -> Classroom:
+        '''
+        Returns classroom allocated to the lesson
+        :return:
+        '''
         return self.classroom
 
-    def remove_classroom(self):
+    def remove_classroom(self) -> None:
+        '''
+        Removes allocation from the lesson
+        :return:
+        '''
         self.classroom = None
 
 
