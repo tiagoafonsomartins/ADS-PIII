@@ -3,6 +3,7 @@ import os
 
 from typing import List
 
+from Gang.Gang import Gang
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
@@ -24,6 +25,8 @@ class Manipulate_Documents:
 
     def import_schedule_documents(self):
         lesson_list = []
+        gang_list = []
+        create_gang = True
         for root, dirs, files in os.walk(self.input_path):
             for file in files:
                 if file.endswith(tuple(self.ext)):
@@ -35,8 +38,17 @@ class Manipulate_Documents:
                         lesson = Lesson(row[0], row[1], row[2], row[3],
                                         int(row[4]), row[5], row[6], row[7], row[8], row[9])
                         lesson_list.append(lesson)
+                        for gang in gang_list:
+                            if gang.name == lesson.gang: # TODO tratar de várias turmas para a mesma Lesson
+                                gang.add_lesson(lesson)
+                                create_gang = False
+                                break
+                        if create_gang:
+                            gang_list.append(Gang(lesson.gang, lesson.course, lesson))
+                        else:
+                            create_gang = True
                     f.close()
-        return lesson_list
+        return (lesson_list, gang_list)
 
     def import_classrooms(self):
         classroom_list = []

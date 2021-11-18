@@ -1,3 +1,5 @@
+from classroom.Classroom import Classroom
+
 
 class Lesson:
 

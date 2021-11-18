@@ -22,6 +22,7 @@ class Lesson_Testing:
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "5:00:00", "4:00:00", "4/23/2005",
                         "Good, Not stinky, Very good")
         print(lesson.generate_time_blocks())
+        print("end caralho\n\n")
 
     def test_get_row(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",

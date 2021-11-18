@@ -3,9 +3,10 @@ from lesson import Lesson
 '''Carlos'''
 
 class Allocator:
-    def __init__(self):
-        self.classrooms = []
-        self.lessons = []
+    def __init__(self, classrooms = [], lessons = [], gangs = []):
+        self.classrooms = classrooms
+        self.lessons = lessons
+        self.gangs = gangs
         self.sum_classroom_characteristics = {}
 
     def add_classroom(self, classroom: Classroom) -> None:
@@ -113,4 +114,4 @@ class Allocator:
         for classroom in self.classrooms:
             classroom.empty_schedule()
 
-    '''End Carlos'''
+'''End Carlos'''

@@ -1,9 +1,12 @@
+import sys
 import time
 
 import csv
 
+from Metrics import Metric
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
+from lesson.Lesson import Lesson
 
 
 class Experiments:
@@ -49,24 +52,79 @@ class Experiments:
 
     def test5(self):
         md = Manipulate_Documents()
-        lessons = md.import_schedule_documents()
+        lessons, gangs = md.import_schedule_documents()
         classrooms = md.import_classrooms()
+        print(gangs)
+        print(len(gangs))
         # print(lessons)
         # print(classrooms)
 
-        a = Allocator()
-        for lesson in lessons:
+        a = Allocator(classrooms, lessons, gangs)
+        '''for lesson in lessons:
             a.add_lesson(lesson)
         for classroom in classrooms:
-            a.add_classroom(classroom)
+            a.add_classroom(classroom)'''
 
         simple_schedule = a.simple_allocation()
 
         md.export_schedule(simple_schedule, "outputMens")
 
     def test6(self):
-        pass
+        lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
+                        "Good, Not stinky, Very good")
+        print(sys.getsizeof(lesson.requested_characteristics))
+        print(sys.getsizeof(Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "10:00:00", "10:30:00", "4/23/2005",
+                        "Good, Not stinky, Very good")))
+        print(sys.getsizeof(""))
 
+    def get_earliest(self):
+      pass
+
+    def test7(self):
+        md = Manipulate_Documents()
+        lessons = md.import_schedule_documents()
+
+        earliest = "23:59:59"
+        latest = "00:00:00"
+        for lesson in lessons:
+            print(lesson.start)
+            print(lesson.end, "\n")
+            if lesson.start != " " and lesson.start != "" and lesson.start < earliest:
+                earliest = lesson.start
+            if lesson.end != " " and lesson.end != "" and lesson.end > latest:
+                latest = lesson.end
+
+        print("earliest: ", earliest)
+        print("latest: ", latest)
+
+    def test8(self):
+        string1 = "a"
+        string2 = "b"
+        print(string1 < string2)
+
+
+    def test9(self):
+        a,b = get_tuplo()
+        print(a)
+        print(b)
+
+    def test10(self):
+        ngosta = getattr(Metric, 'OverBooking')
+        atr = ngosta("fdsa", 2)
+        atr.testing("fkljdsa")
+        print(atr.value)
+        print(atr.name)
+
+    def test11(self):
+        metrics = [Metric.Overbooking(), Metric.Gaps()]
+
+        for metric in [m for m in metrics if m.m_type == "lesson"]:
+            metric.calculate()
+
+
+
+def get_tuplo():
+    return (1, 2)
 
 e = Experiments()
-e.test5()
+e.test11()
