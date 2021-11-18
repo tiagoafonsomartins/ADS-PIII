@@ -6,7 +6,7 @@ class Metric(ABC):
 
     def __init__(self, name):
         self.name = name
-        self.metrics = []
+        self.values = []
 
     @abstractmethod
     def calculate(self, input):
