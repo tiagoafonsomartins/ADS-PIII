@@ -23,13 +23,11 @@ class AlgResults:
 
         for lesson, classroom in self.schedule:
             for metric in metrics_lessons:
-                metric.calcular(lesson, classroom)
+                metric.calculate(lesson, classroom)
         for classroom in classrooms:
             for metric in metrics_gangs:
-                metric.calcular(classroom)
+                metric.calculate(classroom)
         for gang in gangs:
             for metric in metrics_classrooms:
-                metric.calcular(gang)
+                metric.calculate(gang)
 
-    def calculate_overbooking(self):
-        self.cenas = "fdshaf"

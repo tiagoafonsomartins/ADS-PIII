@@ -6,13 +6,24 @@ class Metric(ABC):
 
     def __init__(self, name):
         self.name = name
-        self.metrics = []
+        self.value = []
 
     @abstractmethod
     def calculate(self, input):
         pass
 
+class Roomless_lessons(Metric):
 
+    def __init__(self):
+        super().__init__("Roomless_lessons")
+        self.m_type = "lessons"
+        self.value.append(0)
+
+    def calculate(self, lesson, classroom):
+        if classroom == None: self.value[0] += 1
+
+    def get_roomless_lessons(self):
+        return self.value[0]
 
 class Overbooking(Metric):
 
