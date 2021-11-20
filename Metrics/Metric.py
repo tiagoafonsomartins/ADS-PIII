@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from Gang import Gang
+from lesson import Lesson
+import time
 
 class Metric(ABC):
 
@@ -33,6 +36,32 @@ class Gaps(Metric):
         self.name = "Gaps"
         self.m_type = "gangs"
 
-    def calculate(self):
-        print("2+2 is 4, minus 1 is 3 quick mafs")
+    def calculate(self, input):
+        input.sort(key=lambda x: time.strptime(x.start, '%H:%M:%S'))
+
+        first_lesson = input.pop(0)
+        last_end = first_lesson.end
+        last_day = first_lesson.day
+        for lesson in input:
+            if lesson.start != last_end and lesson.day == last_day:
+                self.value += 1
+            last_end = lesson.end
+
+class Movements(Metric):
+    value = 0
+
+    def __init__(self):
+        self.name = "Movements"
+        self.m_type = "gangs"
+
+    def calculate(self, input):
+        input.sort(key=lambda x: time.strptime(x.start, '%H:%M:%S'))
+
+        first_lesson = input.pop(0)
+        last_classroom = first_lesson.classroom
+        last_day = first_lesson.day
+        for lesson in input:
+            if lesson.classroom != last_classroom and lesson.day == last_day:
+                self.value += 1
+            last_classroom = lesson.classroom
 

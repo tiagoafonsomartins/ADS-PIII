@@ -4,6 +4,7 @@ import time
 import csv
 
 from Metrics import Metric
+from Metrics.Metric import Movements
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
@@ -60,6 +61,7 @@ class Experiments:
         # print(classrooms)
 
         a = Allocator(classrooms, lessons, gangs)
+        a.lessons = [l for l in a.lessons if l.start]
         '''for lesson in lessons:
             a.add_lesson(lesson)
         for classroom in classrooms:
@@ -121,10 +123,21 @@ class Experiments:
         for metric in [m for m in metrics if m.m_type == "lesson"]:
             metric.calculate()
 
+    def test12(self):
+        lesson1 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
+                        "Good, Not stinky, Very good")
+        lesson2 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "10:00:00", "12:00:00", "4/23/2005",
+                        "Good, Not stinky, Very good")
+        lesson3 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "13:00:00", "15:00:00", "4/23/2005",
+                        "Good, Not stinky, Very good")
+        ll = [lesson1, lesson2, lesson3]
 
+        m = Movements()
+        Movements().calculate(ll)
+        print(m.value)
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test11()
+e.test12()
