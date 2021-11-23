@@ -6,7 +6,7 @@ class AlgResults:
         self.schedule = []
         self.metrics = metrics
 
-    def add_association(self, lesson, classroom):
+    def add_association(self, lesson: Lesson, classroom: Classroom):
         self.schedule.append((lesson, classroom))
 
     def calculate_metrics(self, classrooms, gangs):
