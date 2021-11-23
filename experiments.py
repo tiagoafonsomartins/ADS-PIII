@@ -3,8 +3,10 @@ import time
 
 import csv
 
+from Gang.Gang import Gang
 from Metrics import Metric
-from Metrics.Metric import Movements
+from Metrics.Metric import Movements, Gaps
+from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
@@ -126,15 +128,28 @@ class Experiments:
     def test12(self):
         lesson1 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
                         "Good, Not stinky, Very good")
-        lesson2 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "10:00:00", "12:00:00", "4/23/2005",
+        lesson2 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "11:00:00", "12:00:00", "4/23/2005",
                         "Good, Not stinky, Very good")
         lesson3 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "13:00:00", "15:00:00", "4/23/2005",
                         "Good, Not stinky, Very good")
-        ll = [lesson1, lesson2, lesson3]
+        classroom1 = Classroom('Edifício 69', 'Auditório 420', 50, 25, ["cenas"])
+        classroom2 = Classroom('Edifício 2', 'B203', 150, 125, ["cenas", "mais cenas", "ainda mais cenas"])
+        lesson1.add_classroom(classroom1)
+        lesson2.add_classroom(classroom2)
+        lesson3.add_classroom(classroom2)
 
+        gang = Gang("best", "lei", lesson1)
+        gang.add_lesson(lesson2)
+        gang.add_lesson(lesson3)
+
+        g = Gaps()
+        g.calculate(gang)
         m = Movements()
-        Movements().calculate(ll)
+        m.calculate(gang)
+
+        print(g.value)
         print(m.value)
+
 
 def get_tuplo():
     return (1, 2)

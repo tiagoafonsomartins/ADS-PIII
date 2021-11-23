@@ -142,3 +142,6 @@ class Lesson:
 
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + ")"
+
+    def __repr__(self):
+        return str(self)

@@ -3,8 +3,8 @@ from Gang import Gang
 from lesson import Lesson
 import time
 
-class Metric(ABC):
 
+class Metric(ABC):
     m_type = None
 
     def __init__(self, name):
@@ -14,7 +14,6 @@ class Metric(ABC):
     @abstractmethod
     def calculate(self, input):
         pass
-
 
 
 class Overbooking(Metric):
@@ -30,38 +29,42 @@ class Overbooking(Metric):
             obj = lista[0]()
             obj.evaluate_metric(input)'''
 
+
 class Gaps(Metric):
 
     def __init__(self):
         self.name = "Gaps"
         self.m_type = "gangs"
+        self.value = 0
 
     def calculate(self, input):
-        input.sort(key=lambda x: time.strptime(x.start, '%H:%M:%S'))
+        gang_lessons = input.lessons
+        gang_lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S')))
 
-        first_lesson = input.pop(0)
+        first_lesson = gang_lessons[0]
         last_end = first_lesson.end
         last_day = first_lesson.day
-        for lesson in input:
+        for lesson in gang_lessons[1:]:
             if lesson.start != last_end and lesson.day == last_day:
                 self.value += 1
             last_end = lesson.end
 
+
 class Movements(Metric):
-    value = 0
 
     def __init__(self):
         self.name = "Movements"
         self.m_type = "gangs"
+        self.value = 0
 
     def calculate(self, input):
-        input.sort(key=lambda x: time.strptime(x.start, '%H:%M:%S'))
+        gang_lessons = input.lessons
+        gang_lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S')))
 
-        first_lesson = input.pop(0)
+        first_lesson = gang_lessons[0]
         last_classroom = first_lesson.classroom
         last_day = first_lesson.day
-        for lesson in input:
+        for lesson in gang_lessons[1:]:
             if lesson.classroom != last_classroom and lesson.day == last_day:
                 self.value += 1
             last_classroom = lesson.classroom
-
