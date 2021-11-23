@@ -68,3 +68,16 @@ class Movements(Metric):
             if lesson.classroom != last_classroom and lesson.day == last_day:
                 self.value += 1
             last_classroom = lesson.classroom
+
+class UsedRooms(Metric):
+
+    def __init__(self):
+        self.name = "UsedRooms"
+        self.m_type = "lessons"
+        self.values = []
+        self.value = 0
+
+    def calculate(self, lesson, classroom):
+        if classroom not in self.values:
+            self.values.append(classroom)
+            self.value += 1

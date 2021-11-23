@@ -5,7 +5,7 @@ import csv
 
 from Gang.Gang import Gang
 from Metrics import Metric
-from Metrics.Metric import Movements, Gaps
+from Metrics.Metric import Movements, Gaps, UsedRooms
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -146,10 +146,14 @@ class Experiments:
         g.calculate(gang)
         m = Movements()
         m.calculate(gang)
+        u_r = UsedRooms()
+        u_r.calculate(lesson1, classroom1)
+        u_r.calculate(lesson2, classroom1)
+        u_r.calculate(lesson3, classroom1)
 
         print(g.value)
         print(m.value)
-
+        print(u_r.value)
 
 def get_tuplo():
     return (1, 2)
