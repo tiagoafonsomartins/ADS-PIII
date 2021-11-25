@@ -3,9 +3,9 @@ import time
 
 import csv
 
-from Gang.Gang import Gang
-from Metrics import Metric
-from Metrics.Metric import Movements, Gaps, UsedRooms
+from gang.Gang import Gang
+from metrics import Metric
+from metrics.Metric import Movements, Gaps, UsedRooms
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -24,7 +24,7 @@ class Experiments:
         print(range(5))
 
     def test2(self):
-        file = open('Input_Classrooms/Salas.csv')
+        file = open('input_classrooms/Salas.csv')
         csvreader = csv.reader(file)
         next(csvreader)
         row = next(csvreader)

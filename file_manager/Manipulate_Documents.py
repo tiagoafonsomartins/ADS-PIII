@@ -3,14 +3,14 @@ import os
 
 from typing import List
 
-from Gang.Gang import Gang
+from gang.Gang import Gang
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
 class Manipulate_Documents:
 
-    def __init__(self, input_path="Input_Documents", output_path="Output_Documents",
-                 input_classrooms="Input_Classrooms"):
+    def __init__(self, input_path="input_documents", output_path="output_documents",
+                 input_classrooms="input_classrooms"):
         """
         Basic init for Manipulate_Documents
 

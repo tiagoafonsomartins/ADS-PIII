@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Gang import Gang
+from gang import Gang
 from classroom import Classroom
 from lesson import Lesson
 import time
@@ -117,7 +117,7 @@ class Gaps(Metric):
 
     def calculate(self, input: Gang):
         '''
-        Calculates number of gaps that exist in the given Gang and stores the value as an attribute
+        Calculates number of gaps that exist in the given gang and stores the value as an attribute
         :param input:
         :return:
         '''
@@ -142,7 +142,7 @@ class Movements(Metric):
 
     def calculate(self, input: Gang):
         '''
-        Calculates number of Movements that exist in the given Gang and stores the value as an attribute
+        Calculates number of Movements that exist in the given gang and stores the value as an attribute
         :param input:
         :return:
         '''
