@@ -143,5 +143,6 @@ class Lesson:
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"
 
+
     def __repr__(self):
         return str(self)

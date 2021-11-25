@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
-from lesson import Lesson
+
+from Gang import Gang
 from classroom import Classroom
+from lesson import Lesson
+import time
+
 
 class Metric(ABC):
-
     m_type = None
 
     def __init__(self, name):
@@ -105,13 +108,72 @@ class Bad_Classroom(Metric):
         self.value = 0
         self.total = 0
 
-
 class Gaps(Metric):
 
     def __init__(self):
         self.name = "Gaps"
         self.m_type = "gangs"
+        self.value = 0
 
-    def calculate(self):
-        print("2+2 is 4, minus 1 is 3 quick mafs")
+    def calculate(self, input: Gang):
+        '''
+        Calculates number of gaps that exist in the given Gang and stores the value as an attribute
+        :param input:
+        :return:
+        '''
+        gang_lessons = input.lessons
+        gang_lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S')))
 
+        first_lesson = gang_lessons[0]
+        last_end = first_lesson.end
+        last_day = first_lesson.day
+        for lesson in gang_lessons[1:]:
+            if lesson.start != last_end and lesson.day == last_day:
+                self.value += 1
+            last_end = lesson.end
+
+
+class Movements(Metric):
+
+    def __init__(self):
+        self.name = "Movements"
+        self.m_type = "gangs"
+        self.value = 0
+
+    def calculate(self, input: Gang):
+        '''
+        Calculates number of Movements that exist in the given Gang and stores the value as an attribute
+        :param input:
+        :return:
+        '''
+        gang_lessons = input.lessons
+        gang_lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S')))
+
+        first_lesson = gang_lessons[0]
+        last_classroom = first_lesson.classroom
+        last_day = first_lesson.day
+        for lesson in gang_lessons[1:]:
+            if lesson.classroom != last_classroom and lesson.day == last_day:
+                self.value += 1
+            last_classroom = lesson.classroom
+
+
+class UsedRooms(Metric):
+
+    def __init__(self):
+        self.name = "UsedRooms"
+        self.m_type = "lessons"
+        self.values = []
+        self.value = 0
+
+    def calculate(self, lesson: Lesson, classroom: Classroom):
+        '''
+        Receives a Lesson and Classroom and if that Classroom hasn't been recorded it stores the Classroom and updates
+        the number of Used Rooms
+        :param lesson:
+        :param classroom:
+        :return:
+        '''
+        if classroom not in self.values:
+            self.values.append(classroom)
+            self.value += 1
