@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import django_heroku
 import os
 from pathlib import Path
 import mimetypes
@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-_fwz86p-s5t^)e8dnc5#na@^5l2#pcq7)$k_1u!jy9jhzmrev@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://adsgrupo3.herokuapp.com',
+'localhost',
+'127.0.0.1']
 
 
 # Application definition
@@ -131,3 +133,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '/Output_Documents/')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())

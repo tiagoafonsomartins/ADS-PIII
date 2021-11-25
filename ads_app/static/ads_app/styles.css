@@ -52,11 +52,10 @@ ul {
 .content {
   margin-left: 200px;
   padding-left: 20px;
+  vertical-align: middle;
 }
 
 .footer {
-  margin-left: 200px;
-  padding-left: 20px;
   position: fixed;
   padding: 10px 10px 0px 10px;
   bottom: 0;
