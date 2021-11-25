@@ -82,17 +82,27 @@ class Experiments:
 
     def test7(self):
         md = Manipulate_Documents()
-        lessons = md.import_schedule_documents()
+        results = md.import_schedule_documents()
+        lessons = results[0]
 
         earliest = "23:59:59"
         latest = "00:00:00"
         for lesson in lessons:
-            print(lesson.start)
-            print(lesson.end, "\n")
-            if lesson.start != " " and lesson.start != "" and lesson.start < earliest:
-                earliest = lesson.start
-            if lesson.end != " " and lesson.end != "" and lesson.end > latest:
-                latest = lesson.end
+            if lesson.start == " " or lesson.start == "": continue
+            if lesson.end == " " or lesson.end == "": continue
+            new_start = lesson.start
+            new_end = lesson.end
+            if len(lesson.start) < 8: new_start = "0" + new_start
+            if len(lesson.end) < 8: new_end = "0" + new_end
+            #print(lesson.start)
+            #print(lesson.end, "\n")
+            print(new_start, "<", earliest)
+            if new_start < earliest:
+                earliest = new_start
+                print(True)
+            if new_end > latest:
+                latest = new_end
+
 
         print("earliest: ", earliest)
         print("latest: ", latest)
@@ -121,10 +131,13 @@ class Experiments:
         for metric in [m for m in metrics if m.m_type == "lesson"]:
             metric.calculate()
 
+    def test12(self):
+        print(1/3)
+
 
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test11()
+e.test7()

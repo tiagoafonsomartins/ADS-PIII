@@ -141,4 +141,7 @@ class Lesson:
         return (split[0], time_split[0], time_split[1])
 
     def __str__(self):
-        return "(" + self.subject + " | " + self.day + " | " + self.start + ")"
+        return "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"
+
+    def __repr__(self):
+        return str(self)
