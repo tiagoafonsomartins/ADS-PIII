@@ -1,11 +1,14 @@
+import time
+
 from classroom import Classroom
 from lesson import Lesson
 '''Carlos'''
 
 class Allocator:
-    def __init__(self):
-        self.classrooms = []
-        self.lessons = []
+    def __init__(self, classrooms = [], lessons = [], gangs = []):
+        self.classrooms = classrooms
+        self.lessons = lessons
+        self.gangs = gangs
         self.sum_classroom_characteristics = {}
 
     def add_classroom(self, classroom: Classroom) -> None:
@@ -39,7 +42,8 @@ class Allocator:
 
         :return list[Lesson]:
         '''
-        self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
+        self.lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S'), x.number_of_enrolled_students))
+        # self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
     def sort_classrooms(self) -> list:
         '''
@@ -113,4 +117,4 @@ class Allocator:
         for classroom in self.classrooms:
             classroom.empty_schedule()
 
-    '''End Carlos'''
+'''End Carlos'''
