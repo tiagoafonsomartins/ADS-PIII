@@ -132,6 +132,12 @@ class Gaps(Metric):
                 self.value += 1
             last_end = lesson.end
 
+    def get_total_metric_value(self):
+        return self.value
+
+    def reset_metric(self):
+        self.value = 0
+
 
 class Movements(Metric):
 
@@ -157,14 +163,19 @@ class Movements(Metric):
                 self.value += 1
             last_classroom = lesson.classroom
 
+    def get_total_metric_value(self):
+        return self.value
+
+    def reset_metric(self):
+        self.value = 0
+
 
 class UsedRooms(Metric):
 
     def __init__(self):
         self.name = "UsedRooms"
         self.m_type = "lessons"
-        self.values = []
-        self.value = 0
+        self.value = []
 
     def calculate(self, lesson: Lesson, classroom: Classroom):
         '''
@@ -174,6 +185,13 @@ class UsedRooms(Metric):
         :param classroom:
         :return:
         '''
-        if classroom not in self.values:
-            self.values.append(classroom)
-            self.value += 1
+        if classroom not in self.value:
+            self.value.append(classroom)
+
+    def get_total_metric_value(self):
+        return len(self.value)
+    
+    def reset_metric(self):
+        self.value = []
+
+
