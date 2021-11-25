@@ -25,6 +25,11 @@ class Manipulate_Documents:
         self.input_classrooms = input_classrooms
 
     def import_schedule_documents(self):
+        """
+        Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
+
+        :return: a list with a list Classroom objects and a list of Gang objects
+        """
         lesson_list = []
         gang_list = []
         create_gang = True
@@ -40,7 +45,7 @@ class Manipulate_Documents:
                                         int(row[4]), row[5], row[6], row[7], row[8], row[9])
                         lesson_list.append(lesson)
                         for gang in gang_list:
-                            if gang.name == lesson.gang: # TODO tratar de várias turmas para a mesma Lesson
+                            if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
                                 gang.add_lesson(lesson)
                                 create_gang = False
                                 break
@@ -49,9 +54,14 @@ class Manipulate_Documents:
                         else:
                             create_gang = True
                     f.close()
-        return (lesson_list, gang_list)
+        return lesson_list, gang_list
 
     def import_classrooms(self):
+        """
+        Imports a csv into a list of Classroom objects
+
+        :return: list of Classroom objects
+        """
         classroom_list = []
         for root, dirs, files in os.walk(self.input_classrooms):
             for file in files:
@@ -88,7 +98,8 @@ class Manipulate_Documents:
                 writer = csv.writer(file)
 
                 # write first row with headers
-                header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
+                header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana",
+                          "Início",
                           "Fim", "Dia", "Características da sala pedida para a aula",
                           "Sala de aula", "Lotação", "Características reais da sala"]
                 writer.writerow(header)
