@@ -22,7 +22,7 @@ class Metric(ABC):
     def reset_metric(self):
         pass
 
-class Roomless_lessons(Metric):
+class Roomless_Lessons(Metric):
 
     def __init__(self):
         super().__init__("Roomless_lessons")
@@ -32,7 +32,7 @@ class Roomless_lessons(Metric):
 
     def calculate(self, lesson, classroom):
         if classroom == None: self.value += 1
-        self.value += 1
+        self.total += 1
 
     def get_total_metric_value(self):
         return self.value
@@ -80,7 +80,7 @@ class Underbooking(Metric):
     def reset_metric(self):
         self.value = []
 
-class Bad_classroom(Metric):
+class Bad_Classroom(Metric):
 
     def __init__(self):
         self.name = "Bad_classroom"
@@ -93,25 +93,6 @@ class Bad_classroom(Metric):
         if lesson.requested_characteristics not in characteristics:
             self.value += 1
         self.total += 1
-
-    def get_total_metric_value(self):
-        return self.value
-
-    def get_percentage(self):
-        return self.value / self.total
-
-    def reset_metric(self):
-        self.value = 0
-        self.total = 0
-
-class Avg_free_classrooms_hour(Metric):
-
-    def __init__(self):
-        self.name = "Avg_free_classrooms_hour"
-        self.m_type = "classrooms"
-
-    def calculate(self, classroom: Classroom):
-        pass
 
     def get_total_metric_value(self):
         return self.value
