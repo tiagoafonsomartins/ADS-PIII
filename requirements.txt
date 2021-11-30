@@ -1,5 +1,5 @@
 anaconda-client==1.2.2
-anaconda-navigator==
+anaconda-navigator==2.1.1
 appdirs==1.4.4
 argh==0.26.2
 asgiref==3.4.1
