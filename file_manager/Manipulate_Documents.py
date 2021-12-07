@@ -3,14 +3,15 @@ import os
 
 from typing import List
 
+from gang.Gang import Gang
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 
 
 class Manipulate_Documents:
-    '''Nuno'''
-    def __init__(self, input_path="./Input_Documents", output_path="./Output_Documents",
-                 input_classrooms="./Input_Classrooms"):
+
+    def __init__(self, input_path="input_documents", output_path="output_documents",
+                 input_classrooms="input_classrooms"):
         """
         Basic init for Manipulate_Documents
 
@@ -25,6 +26,8 @@ class Manipulate_Documents:
 
     def import_schedule_documents(self):
         lesson_list = []
+        gang_list = []
+        create_gang = True
         for root, dirs, files in os.walk(self.input_path):
             for file in files:
                 if file.endswith(tuple(self.ext)):
@@ -36,8 +39,17 @@ class Manipulate_Documents:
                         lesson = Lesson(row[0], row[1], row[2], row[3],
                                         int(row[4]), row[5], row[6], row[7], row[8], row[9])
                         lesson_list.append(lesson)
+                        for gang in gang_list:
+                            if gang.name == lesson.gang: # TODO tratar de várias turmas para a mesma Lesson
+                                gang.add_lesson(lesson)
+                                create_gang = False
+                                break
+                        if create_gang:
+                            gang_list.append(Gang(lesson.gang, lesson.course, lesson))
+                        else:
+                            create_gang = True
                     f.close()
-        return lesson_list
+        return (lesson_list, gang_list)
 
     def import_classrooms(self):
         classroom_list = []
@@ -59,9 +71,6 @@ class Manipulate_Documents:
 
         return classroom_list
 
-    '''End Nuno'''
-    '''André'''
-
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
         Export to a csv file the list of Lesson objects
@@ -70,30 +79,40 @@ class Manipulate_Documents:
         :param file_name:
         :return:
         """
-        with open(os.path.join(self.output_path, file_name) + ".csv", 'w', newline='') as file:
-            # create the csv writer
-            writer = csv.writer(file)
+        try:
+            print(1)
+            print(os.path.join(self.output_path, file_name) + ".csv")
+            with open(os.path.join(self.output_path, file_name) + ".csv", 'w+', newline='') as file:
+                print(2)
+                # create the csv writer
+                writer = csv.writer(file)
 
-            # write first row with headers
-            header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
-                      "Fim", "Dia", "Características da sala pedida para a aula",
-                      "Sala de aula", "Lotação", "Características reais da sala"]
-            writer.writerow(header)
+                # write first row with headers
+                header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana", "Início",
+                          "Fim", "Dia", "Características da sala pedida para a aula",
+                          "Sala de aula", "Lotação", "Características reais da sala"]
+                writer.writerow(header)
 
-            # write rows to the csv file
-            for tuple in schedule:
-                row = tuple[0].get_row()
-                if tuple[1] is not None:
-                    row.extend([tuple[1].name, tuple[1].normal_capacity,
-                                self.list_to_comma_sep_string(tuple[1].characteristics)])
-                # print("row: ", row)
-                writer.writerow(row)
+                # write rows to the csv file
+                for tuple in schedule:
+                    row = tuple[0].get_row()
+                    if tuple[1] is not None:
+                        row.extend([tuple[1].name, tuple[1].normal_capacity,
+                                    self.list_to_comma_sep_string(tuple[1].characteristics)])
+                    # print("row: ", row)
+                    writer.writerow(row)
+        except EnvironmentError as e:  # parent of IOError, OSError *and* WindowsError where available
+            print("Something went wrong with creating a file to export the results into")
+            print(e)
 
-    def list_to_comma_sep_string(self, my_list):
-        str = ""
+    def list_to_comma_sep_string(self, my_list: list) -> str:
+        """
+        Takes a list and returns a string with all its values concatenated with a comma and a space
+        :param my_list:
+        :return:
+        """
+        string = ""
         for e in my_list:
-            str += e + ", "
-        str = str[:-2]
-        return str
-
-'''End André'''
+            string += str(e) + ", "
+        string = string[:-2]
+        return string
