@@ -1,11 +1,12 @@
-'''import jpype
-
-CLASSPATH = "C:\\Users\\Nuno Dias\\swrlapi-example\\src\\main\\java\\org\\swrlapi\\example\\SWRLAPIExample.jar"
-jpype.startJVM(jpype.getDefaultJVMPath(), "-ea", "-Djava.class.path=%s" % CLASSPATH)
-jpype.java.lang.System.out.println("Calling Java Print from Python using Jpype!")
-jpype.shutdownJVM()
-'''
-
 import subprocess
-subprocess.call(['java', '-jar', 'SWRLAPIExample.jar', "hello"])
+query_result_temp = subprocess.check_output(['java', '-jar', 'SWRLAPIExample.jar', "3"])
+print(query_result_temp)
+query_result = []
+for i in query_result_temp.decode("utf-8").split("Result:")[1].split("\n")[1:-1]:
+    aux_clean_alg = i.split("\r")[0]
+    clean_alg = aux_clean_alg.split(":")[1]
+    query_result.append(clean_alg)
+
+print(query_result)
+
 
