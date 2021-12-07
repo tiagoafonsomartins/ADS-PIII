@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-_fwz86p-s5t^)e8dnc5#na@^5l2#pcq7)$k_1u!jy9jhzmrev@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#Hosts autorizados para o funcionamento do site, incluindo o Heroku
 ALLOWED_HOSTS = ['https://adsgrupo3.herokuapp.com',
 'localhost',
 '127.0.0.1',
@@ -134,6 +135,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '/Output_Documents/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
+# Needed for static CSS Styling
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # for /static/root/favicon.ico    
 WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'root') 
