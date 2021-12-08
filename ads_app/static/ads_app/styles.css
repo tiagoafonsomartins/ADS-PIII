@@ -55,6 +55,13 @@ ul {
   vertical-align: middle;
 }
 
+/* Style the content */
+.csv_table {
+  margin-left: 180px;
+  padding-left: 20px;
+  vertical-align: middle;
+}
+
 .footer {
   position: fixed;
   padding: 10px 10px 0px 10px;
@@ -62,6 +69,6 @@ ul {
   width: 100%;
   text-align: center;
   /* Height of the footer*/
-  height: 40px;
-  background: grey;
+  height: 20px;
+  background: white;
 }}

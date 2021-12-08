@@ -23,14 +23,15 @@ def results(request):
             filename = fs.save('Input_Documents', myFile)
             #uploaded_file_url = fs.url(filename)
             manipulate_docs = Manipulate_Documents()
-            lessons = manipulate_docs.import_schedule_documents()
+            lessons, ganga  = manipulate_docs.import_schedule_documents()
             classes = manipulate_docs.import_classrooms()
             
-            a = Allocator()
-            for lesson in lessons:
-                a.add_lesson(lesson)
-            for classroom in classes:
-                a.add_classroom(classroom)
+            a = Allocator(classes,lessons,ganga)
+            a.lessons = [l for l in a.lessons if l.start]
+            '''for lesson in lessons:
+                a.add_lesson(lesson)'''
+            #for classroom in classes:
+            #    a.add_classroom(classroom)
 
             schedule = a.simple_allocation()
             output_file = open("Output_Documents\Output_Schedule.csv")
