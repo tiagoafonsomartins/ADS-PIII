@@ -10,6 +10,8 @@ from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
+import numpy as np
+
 
 
 class Experiments:
@@ -165,10 +167,28 @@ class Experiments:
         print(m.value)
         print(u_r.value)
 
+    def test13(self):
+        D = 30
+        x = np.random.rand(D)
+        print(x)
+        f1 = x[0]
+        g = 1 + 9 * np.sum(x[1:D] / (D-1))
+        h = 1 - np.sqrt(f1 / g)
+        f2 = g * h
+
+        print([f1, f2])
+
+        print(np.linspace(0, 1, num=20))
+
+    def test14(self):
+        f = 25000.00052
+        print(f)
+
+
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test12()
+e.test14()
 
