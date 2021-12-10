@@ -6,8 +6,12 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
+from jmetalpy.Crossover import DrenasCrossover
 from jmetalpy.Problem import Problem
 from lesson.Lesson import Lesson
+
+import winsound
+import time
 
 md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
 lessons, gangs = md.import_schedule_documents()
@@ -38,14 +42,14 @@ print(len(lessons))
 
 problem = Problem(lessons, classrooms, [])
 
-max_evaluations = 1000
+max_evaluations = 10000
 
 algorithm1 = NSGAII(
     problem=problem,
-    population_size=200,
-    offspring_population_size=200,
-    mutation=IntegerPolynomialMutation(probability=0.9),  # (probability=1.0 / problem.number_of_variables),
-    crossover=NullCrossover(),
+    population_size=500,
+    offspring_population_size=500,
+    mutation=IntegerPolynomialMutation(probability=0.4),  # (probability=1.0 / problem.number_of_variables),
+    crossover=DrenasCrossover(),
     termination_criterion=StoppingByEvaluations(max_evaluations)
 )
 
@@ -66,6 +70,7 @@ algorithm3 = GDE3(
     termination_criterion=StoppingByEvaluations(max_evaluations)
 )
 
+# single objective
 algorithm4 = EvolutionStrategy(
     problem=problem,
     mu = 100,
@@ -76,17 +81,23 @@ algorithm4 = EvolutionStrategy(
 )
 
 
+algorithm = algorithm1
 
-algorithm = algorithm3
-
+start = time.time()
 algorithm.run()
+elapsed_time = time.time() - start
 solutions = algorithm.get_result()
 
-#for solution in solutions:
-#    print(solution.objectives, "\n")
+for solution in solutions:
+    print(solution.objectives, "\n")
 
 #print(solutions)
 front = get_non_dominated_solutions(solutions)
 for f in front:
    print("\n", f.objectives)
+   print("\n", f.variables)
+
+print("Elapsed time: ", elapsed_time)
+
+winsound.PlaySound("SystemExclamation", winsound.SND_ALIAS)
 

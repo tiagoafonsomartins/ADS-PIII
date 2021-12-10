@@ -53,7 +53,7 @@ class SubsetSum(BinaryProblem):
     def get_name(self) -> str:
         return "sss";
 
-sss = SubsetSum(150, [1,2,3,4,5,7,8, 10, 50, 87])
+sss = SubsetSum(150000, [1, 27, 8, 10, 50, 87, 6453, 2435, 523, 10000, 25431, 65434, 32455, 76524, 3421])
 problem = sss
 
 max_evaluations = 10000

@@ -23,12 +23,12 @@ class Problem(IntegerProblem, ABC):
         self.classrooms = classrooms
         self.metrics = metrics
 
-        self.number_of_objectives = 1 # len(metrics)
-        self.number_of_variables = len(self.lessons) #1
+        self.number_of_objectives = 2 # len(metrics)
+        self.number_of_variables = len(self.lessons)
         self.number_of_constraints = 0
 
-        self.obj_directions = [self.MAXIMIZE]
-        self.obj_labels = ['Sum']
+        self.obj_directions = [self.MAXIMIZE, self.MAXIMIZE]
+        self.obj_labels = ['Lower_half', 'Even']
 
     def evaluate(self, solution: IntegerSolution):
         created_schedule = []
@@ -44,24 +44,28 @@ class Problem(IntegerProblem, ABC):
 
         #    solution.objectives[i] = self.metrics[i].get_total_metric_value()
         #    solution.objectives[i] = self.metrics[i].get_total_metric_value()
-        score = 0
+        score1 = 0
+        score2 = 0
         for i in solution.variables:
-            if i == 1:
-                score += 1
-        solution.objectives[0] = -1 * score
+            if i < 10:
+                score1 += 1
+
+            if i % 2 == 0:
+                score2 += 1
+
+        solution.objectives[0] = -1 * score1
+        solution.objectives[1] = -1 * score2
 
         return solution
 
     def create_solution(self) -> IntegerSolution:
         new_solution = IntegerSolution([0], [len(self.classrooms)], self.number_of_objectives) # No clue about lower and upper
 
-        #new_solution.variables[0] = [random.randint(0, len(self.classrooms)) for _ in self.classrooms]
-        #new_solution.variables[0] = [random.randint(0, len(self.classrooms)) for _ in self.classrooms]
+        new_solution.variables = [random.randint(0, len(self.classrooms)) for _ in self.lessons]
 
-
-        new_solution.variables[0] = 1
-        for i in range(len(self.lessons)):
-            new_solution.variables.append(random.randint(0, len(self.classrooms)))
+        # new_solution.variables[0] = 1
+        # for i in range(len(self.lessons)):
+        #     new_solution.variables.append(random.randint(0, len(self.classrooms)))
         #print(new_solution.variables)
         return new_solution
 
