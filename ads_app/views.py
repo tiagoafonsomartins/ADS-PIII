@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.http import HttpResponse, Http404
+import json
 
 
 def index(request):
@@ -33,15 +34,22 @@ def results(request):
             #for classroom in classes:
             #    a.add_classroom(classroom)
 
-            schedule = a.simple_allocation()
+            #schedule = a.simple_allocation()
             output_file = open("Output_Documents\Output_Schedule.csv")
             #data = output_file.read()
             #object.save()
             #context = upload.objects.all()
-            request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
-            return render(request, 'results.html', {"context": output_file})
-            #response = FileResponse(open(filename, 'rb'))
-            #return render(response, 'results.html')
+            #request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
+            #return render(request, 'results.html', {"context": output_file})
+            
+            # table columns
+            headers = {"Metric": "Metric", "Algorithm - 1": "Algorithm - 1", "Algorithm - 2": "Algorithm - 2"}
+            
+            # content of evaluation table
+            context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2" : "50%"},{"Metric": "2", "Algorithm - 1": "10.5%", "Algorithm - 2" : "99.7%"}]
+            context = json.dumps(context)
+            
+            return render(request, 'results.html', {"context": context,"table_headers": headers})
     return render(request, 'index.html')
     #return HttpResponse(s.nice())
     

@@ -58,10 +58,8 @@
 
 		</select>
 		<br><br>
-		<input type="file" id="myFile" name="filename" required="required" onchange="csvJSON();">
-		<input type="submit" id="submit" >
-		<br>
-		<p>Is your file standard or have you made any changes to it?</p>
+
+		<p>Is your file standard?</p>
 
 		<div>
 		  <input type="radio" id="yes_changes" name="changed" value="true"
@@ -87,9 +85,14 @@
 			<input type="text" class="ifChecked" id="max_capacity" name="col1" >           <label class="ifChecked" for="max_capacity">Lotação</label> <br>
 			<input type="text" class="ifChecked" id="characteristics_actual" name="col1" > <label class="ifChecked" for="characteristics_actual">Características reais da sala</label> <br>
 		</div>
+		<br>
+		<p>Please select the schedule</p>
 
+		<input type="file" id="myFile" name="filename" required="required" onchange="csvJSON();">
+		<input type="submit" id="submit" >
+		<br>
 	</form>
-
+<br>
 	<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
 	<div id="csv_table" class="csv_table" name="csv_table">	</div>
 	<script>
@@ -121,6 +124,7 @@
 				alert("Row " + row.getData().id + " Clicked!!!!");
 			},
 		});
+		
 
 		//var csv is the CSV file with headers
 		function csvJSON(){
@@ -333,7 +337,5 @@
 
 	</body>
 	<br>
-	<div class="footer" id="footer" name="footer">
-	  <p>Authors: Andreia Garçia, Nuna Dias, Carlota Portugal, Tiaga Martini --- ADS - 2021™</p>
-	</div>
+
 </html>
