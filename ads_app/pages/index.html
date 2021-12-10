@@ -98,33 +98,8 @@
 	<script>
 	
 		//create Tabulator on DOM element with id "example-table"
-		var table = new Tabulator("#csv_table", {
-			height:400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-			 //assign data to table
-			layout:"fitColumns", //fit columns to width of table (optional)
-			columns:[ //Define Table Columns
-				{title:"Curso", field:"curso", width:150},
-				{title:"Unidade de Execução", field:"uc", hozAlign:"left"},
-				{title:"Turno", field:"turno"},
-				{title:"Turma", field:"turma"},
-				{title:"Inscritos", field:"inscritos"},
-				{title:"Dia da Semana", field:"dia_semana"},
-				{title:"Início", field:"inicio", sorter:"date", hozAlign:"center"},
-				{title:"Fim", field:"fim", sorter:"date", hozAlign:"center"},
-				{title:"Dia", field:"dia", sorter:"date", hozAlign:"center"},
-				{title:"Características da sala pedidas", field:"car_pedidas"},
-				{title:"Sala da aula", field:"sala"},
-				{title:"Lotação", field:"lotacao"},
-				{title:"Características reais da sala", field:"car_reais"},
-			
-			
-			
-			],
-			rowClick:function(e, row){ //trigger an alert message when the row is clicked
-				alert("Row " + row.getData().id + " Clicked!!!!");
-			},
-		});
-		
+
+	var headers;	
 
 		//var csv is the CSV file with headers
 		function csvJSON(){
@@ -134,98 +109,61 @@
 			reader.onload = function (e) {
 				const text = e.target.result;
 				const data = csvToArray(text);
-				console.log(JSON.stringify(data));
-				table.setData(JSON.stringify(data));
+				json_data = JSON.stringify(data);
+				//console.log();
+				//var columns = {};
+				var my_columns = []; // create an empty array
+				for(let i = 0; i < headers.length; i++) {
+					my_columns.push({
+						title: headers[i],
+						field: headers[i],
+						width: 150
+					});
+					console.log(my_columns[i]);
+				}
+				//for(let i = 0; i < headers.length; i++) {
+				//	console.log(headers[i]);
+				//	columns.title=(headers[i]);
+				//	columns.field=(headers[i]);
+				//}
+				//my_columns = JSON.stringify(columns);
+				//my_columns.substring(1,columns.length-1);
+				var table = new Tabulator("#csv_table", {
+				height:400, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+				//assign data to table
+				data:json_data,
+				layout:"fitColumns", //fit columns to width of table (optional)
+				columns: my_columns, //Define Table Columns
+					//{title:"Curso", field:"curso", width:150},
+					//{title:"Unidade de Execução", field:"uc", hozAlign:"left"},
+					//{title:"Turno", field:"turno"},
+					//{title:"Turma", field:"turma"},
+					//{title:"Inscritos", field:"inscritos"},
+					//{title:"Dia da Semana", field:"dia_semana"},
+					//{title:"Início", field:"inicio", sorter:"date", hozAlign:"center"},
+					//{title:"Fim", field:"fim", sorter:"date", hozAlign:"center"},
+					//{title:"Dia", field:"dia", sorter:"date", hozAlign:"center"},
+					//{title:"Características da sala pedidas", field:"car_pedidas"},
+					//{title:"Sala da aula", field:"sala"},
+					//{title:"Lotação", field:"lotacao"},
+					//{title:"Características reais da sala", field:"car_reais"},
+				
+				
+				
+				
+				//rowClick:function(e, row){ //trigger an alert message when the row is clicked
+				//	alert("Row " + row.getData().id + " Clicked!!!!");
+				//},
+				});
+				//table.setData(JSON.stringify(data));
 
 			};			
 			
 			reader.readAsText(csv);
-			//var file_read = reader.readAsText(csv);
-			//var data = csvToArray(file_read);
-			////var lines=file_read.match(/("[^"]+"|[^,]+)/g);
-			//var lines=file_read.split("\n");
-			//var result = [];
-			//
-			//// NOTE: If your columns contain commas in their values, you'll need
-			//// to deal with those before doing the next step 
-			//// (you might convert them to &&& or something, then covert them back later)
-			//// jsfiddle showing the issue https://jsfiddle.net/
-			//var headers=lines[0].split(",");
-			//
-			//for(var i=1;i<lines.length;i++){
-			//
-			//var obj = {};
-			//var currentline=lines[i].split(",");
-			//
-			//for(var j=0;j<headers.length;j++){
-			//	obj[headers[j]] = currentline[j];
-			//}
-			//
-			//result.push(obj);
-			//
-			//}
 	
-			//return result; //JavaScript object
-			//return JSON.stringify(result); //JSON
-			
 		}
 		
-		//function csvToArray(str, delimiter = ",") {
-		//  // slice from start of text to the first \n index
-		//  // use split to create an array from string by delimiter
-		//  const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
-		//
-		//  // slice from \n index + 1 to the end of the text
-		//  // use split to create an array of each csv value row
-		//  const rows = str.slice(str.indexOf("\n") + 1).split("\n");
-		//  
-		//    // Map the rows
-		//  // split values from each row into an array
-		//  // use headers.reduce to create an object
-		//  // object properties derived from headers:values
-		//  // the object passed as an element of the array
-		//  const arr = rows.map(function (row) {
-		//	const values = row.split(delimiter);
-		//	const el = headers.reduce(function (object, header, index) {
-		//	  object[header] = values[index];
-		//	  return object;
-		//	}, {});
-		//	return el;
-		//  });
-		//
-		//  // return the array
-		//  return arr;
-		//}
-		
-		//function csvToArray(csv, delimiter = ",") {
-		//
-		//  var lines=csv.split("\n");
-		//
-		//  var result = [];
-		//  var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
-		//  var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
-		//  var regex = /(\s*'[^']+'|\s*[^,]+)(?=,|$)/g;
-		//  var headers=lines[0].split(",");
-		//
-		//  for(var i=1;i<lines.length;i++){
-		//
-		//	  var obj = {};
-		//	  var currentline=lines[i].split(/("[^"]+"|[^,]+,)/g);
-		//	  //var currentline=lines[i].split(/('",'+|','+)/g);
-		//
-		//	  for(var j=0;j<headers.length;j++){
-		//		  obj[headers[j]] = currentline[j];
-		//	  }
-		//
-		//	  result.push(obj);
-		//
-		//  }
-		//  
-		//  //return result; //JavaScript object
-		//  return result; //JSON
-		//  
-		//}
-		
+
 			// This will parse a delimited string into an array of
 	// arrays. The default delimiter is the comma, but this
 	// can be overriden in the second argument.
@@ -306,10 +244,10 @@
 			// it to the data array.
 			arrData[ arrData.length - 1 ].push( strMatchedValue );
 		}
-
+		
 		//Now that the information is parsed correctly we can send it to the tabulator table
 		var result = [];
-		var headers=arrData[0];
+		headers=arrData[0];
 		
 		for(var i=1;i<arrData.length;i++){
 		
@@ -319,20 +257,11 @@
 		  for(var j=0;j<headers.length;j++){
 			  obj[headers[j]] = arrData[i][j];
 		  }
-		
-		  result.push(obj);
-		
-		}
-		
-		
-		
-		
-		
-		
+		  result.push(obj);		
+		}	
 		// Return the parsed data.
 		return( result );
-	}
-		  
+	}		  
 	</script>
 
 	</body>
