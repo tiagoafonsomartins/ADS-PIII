@@ -24,12 +24,16 @@ class Manipulate_Documents:
         self.output_path = output_path
         self.input_classrooms = input_classrooms
 
+        self.classroom_list = []
+
+
     def import_schedule_documents(self):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
         :return: a list with a list Classroom objects and a list of Gang objects
         """
+        schedule = []
         lesson_list = []
         gang_list = []
         create_gang = True
@@ -41,20 +45,25 @@ class Manipulate_Documents:
                     csvreader = csv.reader(f)
                     next(csvreader)
                     for row in csvreader:
-                        lesson = Lesson(row[0], row[1], row[2], row[3],
-                                        int(row[4]), row[5], row[6], row[7], row[8], row[9])
-                        lesson_list.append(lesson)
-                        for gang in gang_list:
-                            if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
-                                gang.add_lesson(lesson)
-                                create_gang = False
-                                break
-                        if create_gang:
-                            gang_list.append(Gang(lesson.gang, lesson.course, lesson))
-                        else:
-                            create_gang = True
+                        if row[5] and row[6] and row[8]:
+                            lesson = Lesson(row[0], row[1], row[2], row[3],
+                                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
+                            lesson_list.append(lesson)
+                            for classroom in self.classroom_list:
+                                if classroom.name == row[10] or not row[10]:
+                                    schedule.append((lesson, classroom))
+                                    break
+                            for gang in gang_list:
+                                if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
+                                    gang.add_lesson(lesson)
+                                    create_gang = False
+                                    break
+                            if create_gang:
+                                gang_list.append(Gang(lesson.gang, lesson.course, lesson))
+                            else:
+                                create_gang = True
                     f.close()
-        return lesson_list, gang_list
+        return lesson_list, gang_list, schedule
 
     def import_classrooms(self):
         """
@@ -62,7 +71,6 @@ class Manipulate_Documents:
 
         :return: list of Classroom objects
         """
-        classroom_list = []
         for root, dirs, files in os.walk(self.input_classrooms):
             for file in files:
                 if file.endswith(tuple(self.ext)):
@@ -76,10 +84,9 @@ class Manipulate_Documents:
                             if row[i].lower() == "x":
                                 charact_list.append(header[i])
                         classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
-                        classroom_list.append(classroom)
+                        self.classroom_list.append(classroom)
                     f.close()
-
-        return classroom_list
+        return self.classroom_list
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
@@ -127,3 +134,11 @@ class Manipulate_Documents:
             string += str(e) + ", "
         string = string[:-2]
         return string
+
+
+
+# fazer sempre o import_classrooms antes do import_schedule_documents
+mn = Manipulate_Documents(input_path="../input_documents", input_classrooms="../input_classrooms")
+mn.import_classrooms()
+mn.import_schedule_documents()
+
