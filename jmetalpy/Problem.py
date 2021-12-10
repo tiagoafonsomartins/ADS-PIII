@@ -6,7 +6,7 @@ para a solução apresentada para cada objetivo
  -A Solution é retornada com o score guardado e o algorítmo volta
 a iterar para devolver nova solução
  -Tem um método create_solution(self) que cria a primeira Solution para o algorítmo'''
-
+from abc import ABC
 from jmetal.core.problem import IntegerProblem
 from jmetal.core.solution import IntegerSolution
 from jmetal.algorithm.multiobjective.nsgaii import NSGAII
@@ -17,14 +17,14 @@ from jmetal.util.solution import get_non_dominated_solutions
 import random
 
 
-class Problem(IntegerProblem):
+class Problem(IntegerProblem, ABC):
     def __init__(self, lessons: list, classrooms: list, metrics: list):
         self.lessons = lessons
         self.classrooms = classrooms
+        self.metrics = metrics
 
-        self.number_of_bits = len(self.W) # no clue
-        self.number_of_objectives = len(metrics)
-        self.number_of_variables = 1
+        self.number_of_objectives = 1 # len(metrics)
+        self.number_of_variables = len(self.lessons) #1
         self.number_of_constraints = 0
 
         self.obj_directions = [self.MAXIMIZE]
@@ -33,18 +33,37 @@ class Problem(IntegerProblem):
     def evaluate(self, solution: IntegerSolution):
         created_schedule = []
 
-        '''pegar em 2 inteiros e juntar lesson com classroom ou pegar só 1 inteiro e juntar classroom com lesson atual'''
-        for i in solution.variables[0]:
-            created_schedule.append(self.classrooms[i])
+        '''1 inteiro e juntar classroom com lesson atual'''
+        #for i, classroom in enumerate(solution.variables[0]):
+        #    created_schedule.append((self.lessons[i], self.classrooms[classroom]))
 
-        for i in len(self.metrics):
-            solution.objectives[i] = self.metrics[i].calculate(created_schedule)
+
+        #for i in range(len(self.metrics)):
+        #    for j in created_schedule:
+        #        m = self.metrics[i].calculate(j)
+
+        #    solution.objectives[i] = self.metrics[i].get_total_metric_value()
+        #    solution.objectives[i] = self.metrics[i].get_total_metric_value()
+        score = 0
+        for i in solution.variables:
+            if i == 1:
+                score += 1
+        solution.objectives[0] = -1 * score
 
         return solution
 
     def create_solution(self) -> IntegerSolution:
-        new_solution = IntegerSolution(None, None, self.number_of_objectives) # No clue about lower and upper
-        new_solution.variables[0] = \
-            [random.randint(0, len(self.classrooms)) for _ in self.classrooms]
+        new_solution = IntegerSolution([0], [len(self.classrooms)], self.number_of_objectives) # No clue about lower and upper
 
+        #new_solution.variables[0] = [random.randint(0, len(self.classrooms)) for _ in self.classrooms]
+        #new_solution.variables[0] = [random.randint(0, len(self.classrooms)) for _ in self.classrooms]
+
+
+        new_solution.variables[0] = 1
+        for i in range(len(self.lessons)):
+            new_solution.variables.append(random.randint(0, len(self.classrooms)))
+        #print(new_solution.variables)
         return new_solution
+
+    def get_name(self) -> str:
+        return "timetabling";
