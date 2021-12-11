@@ -56,14 +56,15 @@ class Overbooking(Metric):
         self.m_type = "lessons"
 
     def calculate(self, lesson: Lesson, classroom: Classroom):
-        if lesson.number_of_enrolled_students > classroom.normal_capacity:
-            self.value.append(classroom.normal_capacity/lesson.number_of_enrolled_students)
-        else:
-            self.value.append(0)
+        if classroom:
+            if lesson.number_of_enrolled_students > classroom.normal_capacity:
+                self.value.append(classroom.normal_capacity/lesson.number_of_enrolled_students)
+            else:
+                self.value.append(0)
 
     def get_total_metric_value(self):
-        return sum(self.value)
-        # return sum(self.value)/len(self.value)
+        # return sum(self.value)
+        return sum(self.value)/len(self.value)
 
     def reset_metric(self):
         self.value = []

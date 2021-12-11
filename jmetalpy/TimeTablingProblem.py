@@ -22,7 +22,10 @@ class TimeTablingProblem(PermutationProblem):
         created_schedule = []
 
         for i, classroom in enumerate(solution.variables):
-            created_schedule.append((self.lessons[i], self.classrooms[classroom]))
+            if classroom != -1:
+                created_schedule.append((self.lessons[i], self.classrooms[classroom]))
+            else:
+                created_schedule.append((self.lessons[i], None))
 
         for i, metric in enumerate(self.metrics):
             for j in created_schedule:
@@ -35,7 +38,15 @@ class TimeTablingProblem(PermutationProblem):
     def create_solution(self) -> PermutationSolution:
         new_solution = PermutationSolution(self.number_of_variables, self.number_of_objectives) # No clue about lower and upper
 
-        new_solution.variables = random.sample(range(len(self.classrooms)), len(self.lessons))
+        if len(self.classrooms) > len(self.lessons):
+            new_solution.variables = random.sample(range(len(self.classrooms)), len(self.lessons))
+        else:
+            sample = random.sample(range(len(self.classrooms)), len(self.classrooms))
+            for i in range(len(self.lessons)):
+                if i < len(sample):
+                    new_solution.variables[i] = sample[i]
+                else:
+                    new_solution.variables[i] = -1
 
         return new_solution
 

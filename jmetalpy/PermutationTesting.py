@@ -5,6 +5,7 @@ from jmetal.operator.mutation import PermutationSwapMutation
 from jmetal.util.solution import get_non_dominated_solutions
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
+from alocate.Allocator import Allocator
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from jmetalpy.TimeTablingProblem import TimeTablingProblem
@@ -33,15 +34,22 @@ c = md.import_classrooms()
 m = Overbooking()
 # m = Movements()
 
-problem = TimeTablingProblem(l[20:40], c, [m])
-max_evaluations = 1000
+a = Allocator(c, l[100:120])
+for i in a.simple_allocation():
+    m.calculate(i[0],i[1])
+print(m.get_total_metric_value())
+
+m.reset_metric()
+
+problem = TimeTablingProblem(l[100:120], c, [m])
+max_evaluations = 500
 
 algorithm1 = NSGAII(
     problem=problem,
     population_size=200,
     offspring_population_size=200,
-    mutation=PermutationSwapMutation(probability=0.4),  # (probability=1.0 / problem.number_of_variables),
-    crossover=PMXCrossover(probability=1.0),
+    mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
+    crossover=PMXCrossover(probability=0.5),
     termination_criterion=StoppingByEvaluations(max_evaluations)
 )
 
@@ -61,4 +69,5 @@ for f in front:
     print()
     print("Objectives: ", f.objectives, " Variables: ", f.variables)
 
+print()
 print("Elapsed time: ", elapsed_time)
