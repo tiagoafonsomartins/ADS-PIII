@@ -27,14 +27,16 @@ class Manipulate_Documents:
         self.classroom_list = []
 
 
-    def import_schedule_documents(self):
+    def import_schedule_documents(self, use_classrooms: bool):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
         :return: a list with a list Classroom objects and a list of Gang objects
         """
+        classroom_dict = {}
+        for classroom in self.classroom_list:
+            classroom_dict[classroom.name] = classroom
         schedule = []
-        lesson_list = []
         gang_list = []
         create_gang = True
         for root, dirs, files in os.walk(self.input_path):
@@ -44,15 +46,18 @@ class Manipulate_Documents:
                     f = open(file_to_open, 'r', encoding="utf8")
                     csvreader = csv.reader(f)
                     next(csvreader)
+
                     for row in csvreader:
                         if row[5] and row[6] and row[8]:
                             lesson = Lesson(row[0], row[1], row[2], row[3],
                                             int(row[4]), row[5], row[6], row[7], row[8], row[9])
-                            lesson_list.append(lesson)
-                            for classroom in self.classroom_list:
-                                if classroom.name == row[10] or not row[10]:
-                                    schedule.append((lesson, classroom))
-                                    break
+
+                            if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+                                schedule.append((lesson, None))
+                            else:
+                                classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+                                schedule.append((lesson, classroom_dict[row[10]]))
+
                             for gang in gang_list:
                                 if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
                                     gang.add_lesson(lesson)
@@ -63,7 +68,7 @@ class Manipulate_Documents:
                             else:
                                 create_gang = True
                     f.close()
-        return lesson_list, gang_list, schedule
+        return gang_list, schedule
 
     def import_classrooms(self):
         """
@@ -140,5 +145,5 @@ class Manipulate_Documents:
 # fazer sempre o import_classrooms antes do import_schedule_documents
 mn = Manipulate_Documents(input_path="../input_documents", input_classrooms="../input_classrooms")
 mn.import_classrooms()
-mn.import_schedule_documents()
+mn.import_schedule_documents(True)
 

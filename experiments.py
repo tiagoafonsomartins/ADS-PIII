@@ -55,21 +55,26 @@ class Experiments:
 
     def test5(self):
         md = Manipulate_Documents()
-        lessons, gangs = md.import_schedule_documents()
         classrooms = md.import_classrooms()
-        print(gangs)
-        print(len(gangs))
+        gangs, schedule = md.import_schedule_documents(False)
+
         # print(lessons)
         # print(classrooms)
+        a = Allocator(classrooms, schedule, gangs)
 
-        a = Allocator(classrooms, lessons, gangs)
-        a.lessons = [l for l in a.lessons if l.start]
-        '''for lesson in lessons:
-            a.add_lesson(lesson)
-        for classroom in classrooms:
-            a.add_classroom(classroom)'''
-
+        start = time.time()
         simple_schedule = a.simple_allocation()
+        elapsed_time = time.time() - start
+        print("Elapsed time: ", elapsed_time)
+
+        """all_true = True
+        for i in range(len(schedule)):
+            if schedule[i][1]:
+                print(schedule[i][1]==simple_schedule[i][1])
+                if schedule[i][1] != simple_schedule[i][1]:
+                    all_true = False
+                #print(simple_schedule[i][1])
+        print("all_true: ", all_true)"""
 
         md.export_schedule(simple_schedule, "outputMens")
 
@@ -165,10 +170,39 @@ class Experiments:
         print(m.value)
         print(u_r.value)
 
+    def test13(self):
+        dix = {}
+        for i in range(10000000):
+            dix[str(i)] = i
+
+        start = time.time()
+        if '99999999' in dix.keys():
+            print("caralho")
+        else:
+            print('what')
+        elapsed_time = time.time() - start
+
+        print("Elapsed time: ", elapsed_time)
+
+    class TestYa:
+        def __init__(self, i):
+            self.i = i
+        def __repr__(self):
+            return str(self.i)
+
+    def test14(self):
+        l = []
+        for i in range(1000):
+            l.append((self.TestYa(i), self.TestYa(i)))
+        for i, ip1 in l:
+            ip1.i = ip1.i + 1
+
+        print(l)
+
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test12()
+e.test5()
 
