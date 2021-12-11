@@ -93,18 +93,18 @@ class Experiments:
 
     def test7(self):
         md = Manipulate_Documents()
-        results = md.import_schedule_documents()
-        lessons = results[0]
+        results = md.import_schedule_documents(True)
+        lessons = results[1]
 
         earliest = "23:59:59"
         latest = "00:00:00"
         for lesson in lessons:
-            if lesson.start == " " or lesson.start == "": continue
-            if lesson.end == " " or lesson.end == "": continue
-            new_start = lesson.start
-            new_end = lesson.end
-            if len(lesson.start) < 8: new_start = "0" + new_start
-            if len(lesson.end) < 8: new_end = "0" + new_end
+            if lesson[0].start == " " or lesson[0].start == "": continue
+            if lesson[0].end == " " or lesson[0].end == "": continue
+            new_start = lesson[0].start
+            new_end = lesson[0].end
+            if len(lesson[0].start) < 8: new_start = "0" + new_start
+            if len(lesson[0].end) < 8: new_end = "0" + new_end
             #print(lesson.start)
             #print(lesson.end, "\n")
             print(new_start, "<", earliest)
@@ -208,12 +208,32 @@ class Experiments:
         else:
             print("Não hello")
 
+    def test16(self):
+        md = Manipulate_Documents()
+        classrooms = md.import_classrooms()
+        gangs, schedule = md.import_schedule_documents(False)
+        days = set()
+        for i, tuple in enumerate(schedule):
+            #if tuple[0].start.split(":")[1] != "00" and tuple[0].start.split(":")[1] != "30":
+                #print("Here: ", i)
+                #print(tuple[0].end)
+            if tuple[0].day not in days:
+                days.add(tuple[0].day)
+                print(tuple[0].day)
+        print(len(days))
+
+    def test17(self):
+        l = [1,2,3]
+        print(l[:2])
+        print(l[2:])
+
+
 
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test15()
+e.test17()
 
 

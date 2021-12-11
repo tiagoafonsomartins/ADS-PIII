@@ -111,6 +111,7 @@ class Lesson:
         if not isinstance(block, str): return ("", "", "")
         if "_" not in block or "-" not in block: return ("", "", "")
         if block.find("_") > block.find("-"): return ("", "", "")
+
         split = block.split("_")
         time_split = split[1].split("-")
 

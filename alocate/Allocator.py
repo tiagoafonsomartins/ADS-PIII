@@ -94,7 +94,66 @@ class Allocator:
 
         return schedule
 
+    def andre_alocation(self) -> list:
+        '''
+                Simple allocation algorithm that allocates first room that accommodates the lessons requested characteristics
+                and is available at that time
 
+                :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
+                '''
+        self.classrooms.sort(key=lambda x: x.normal_capacity)
+        number_of_roomless_lessons = 0
+        schedule = []
+        cur_class = ""
+        for lesson, c in self.schedule:
+            if not c:
+                classroom_assigned = False
+                for classroom in self.classrooms:
+                    # TODO usar tolerância aqui
+                    if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
+                            (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
+                            (classroom.is_available(lesson.generate_time_blocks())):
+                        classroom.set_unavailable(lesson.generate_time_blocks())
+                        schedule.append((lesson, classroom))
+                        classroom_assigned = True
+                        break
+
+                if not classroom_assigned:
+                    schedule.append((lesson, None))
+                    number_of_roomless_lessons += 1
+                else:
+                    classroom_assigned = False
+            else:
+                schedule.append((lesson, c))
+
+        print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+
+        return schedule
+
+    def get_num_of_blocks(self) -> int:
+        days = set()
+        for i, tuple in enumerate(self.schedule):
+            if tuple[0].day not in days:
+                days.add(tuple[0].day)
+                print(tuple[0].day)
+        return len(days)
+
+    # "10/16/2015_09:30:00-10:00:00"
+    def get_index_of_block(self,starting_block: str, block: str) -> int:
+        if not isinstance(block, str): return ("", "", "")
+        if "_" not in block or "-" not in block: return ("", "", "")
+        if block.find("_") > block.find("-"): return ("", "", "")
+
+        date, time = block.split("_")
+        s_date, s_time = starting_block.split("_")
+        month, day, year = date.split("/")
+        s_month, s_day, s_year = s_date.split("/")
+        start = time.split("-")[0]
+        hour, minute = start.split(":")[:2]
+
+        index = 0
+
+        index +=
     def remove_all_allocations(self) -> None:
         '''
         Remove all allocations from lessons and empty all schedules from classrooms
@@ -103,5 +162,3 @@ class Allocator:
         '''
         for classroom in self.classrooms:
             classroom.empty_schedule()
-
-'''End Carlos'''
