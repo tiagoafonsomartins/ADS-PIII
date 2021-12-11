@@ -71,6 +71,7 @@ class Allocator:
             if not c:
                 classroom_assigned = False
                 for classroom in self.classrooms:
+                    # TODO usar tolerância aqui
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
