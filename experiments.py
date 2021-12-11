@@ -10,6 +10,8 @@ from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
+import numpy as np
+
 
 
 class Experiments:
@@ -199,10 +201,19 @@ class Experiments:
 
         print(l)
 
+    def test15(self):
+        cena = None
+        if cena and cena + 1 == 2:
+            print("hello")
+        else:
+            print("Não hello")
+
+
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test5()
+e.test15()
+
 
