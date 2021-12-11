@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from jmetal.core.problem import Problem
+
+import self as self
 
 from gang import Gang
 from classroom import Classroom
@@ -13,7 +16,6 @@ class Metric(ABC):
         self.name = name
         self.value = []
 
-
     @abstractmethod
     def calculate(self, input):
         pass
@@ -25,6 +27,7 @@ class Metric(ABC):
     @abstractmethod
     def reset_metric(self):
         pass
+
 
 class Roomless_Lessons(Metric):
 
@@ -42,11 +45,12 @@ class Roomless_Lessons(Metric):
         return self.value
 
     def get_percentage(self):
-        return self.value/self.total
+        return self.value / self.total
 
     def reset_metric(self):
         self.value = 0
         self.total = 0
+
 
 class Overbooking(Metric):
 
@@ -54,20 +58,23 @@ class Overbooking(Metric):
         super().__init__("Overbooking")
         self.name = "Overbooking"
         self.m_type = "lessons"
+        self.obj = Problem.MAXIMIZE
 
     def calculate(self, lesson: Lesson, classroom: Classroom):
         if classroom:
             if lesson.number_of_enrolled_students > classroom.normal_capacity:
-                self.value.append(classroom.normal_capacity/lesson.number_of_enrolled_students)
+                self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
+                #self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
             else:
                 self.value.append(0)
 
     def get_total_metric_value(self):
         # return sum(self.value)
-        return sum(self.value)/len(self.value)
+        return sum(self.value) / len(self.value)
 
     def reset_metric(self):
         self.value = []
+
 
 class Underbooking(Metric):
 
@@ -77,15 +84,16 @@ class Underbooking(Metric):
 
     def calculate(self, lesson: Lesson, classroom: Classroom):
         if lesson.number_of_enrolled_students < classroom.normal_capacity:
-            self.value.append(lesson.number_of_enrolled_students/classroom.normal_capacity)
+            self.value.append(lesson.number_of_enrolled_students / classroom.normal_capacity)
         else:
             self.value.append(0)
 
     def get_total_metric_value(self):
-        return sum(self.value)/len(self.value)
+        return sum(self.value) / len(self.value)
 
     def reset_metric(self):
         self.value = []
+
 
 class Bad_Classroom(Metric):
 
@@ -110,6 +118,7 @@ class Bad_Classroom(Metric):
     def reset_metric(self):
         self.value = 0
         self.total = 0
+
 
 class Gaps(Metric):
 
@@ -192,8 +201,6 @@ class UsedRooms(Metric):
 
     def get_total_metric_value(self):
         return len(self.value)
-    
+
     def reset_metric(self):
         self.value = []
-
-
