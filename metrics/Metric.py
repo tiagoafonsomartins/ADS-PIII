@@ -132,8 +132,7 @@ class BadClassroom(Metric):
         :return:
         '''
         for lesson, classroom in schedule:
-            characteristics = classroom.characteristics
-            if lesson.requested_characteristics not in characteristics:
+            if classroom and lesson.requested_characteristics not in classroom.characteristics:
                 self.value += 1
             self.total += 1
 

@@ -5,13 +5,12 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BuildingMovements, BadClassroom
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
 import numpy as np
-
 
 
 class Experiments:
@@ -71,10 +70,10 @@ class Experiments:
 
         simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
-		
+
         start = time.time()
 
-        allocation_with_overbooking = a_simple.allocation_with_overbooking(10)
+        allocation_with_overbooking = a_simple.allocation_with_overbooking(50)
 
         room_metric = RoomlessLessons()
         room_metric.calculate(allocation_with_overbooking)
@@ -85,26 +84,36 @@ class Experiments:
         underbooking_metric = Underbooking()
         underbooking_metric.calculate(allocation_with_overbooking)
 
-        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        bad_classroom = BadClassroom()
+        bad_classroom.calculate(allocation_with_overbooking)
+
+        used_rooms = UsedRooms()
+        used_rooms.calculate(allocation_with_overbooking)
+
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 3) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 3) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 3) * 100, "%")
+        print("BadClassroom Percentage:", round(bad_classroom.get_total_metric_value(), 3) * 100, "%")
+        print("used_rooms:", used_rooms.get_total_metric_value())
 
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
-        #md.export_schedule_lessons30(andre_schedule, "Teste_andre")
-        #md.export_schedule(andre_schedule, "outputMens")
+        md.export_schedule(allocation_with_overbooking, "Alg Nuno")
+
+        # md.export_schedule_lessons30(andre_schedule, "Teste_andre")
+        # md.export_schedule(andre_schedule, "outputMens")
 
     def test6(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
                         "Good, Not stinky, Very good")
         print(sys.getsizeof(lesson.requested_characteristics))
         print(sys.getsizeof(Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "10:00:00", "10:30:00", "4/23/2005",
-                        "Good, Not stinky, Very good")))
+                                   "Good, Not stinky, Very good")))
         print(sys.getsizeof(""))
 
     def get_earliest(self):
-      pass
+        pass
 
     def test7(self):
         md = Manipulate_Documents()
@@ -120,15 +129,14 @@ class Experiments:
             new_end = lesson[0].end
             if len(lesson[0].start) < 8: new_start = "0" + new_start
             if len(lesson[0].end) < 8: new_end = "0" + new_end
-            #print(lesson.start)
-            #print(lesson.end, "\n")
+            # print(lesson.start)
+            # print(lesson.end, "\n")
             print(new_start, "<", earliest)
             if new_start < earliest:
                 earliest = new_start
                 print(True)
             if new_end > latest:
                 latest = new_end
-
 
         print("earliest: ", earliest)
         print("latest: ", latest)
@@ -138,9 +146,8 @@ class Experiments:
         string2 = "b"
         print(string1 < string2)
 
-
     def test9(self):
-        a,b = get_tuplo()
+        a, b = get_tuplo()
         print(a)
         print(b)
 
@@ -159,11 +166,11 @@ class Experiments:
 
     def test12(self):
         lesson1 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
-                        "Good, Not stinky, Very good")
+                         "Good, Not stinky, Very good")
         lesson2 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "11:00:00", "12:00:00", "4/23/2005",
-                        "Good, Not stinky, Very good")
+                         "Good, Not stinky, Very good")
         lesson3 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "13:00:00", "15:00:00", "4/23/2005",
-                        "Good, Not stinky, Very good")
+                         "Good, Not stinky, Very good")
         classroom1 = Classroom('Edifício 69', 'Auditório 420', 50, 25, ["cenas"])
         classroom2 = Classroom('Edifício 2', 'B203', 150, 125, ["cenas", "mais cenas", "ainda mais cenas"])
         lesson1.add_classroom(classroom1)
@@ -176,15 +183,15 @@ class Experiments:
 
         g = Gaps()
         g.calculate(gang)
-        #m = Movements()
-        #m.calculate(gang)
+        # m = Movements()
+        # m.calculate(gang)
         u_r = UsedRooms()
         u_r.calculate(lesson1, classroom1)
         u_r.calculate(lesson2, classroom1)
         u_r.calculate(lesson3, classroom1)
 
         print(g.value)
-        #print(m.value)
+        # print(m.value)
         print(u_r.value)
 
     def test13(self):
@@ -204,6 +211,7 @@ class Experiments:
     class TestYa:
         def __init__(self, i):
             self.i = i
+
         def __repr__(self):
             return str(self.i)
 
@@ -229,16 +237,16 @@ class Experiments:
         gangs, schedule = md.import_schedule_documents(False)
         days = set()
         for i, tuple in enumerate(schedule):
-            #if tuple[0].start.split(":")[1] != "00" and tuple[0].start.split(":")[1] != "30":
-                #print("Here: ", i)
-                #print(tuple[0].end)
+            # if tuple[0].start.split(":")[1] != "00" and tuple[0].start.split(":")[1] != "30":
+            # print("Here: ", i)
+            # print(tuple[0].end)
             if tuple[0].day not in days:
                 days.add(tuple[0].day)
                 print(tuple[0].day)
         print(len(days))
 
     def test17(self):
-        l = [1,2,3]
+        l = [1, 2, 3]
         print(l[:2])
         print(l[2:])
 
@@ -256,8 +264,8 @@ class Experiments:
 
         print(max)
         print(min)
-        #a = Allocator(classrooms, schedule, gangs)
-        #a.get_index_of_block()
+        # a = Allocator(classrooms, schedule, gangs)
+        # a.get_index_of_block()
 
     def test19(self):
         l = {}
@@ -273,7 +281,6 @@ class Experiments:
 def get_tuplo():
     return (1, 2)
 
+
 e = Experiments()
 e.test5()
-
-
