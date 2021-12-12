@@ -5,7 +5,7 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Gaps, UsedRooms, RoomlessLessons
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -72,10 +72,22 @@ class Experiments:
         simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
         start = time.time()
-        allocation_with_overbooking = a_simple.allocation_with_overbooking(20)
-        metric = RoomlessLessons()
-        metric.calculate(allocation_with_overbooking)
-        print("Roomless Lessons Percentage:", round(metric.get_percentage(), 2) * 100, "%")
+        allocation_with_overbooking = a_simple.allocation_with_overbooking(10)
+
+        room_metric = RoomlessLessons()
+        room_metric.calculate(allocation_with_overbooking)
+
+        overbooking_metric = Overbooking()
+        overbooking_metric.calculate(allocation_with_overbooking)
+
+        underbooking_metric = Underbooking()
+        underbooking_metric.calculate(allocation_with_overbooking)
+
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+
+
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
