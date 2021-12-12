@@ -5,9 +5,9 @@ from lesson import Lesson
 '''Carlos'''
 
 class Allocator:
-    def __init__(self, classrooms = [], lessons = [], gangs = []):
+    def __init__(self, classrooms = [], schedule = [], gangs = []):
         self.classrooms = classrooms
-        self.lessons = lessons
+        self.schedule = schedule
         self.gangs = gangs
         self.sum_classroom_characteristics = {}
 
@@ -42,7 +42,7 @@ class Allocator:
 
         :return list[Lesson]:
         '''
-        self.lessons.sort(key=lambda x: (time.strptime(x.day, '%m/%d/%Y'), time.strptime(x.start, '%H:%M:%S'), x.number_of_enrolled_students))
+        self.schedule.sort(key=lambda x: (time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S'), x[0].number_of_enrolled_students))
         # self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
     def sort_classrooms(self) -> list:
@@ -51,7 +51,7 @@ class Allocator:
 
         :return list[Classroom]:
         '''
-        self.classrooms.sort(key=lambda x: x.normal_capacity)
+        self.classrooms.sort(key=lambda x: (x.normal_capacity, len(x.get_characteristics())))
 
     def simple_allocation(self) -> list:
         '''
@@ -67,44 +67,33 @@ class Allocator:
 
         schedule = []
 
-        for lesson in self.lessons:
-            for classroom in self.classrooms:
-                if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
-                        (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
-                        (classroom.is_available(lesson.generate_time_blocks())):
-                    self.add_classroom_to_lesson(lesson, classroom)
-                    schedule.append((lesson, classroom))
-                    break
+        for lesson, c in self.schedule:
+            if not c:
+                classroom_assigned = False
+                for classroom in self.classrooms:
+                    # TODO usar tolerância aqui
+                    if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
+                            (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
+                            (classroom.is_available(lesson.generate_time_blocks())):
 
-            if lesson.get_classroom() is None:
-                schedule.append((lesson, None))
-                number_of_roomless_lessons += 1
+                        classroom.set_unavailable(lesson.generate_time_blocks())
+                        schedule.append((lesson, classroom))
+                        classroom_assigned = True
+                        break
+
+                if not classroom_assigned:
+                    schedule.append((lesson, None))
+                    number_of_roomless_lessons += 1
+                else:
+                    classroom_assigned = False
+            else:
+                schedule.append((lesson, c))
+
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
         return schedule
 
-    def add_classroom_to_lesson(self, lesson: Lesson, classroom: Classroom) -> None:
-        '''
-        Allocates classroom to lesson and sets classroom schedule time blocks unavailable
-
-        :param lesson:
-        :param classroom:
-        :return:
-        '''
-        lesson.add_classroom(classroom)
-        classroom.set_unavailable(lesson.generate_time_blocks())
-
-    def remove_classroom_from_lesson(self, lesson: Lesson, classroom: Classroom) -> None:
-        '''
-        Remove allocation from lesson and sets classroom schedule time blocks available
-
-        :param lesson:
-        :param classroom:
-        :return:
-        '''
-        lesson.remove_classroom()
-        classroom.set_available(lesson.generate_time_blocks())
 
     def remove_all_allocations(self) -> None:
         '''
@@ -112,8 +101,6 @@ class Allocator:
 
         :return:
         '''
-        for lesson in self.lessons:
-            lesson.remove_classroom()
         for classroom in self.classrooms:
             classroom.empty_schedule()
 

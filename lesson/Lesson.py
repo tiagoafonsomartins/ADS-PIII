@@ -1,5 +1,6 @@
 from classroom.Classroom import Classroom
 
+
 class Lesson:
 
     def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
@@ -15,17 +16,8 @@ class Lesson:
         self.end = end
         self.day = day
         self.requested_characteristics = requested_characteristics
-        self.classroom = None
         # self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
 
-
-    def add_classroom(self, classroom: Classroom) -> None:
-        '''
-        Allocates classroom to lesson
-        :param classroom:
-        :return:
-        '''
-        self.classroom = classroom
 
     def get_requested_characteristics(self) -> list:
         '''
@@ -41,22 +33,7 @@ class Lesson:
         '''
         return self.number_of_enrolled_students
 
-    def get_classroom(self) -> Classroom:
-        '''
-        Returns classroom allocated to the lesson
-        :return:
-        '''
-        return self.classroom
-
-    def remove_classroom(self) -> None:
-        '''
-        Removes allocation from the lesson
-        :return:
-        '''
-        self.classroom = None
-
-
-    def get_row(self)-> list:
+    def get_row(self) -> list:
         """
         Returns a list of strings with the correct order and informations to use on the export function in the Manipulate_Documents class.
         :return:
@@ -131,9 +108,9 @@ class Lesson:
         :param block:
         :return:
         """
-        if not isinstance(block, str): return ("","","")
-        if "_" not in block or "-" not in block: return ("","","")
-        if block.find("_") > block.find("-"): return ("","","")
+        if not isinstance(block, str): return ("", "", "")
+        if "_" not in block or "-" not in block: return ("", "", "")
+        if block.find("_") > block.find("-"): return ("", "", "")
         split = block.split("_")
         time_split = split[1].split("-")
 
@@ -141,7 +118,6 @@ class Lesson:
 
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"
-
 
     def __repr__(self):
         return str(self)
