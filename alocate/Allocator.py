@@ -141,14 +141,17 @@ class Allocator:
                         # Laboratórios de informática com demasiados alunos (sala com mais capacidade tem 50, turmas com inscritos que chegam aos 106)
                         roomless_lessons.append((lesson, None))
                         number_of_roomless_lessons += 1
-                        print(lesson.get_requested_characteristics(), lesson.get_number_of_enrolled_students(), lesson.datetime_to_string(lesson.day, lesson.start, lesson.end))
+                        # print(lesson.get_requested_characteristics(), lesson.get_number_of_enrolled_students(), lesson.datetime_to_string(lesson.day, lesson.start, lesson.end))
                 else:
                     classroom_assigned = False
             else:
                 schedule.append((lesson, c))
-        for c in self.classrooms:
+        '''
+                for c in self.classrooms:
             if "Arq 9" in c.get_characteristics():
                 print(c.get_normal_capacity(), c.name, c.schedule)
+        '''
+
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return schedule
 

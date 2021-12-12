@@ -69,12 +69,11 @@ class Experiments:
         s_copy = schedule.copy()
         a_simple = Allocator(c_copy, s_copy, g_copy, rarity_dict)
 
-        start = time.time()
+
         simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
+        start = time.time()
         allocation_with_overbooking = a_simple.allocation_with_overbooking(20)
-
-
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
