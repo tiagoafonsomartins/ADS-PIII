@@ -43,9 +43,13 @@ class Classroom:
         :param time_blocks:
         :return:
         """
+        #print(self.schedule)
+        #print(time_blocks)
         for block in time_blocks:
             if block in self.schedule:
+                #print(False)
                 return False
+        #print(True)
         return True
 
     def set_unavailable(self, time_blocks: list) -> None:

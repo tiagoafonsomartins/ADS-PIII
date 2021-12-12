@@ -5,14 +5,14 @@ from lesson import Lesson
 import numpy as np
 import datetime as dt
 
-
 class Allocator:
 
-    def __init__(self, classrooms, schedule, gangs):  # starting_date, ending_date
+    def __init__(self, classrooms, schedule, gangs): # starting_date, ending_date
         self.classrooms = classrooms
         self.schedule = schedule
         self.gangs = gangs
         self.sum_classroom_characteristics = {}
+
 
     def add_classroom(self, classroom: Classroom) -> None:
         '''
@@ -45,9 +45,7 @@ class Allocator:
 
         :return list[Lesson]:
         '''
-        self.schedule.sort(key=lambda x: (
-            x[0].number_of_enrolled_students, time.strptime(x[0].day, '%m/%d/%Y'),
-            time.strptime(x[0].start, '%H:%M:%S'),))
+        self.schedule.sort(key=lambda x: (x[0].number_of_enrolled_students, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S'), ))
         # self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
 
     def sort_classrooms(self) -> list:
@@ -57,6 +55,7 @@ class Allocator:
         :return list[Classroom]:
         '''
         self.classrooms.sort(key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
+
 
     def simple_allocation(self) -> list:
         '''
@@ -80,6 +79,7 @@ class Allocator:
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
+
                         classroom.set_unavailable(lesson.generate_time_blocks())
                         schedule.append((lesson, classroom))
                         classroom_assigned = True
@@ -93,6 +93,7 @@ class Allocator:
             else:
                 schedule.append((lesson, c))
 
+
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
         return schedule
@@ -102,15 +103,17 @@ class Allocator:
         self.sort_classrooms()
 
         number_of_roomless_lessons = 0
+        roomless_lessons = []
         schedule = []
 
         for lesson, c in self.schedule:
             if not c:
                 classroom_assigned = False
                 for classroom in self.classrooms:
+                    # TODO usar tolerância aqui
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity() *
-                             (1 + (overbooking_percentage / 100))) and \
+                             (1 + (overbooking_percentage/100))) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
                         classroom.set_unavailable(lesson.generate_time_blocks())
                         schedule.append((lesson, classroom))
@@ -120,13 +123,15 @@ class Allocator:
                 if not classroom_assigned:
                     if lesson.requested_characteristics != "Não necessita de sala" and \
                             lesson.requested_characteristics != "Lab ISTA":
-                        schedule.append((lesson, None))
-                        number_of_roomless_lessons += 1
-
                         # Arq 9/5 com o horário cheio
                         # Laboratórios de informática com demasiados alunos (sala com mais capacidade tem 50, turmas com inscritos que chegam aos 106)
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
-
+                        schedule.append((lesson, None))
+                        roomless_lessons.append((lesson, None))
+                        number_of_roomless_lessons += 1
+                        # print(lesson.get_requested_characteristics(), lesson.get_number_of_enrolled_students(), lesson.datetime_to_string(lesson.day, lesson.start, lesson.end))
+                else:
+                    classroom_assigned = False
             else:
                 schedule.append((lesson, c))
         '''
@@ -139,21 +144,21 @@ class Allocator:
         return schedule
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom):
-        if not classroom.is_available(lesson.generate_time_blocks()): return 0
+        #if not classroom.is_available(lesson.generate_time_blocks()): return 0
 
         score = 0
 
-        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 20
-        score += (20 - len(classroom.get_characteristics())) / 2
+        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 100
+        score += (20 - len(classroom.get_characteristics())) / 4
         score += (1 - classroom.get_rarity()) * 10
         if lesson.number_of_enrolled_students > classroom.normal_capacity:
-            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 20
+            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 50
         else:
-            score += 20
+            score += 50
         if lesson.number_of_enrolled_students < classroom.normal_capacity:
-            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 20
+            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 50
         else:
-            score += 20
+            score += 50
 
         return score
 
@@ -165,7 +170,7 @@ class Allocator:
                 :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
                 '''
 
-        # self.classrooms.sort(key=lambda x: x.normal_capacity)
+        #self.classrooms.sort(key=lambda x: x.normal_capacity)
         number_of_roomless_lessons = 0
         lessons30 = {}
         last_lesson = ""
@@ -177,19 +182,16 @@ class Allocator:
                 if lesson.requested_characteristics == "Não necessita de sala":
                     self.assign_lessons30(lessons30, lesson, None)
                     continue
-                if last_lesson != (
-                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(
-                    lesson.time_blocks):
-                    # available_classrooms = []
-                    # for classroom in self.classrooms:
-                    # if classroom.is_available(lesson.time_blocks[0]):
-                    # available_classrooms.append(classroom)
 
+                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (not (cur_classroom.is_available(lesson.time_blocks))):
+                    last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
+                    cur_score = 0
                     for classroom in self.classrooms:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
                         new_score = self.get_classroom_score(lesson, classroom)
                         if new_score > cur_score:
+
                             cur_classroom = classroom
                             cur_score = new_score
 
@@ -201,7 +203,7 @@ class Allocator:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, cur_classroom)
 
-            elif lesson.requested_characteristics != "Não necessita de sala":
+            else:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, c)
 
@@ -227,7 +229,7 @@ class Allocator:
         return np.busday_count(start, end)
 
     def get_block(self, month: str, day: str, year: str, start_time: str, end_time: str):
-        return month + "/" + day + "/" + year + "_" + start_time + "-" + end_time
+        return month + "/"+ day + "/" + year + "_" + start_time + "-" + end_time
 
     # "10/16/2015_09:30:00-10:00:00"
     def get_index_of_block(self, block: str) -> int:
@@ -249,10 +251,11 @@ class Allocator:
         days_between = self.numOfDays(self.starting_date, date)
 
         index += days_between * 32
-        index += (int(hour) - 8) * 2
+        index += (int(hour) - 8)*2
         if minute == "30": index += 1
 
         return index
+
 
     def remove_all_allocations(self) -> None:
         '''
