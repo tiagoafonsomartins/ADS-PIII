@@ -7,6 +7,7 @@ from gang.Gang import Gang
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 import datetime as dt
+import time
 
 
 class Manipulate_Documents:

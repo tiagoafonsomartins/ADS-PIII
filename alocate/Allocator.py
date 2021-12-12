@@ -102,17 +102,17 @@ class Allocator:
 
         score = 0
 
-        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 15
+        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 20
         score += (20 - len(classroom.get_characteristics())) / 2
-        score += (1 - classroom.get_rarity()) * 15
+        score += (1 - classroom.get_rarity()) * 10
         if lesson.number_of_enrolled_students > classroom.normal_capacity:
-            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 15
+            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 20
         else:
-            score += 15
+            score += 20
         if lesson.number_of_enrolled_students < classroom.normal_capacity:
-            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 10
+            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 20
         else:
-            score += 10
+            score += 20
 
         return score
 
@@ -124,7 +124,7 @@ class Allocator:
                 :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
                 '''
 
-        self.classrooms.sort(key=lambda x: x.normal_capacity)
+        #self.classrooms.sort(key=lambda x: x.normal_capacity)
         number_of_roomless_lessons = 0
         lessons30 = {}
         last_lesson = ""
