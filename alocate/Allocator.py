@@ -54,21 +54,6 @@ class Allocator:
 
         :return list[Classroom]:
         '''
-        for classroom in self.classrooms:
-            min_rarity = 20
-            for charateristic in classroom.get_characteristics():
-                if self.classrooms_rarity_dict[charateristic] < 3 and min_rarity > classroom.rarity:
-                    classroom.rarity = 5
-                    min_rarity = 5
-                elif 3 <= self.classrooms_rarity_dict[charateristic] < 15 and min_rarity > classroom.rarity:
-                    classroom.rarity = 4
-                    min_rarity = 4
-                elif 15 <= self.classrooms_rarity_dict[charateristic] < 71 and min_rarity > classroom.rarity:
-                    classroom.rarity = 3
-                    min_rarity = 3
-                else:
-                    classroom.rarity = 2
-                    min_rarity = 2
         self.classrooms.sort(key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
 
 

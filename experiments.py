@@ -57,7 +57,7 @@ class Experiments:
 
     def test5(self):
         md = Manipulate_Documents()
-        classrooms, rarity_dict = md.import_classrooms()
+        classrooms = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents(False)
 
         # print(rarity_dict)
@@ -67,7 +67,7 @@ class Experiments:
         c_copy = classrooms.copy()
         g_copy = gangs.copy()
         s_copy = schedule.copy()
-        a_simple = Allocator(c_copy, s_copy, g_copy, rarity_dict)
+        a_simple = Allocator(c_copy, s_copy, g_copy)
 
         simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
@@ -92,7 +92,7 @@ class Experiments:
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
-        md.export_schedule_lessons30(andre_schedule, "Teste_andre")
+        #md.export_schedule_lessons30(andre_schedule, "Teste_andre")
         #md.export_schedule(andre_schedule, "outputMens")
 
     def test6(self):
@@ -176,15 +176,15 @@ class Experiments:
 
         g = Gaps()
         g.calculate(gang)
-        m = Movements()
-        m.calculate(gang)
+        #m = Movements()
+        #m.calculate(gang)
         u_r = UsedRooms()
         u_r.calculate(lesson1, classroom1)
         u_r.calculate(lesson2, classroom1)
         u_r.calculate(lesson3, classroom1)
 
         print(g.value)
-        print(m.value)
+        #print(m.value)
         print(u_r.value)
 
     def test13(self):
