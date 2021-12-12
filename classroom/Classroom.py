@@ -16,6 +16,7 @@ class Classroom:
         self.normal_capacity = normal_capacity
         self.exam_capacity = exam_capacity
         self.characteristics = characteristics
+        self.rarity = 0
 
     '''
     def add_lesson(self, lesson):
@@ -59,7 +60,7 @@ class Classroom:
 
     def __str__(self):
         return "(" + self.building + " | " + self.name + " | " + str(self.normal_capacity) + " | " + str(
-            self.exam_capacity) + ")"
+            self.exam_capacity) + " | " + str(self.get_characteristics()) + ")"
 
     def __repr__(self):
         return str(self)

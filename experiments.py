@@ -57,15 +57,24 @@ class Experiments:
 
     def test5(self):
         md = Manipulate_Documents()
-        classrooms = md.import_classrooms()
+        classrooms, rarity_dict = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents(False)
 
+        print(rarity_dict)
         # print(lessons)
         # print(classrooms)
-        a = Allocator(classrooms, schedule, gangs)
+
+        c_copy = classrooms.copy()
+        g_copy = gangs.copy()
+        s_copy = schedule.copy()
+        a_simple = Allocator(c_copy, s_copy, g_copy, rarity_dict)
 
         start = time.time()
-        simple_schedule = a.simple_allocation()
+        simple_schedule = a_simple.simple_allocation()
+        a_simple.remove_all_allocations()
+        allocation_with_overbooking = a_simple.allocation_with_overbooking(20)
+
+
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
@@ -214,6 +223,6 @@ def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test15()
+e.test5()
 
 

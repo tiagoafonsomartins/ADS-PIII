@@ -76,6 +76,7 @@ class Manipulate_Documents:
 
         :return: list of Classroom objects
         """
+        char_rarity = {}
         for root, dirs, files in os.walk(self.input_classrooms):
             for file in files:
                 if file.endswith(tuple(self.ext)):
@@ -89,9 +90,18 @@ class Manipulate_Documents:
                             if row[i].lower() == "x":
                                 charact_list.append(header[i])
                         classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
+                        for ch in charact_list:
+                            if ch in char_rarity.keys():
+                                char_rarity[ch] += 1
+                            else:
+                                char_rarity[ch] = 1
                         self.classroom_list.append(classroom)
                     f.close()
-        return self.classroom_list
+        sorted_char_rarity = sorted(char_rarity, key=char_rarity.get, reverse=True)
+        sorted_dict = {}
+        for w in sorted_char_rarity:
+            sorted_dict[w] = char_rarity[w]
+        return self.classroom_list, sorted_dict
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
