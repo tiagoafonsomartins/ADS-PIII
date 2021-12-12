@@ -134,11 +134,12 @@ class Allocator:
                         break
 
                 if not classroom_assigned:
-                    schedule.append((lesson, None))
                     if lesson.requested_characteristics != "Não necessita de sala" and \
                             lesson.requested_characteristics != "Lab ISTA":
                         # Arq 9/5 com o horário cheio
                         # Laboratórios de informática com demasiados alunos (sala com mais capacidade tem 50, turmas com inscritos que chegam aos 106)
+                        # não estou a adicionar lessons que tenham as caracteristicas do if acima
+                        schedule.append((lesson, None))
                         roomless_lessons.append((lesson, None))
                         number_of_roomless_lessons += 1
                         # print(lesson.get_requested_characteristics(), lesson.get_number_of_enrolled_students(), lesson.datetime_to_string(lesson.day, lesson.start, lesson.end))

@@ -5,7 +5,7 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Movements, Gaps, UsedRooms
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -60,7 +60,7 @@ class Experiments:
         classrooms, rarity_dict = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents(False)
 
-        print(rarity_dict)
+        # print(rarity_dict)
         # print(lessons)
         # print(classrooms)
 
@@ -69,11 +69,13 @@ class Experiments:
         s_copy = schedule.copy()
         a_simple = Allocator(c_copy, s_copy, g_copy, rarity_dict)
 
-
         simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
         start = time.time()
         allocation_with_overbooking = a_simple.allocation_with_overbooking(20)
+        metric = RoomlessLessons()
+        metric.calculate(allocation_with_overbooking)
+        print("Roomless Lessons Percentage:", round(metric.get_percentage(), 2) * 100, "%")
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
