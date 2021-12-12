@@ -12,7 +12,7 @@ from jmetalpy.Crossover import DrenasCrossover
 from jmetalpy.Problem import Problem
 from jmetalpy.TimeTablingProblem import TimeTablingProblem
 from lesson.Lesson import Lesson
-from metrics.Metric import Metric, Overbooking
+from metrics.Metric import *
 
 
 class JMP:
@@ -31,6 +31,8 @@ class JMP:
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
 
+
+
         print(alg_name)
         [print(f.objectives, f.variables[:len(lessons)]) for f in front]
         return [f.variables for f in front][:len(lessons)]
@@ -38,11 +40,11 @@ class JMP:
     def pnsgaii(problem):
         return NSGAII(
             problem=problem,
-            population_size=500,
-            offspring_population_size=500,
+            population_size=100,
+            offspring_population_size=100,
             mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
             crossover=PMXCrossover(probability=0.5),
-            termination_criterion=StoppingByEvaluations(max_evaluations=10000)
+            termination_criterion=StoppingByEvaluations(max_evaluations=1000)
         )
 
     def insgaii(problem):
@@ -60,8 +62,8 @@ class JMP:
 md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
 gangs, l = md.import_schedule_documents(False)
 classrooms = md.import_classrooms()
-metrics = [Overbooking()]
-lessons = [le[0] for le in l][100:120]
-
+metrics = [Overbooking(), Underbooking(), BadClassroom()]
+#metrics = [Overbooking()]
+lessons = [le[0] for le in l][:100]
 
 JMP().run_algorithm("pnsgaii", lessons, classrooms, metrics)
