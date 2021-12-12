@@ -144,21 +144,21 @@ class Allocator:
         return schedule
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom):
-        if not classroom.is_available(lesson.generate_time_blocks()): return 0
+        #if not classroom.is_available(lesson.generate_time_blocks()): return 0
 
         score = 0
 
-        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 20
-        score += (20 - len(classroom.get_characteristics())) / 2
+        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 100
+        score += (20 - len(classroom.get_characteristics())) / 4
         score += (1 - classroom.get_rarity()) * 10
         if lesson.number_of_enrolled_students > classroom.normal_capacity:
-            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 20
+            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 50
         else:
-            score += 20
+            score += 50
         if lesson.number_of_enrolled_students < classroom.normal_capacity:
-            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 20
+            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 50
         else:
-            score += 20
+            score += 50
 
         return score
 
@@ -182,17 +182,16 @@ class Allocator:
                 if lesson.requested_characteristics == "Não necessita de sala":
                     self.assign_lessons30(lessons30, lesson, None)
                     continue
-                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(lesson.time_blocks):
-                    #available_classrooms = []
-                    #for classroom in self.classrooms:
-                        # if classroom.is_available(lesson.time_blocks[0]):
-                        #available_classrooms.append(classroom)
 
+                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (not (cur_classroom.is_available(lesson.time_blocks))):
+                    last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
+                    cur_score = 0
                     for classroom in self.classrooms:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
                         new_score = self.get_classroom_score(lesson, classroom)
                         if new_score > cur_score:
+
                             cur_classroom = classroom
                             cur_score = new_score
 
@@ -204,7 +203,7 @@ class Allocator:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, cur_classroom)
 
-            elif lesson.requested_characteristics != "Não necessita de sala":
+            else:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, c)
 

@@ -5,7 +5,7 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -69,7 +69,7 @@ class Experiments:
         s_copy = schedule.copy()
         a_simple = Allocator(c_copy, s_copy, g_copy)
 
-        simple_schedule = a_simple.simple_allocation()
+        """simple_schedule = a_simple.simple_allocation()
         a_simple.remove_all_allocations()
 		
         start = time.time()
@@ -85,15 +85,57 @@ class Experiments:
         underbooking_metric = Underbooking()
         underbooking_metric.calculate(allocation_with_overbooking)
 
+        print("\n\nallocation_with_overbooking:\n")
         print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
         print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
         print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
 
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
+"""
+        # andre_allocation
+        a_simple.remove_all_allocations()
+
+        start = time.time()
+
+        lessons30 = a_simple.andre_alocation()
+
+        elapsed_time = time.time() - start
+
+        schedule_andre = []
+        for sublist in lessons30.values():
+            for item in sublist:
+                schedule_andre.append(item)
+
+        start_metricas = time.time()
+
+        room_metric = RoomlessLessons()
+        room_metric.calculate(schedule_andre)
+
+        overbooking_metric = Overbooking()
+        overbooking_metric.calculate(schedule_andre)
+
+        underbooking_metric = Underbooking()
+        underbooking_metric.calculate(schedule_andre)
+
+        bad_classroom_metric = BadClassroom()
+        bad_classroom_metric.calculate(schedule_andre)
+
+        elapsed_time_metricas = time.time() - start_metricas
+
+        print("\n\nandre_algorithm:\n")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
+
+
+        print("Elapsed time: ", elapsed_time)
+        print("Elapsed time on metricas: ", elapsed_time_metricas)
 
         #md.export_schedule_lessons30(andre_schedule, "Teste_andre")
         #md.export_schedule(andre_schedule, "outputMens")
+
 
     def test6(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
@@ -268,6 +310,11 @@ class Experiments:
             print("hello")
         else:
             print("Adeus")
+
+    def test20(self):
+        string = "hello"
+        string2 = "hello"
+        print(string == string2)
 
 
 def get_tuplo():
