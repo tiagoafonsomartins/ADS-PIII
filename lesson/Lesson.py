@@ -17,6 +17,7 @@ class Lesson:
         self.day = day
         self.requested_characteristics = requested_characteristics
         # self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
+        self.time_blocks = self.generate_time_blocks()
 
 
     def get_requested_characteristics(self) -> list:
@@ -111,6 +112,7 @@ class Lesson:
         if not isinstance(block, str): return ("", "", "")
         if "_" not in block or "-" not in block: return ("", "", "")
         if block.find("_") > block.find("-"): return ("", "", "")
+
         split = block.split("_")
         time_split = split[1].split("-")
 

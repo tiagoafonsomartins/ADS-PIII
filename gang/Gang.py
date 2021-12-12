@@ -1,12 +1,15 @@
 class Gang:
 
-    def __init__(self, name, course, lesson):
+    def __init__(self, name, course):
         self.name = name
         self.course = course
-        self.lessons = [lesson]
+        self.schedule = {}
 
     def add_lesson(self, lesson):
-        self.lessons.append(lesson)
+        self.schedule[lesson] = None
+
+    def add_classroom(self, lesson, classroom):
+        self.schedule[lesson] = classroom
 
     def __str__(self):
         return "(" + self.name + ")"
