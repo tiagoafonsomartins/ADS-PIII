@@ -19,52 +19,59 @@ def index(request):
     
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
-            myFile = request.FILES['filename']
-            fs = FileSystemStorage()
-            #filename = fs.save('\tmp\Input_Documents', myFile)
-            #uploaded_file_url = fs.url(filename)
-            manipulate_docs = Manipulate_Documents()
-            lessons, ganga  = manipulate_docs.import_schedule_documents()
-            classes = manipulate_docs.import_classrooms()
-            try:
-                os.mkdir(os.path.join('/app', '/tmp/'))
-            except Exception:
-                print("didnt create dir")
-            filename = fs.save('/app/tmp', myFile)
-            #app.config['UPLOAD_FOLDER'] = "/tmp/"
-            #filename = send_from_directory("/tmp/", myFile)
-            a = Allocator(classes,lessons,ganga)
-            a.lessons = [l for l in a.lessons if l.start]
-            '''for lesson in lessons:
-                a.add_lesson(lesson)'''
-            #for classroom in classes:
-            #    a.add_classroom(classroom)
+        myFile = request.FILES['filename']
+        fs = FileSystemStorage()
+        #filename = fs.save('\tmp\Input_Documents', myFile)
+        #uploaded_file_url = fs.url(filename)
+        manipulate_docs = Manipulate_Documents()
+        lessons, ganga  = manipulate_docs.import_schedule_documents()
+        classes = manipulate_docs.import_classrooms()
+        
+        try:
+            os.mkdir(os.path.join('/app', '/tmp/'))
+        except Exception:
+            print("didnt create dir")
+        print(request.POST.get("degree"))
+        #filename = fs.save('/app/tmp', myFile)
+        #app.config['UPLOAD_FOLDER'] = "/tmp/"
+        #filename = send_from_directory("/tmp/", myFile)
+        a = Allocator(classes,lessons,ganga)
+        a.lessons = [l for l in a.lessons if l.start]
+        '''for lesson in lessons:
+            a.add_lesson(lesson)'''
+        #for classroom in classes:
+        #    a.add_classroom(classroom)
 
-            #schedule = a.simple_allocation()
-            filename = open("/app/tmp/Exemplo_de_horario_do_1o_Semestre.csv", "w")
-            #data = output_file.read()
-            #object.save()
-            #context = upload.objects.all()
-            #request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
-            #return render(request, 'results.html', {"context": output_file})
-            
-            # table columns
-            headers = {"Metric": "Metric", "Algorithm - 1": "Algorithm - 1", "Algorithm - 2": "Algorithm - 2"}
-            
-            # content of evaluation table
-            context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2" : "50%"},{"Metric": "2", "Algorithm - 1": "10.5%", "Algorithm - 2" : "99.7%"}]
-            context = json.dumps(context)
-            
-            return render(request, 'results.html', {"context": context,"table_headers": headers, "myFile": filename})
+        #schedule = a.simple_allocation()
+        #filename = open("/app/tmp/Exemplo_de_horario_do_1o_Semestre.csv", "w")
+        #data = output_file.read()
+        #object.save()
+        #context = upload.objects.all()
+        #request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
+        #return render(request, 'results.html', {"context": output_file})
+        
+        # table columns
+        headers = {"Metric": "Metric", "Algorithm - 1": "Algorithm - 1", "Algorithm - 2": "Algorithm - 2"}
+        
+        # content of evaluation table
+        context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2" : "50%"},{"Metric": "2", "Algorithm - 1": "10.5%", "Algorithm - 2" : "99.7%"}]
+        context = json.dumps(context)
+        
+        # content of all algorithms to show on page, append to render
+        return render(request, 'results.html', {"context": context,"table_headers": headers})
+
+        #return render(request, 'results.html', {"context": context,"table_headers": headers, "myFile": filename})
+
     return render(request, 'index.html')
     #return HttpResponse(s.nice())
     
 def download_file(request):
     # fill these variables with real values
-    fl_path = "Output_Documents/"
-    filename = 'Output_Schedule.csv'
-
-    response = HttpResponse(open("Output_Documents\Output_Schedule.csv", 'rb').read())
+    # fl_path = "Output_Documents/"
+    # filename = 'Output_Schedule.csv'
+    lines = ["test"]
+    response = HttpResponse(content_type='text/csv')
     response['Content-Type'] = 'text/csv'
-    response['Content-Disposition'] = 'attachment; filename=DownloadedText.csv'
+    response['Content-Disposition'] = 'attachment; filename=Algorithm_Results.csv'
+    response.writelines(lines)
     return response
