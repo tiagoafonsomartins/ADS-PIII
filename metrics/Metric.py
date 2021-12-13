@@ -63,6 +63,7 @@ class Overbooking(Metric):
         super().__init__("Overbooking")
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
+        self.value = []
 
     def calculate(self, schedule: list):
         '''
@@ -71,12 +72,12 @@ class Overbooking(Metric):
         :return:
         '''
         for lesson, classroom in schedule:
-            if classroom:
-                if lesson.number_of_enrolled_students > classroom.normal_capacity:
-                    self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
-                    # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
-                else:
-                    self.value.append(0)
+            if classroom and lesson.number_of_enrolled_students > classroom.normal_capacity:
+                self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
+                # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
+            else:
+                self.value.append(0)
+
 
     def get_percentage(self):
         return sum(self.value) / len(self.value)

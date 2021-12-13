@@ -420,7 +420,7 @@ def get_tuplo():
 
 
 e = Experiments()
-e.test20()
+e.test5()
 
 
 

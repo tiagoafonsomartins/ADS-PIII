@@ -5,9 +5,8 @@ from jmetalpy.JMP import JMP
 from lesson import Lesson
 import numpy as np
 import datetime as dt
-from metrics.Metric import RoomlessLessons, Overbooking
+from metrics.Metric import RoomlessLessons, Overbooking, Underbooking, BadClassroom
 from swrlAPI.SWRL_API import query_result
-
 
 
 class Allocator:
@@ -105,23 +104,34 @@ class Allocator:
                 self.assign_lessons30(lessons30, lesson, c)
 
         troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
+
         rll = RoomlessLessons()
         rll.calculate(lessons30[troublesome_lessons30])
+
         ob = Overbooking()
         ob.calculate(lessons30[troublesome_lessons30])
-        # print("before", rll.get_total_metric_value(), ob.get_total_metric_value())
+
+        print("before", rll.get_total_metric_value(), ob.get_percentage())
+
         trouble_l = []
         trouble_c = set()
         for t_l, t_c in lessons30[troublesome_lessons30]:
             trouble_l.append(t_l)
-            trouble_c.add(t_c)
-        metrics = [RoomlessLessons(), Overbooking()]
-        JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
-        # print(lessons30)
+            if t_c is not None:
+                trouble_c.add(t_c)
+        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
+        result = JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
+
+        rll = RoomlessLessons()
+        rll.calculate(result)
+
+        ob = Overbooking()
+        ob.calculate(result)
+
+        print("after", rll.get_percentage(), ob.get_percentage())
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
-
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float,
                             len_characs_div: float, rarity: float, overbooking: float, underbooking: float):
@@ -142,9 +152,8 @@ class Allocator:
 
         return score
 
-
-    def andre_alocation(self, characs = 100, len_characs = 20, len_characs_div = 4, rarity = 10, overbooking = 50,
-						underbooking = 50, overbooking_tolerance = 0.20) -> dict:
+    def andre_alocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
+                        underbooking=50, overbooking_tolerance=0.20) -> dict:
 
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
@@ -175,7 +184,8 @@ class Allocator:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
 
-                        new_score = self.get_classroom_score(lesson, classroom, characs, len_characs, len_characs_div, rarity, overbooking, underbooking)
+                        new_score = self.get_classroom_score(lesson, classroom, characs, len_characs, len_characs_div,
+                                                             rarity, overbooking, underbooking)
 
                         if new_score > cur_score:
                             cur_classroom = classroom
