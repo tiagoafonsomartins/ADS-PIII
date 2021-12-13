@@ -48,6 +48,14 @@
 </head>
 	<body>
 
+
+{% if myFile %}
+    <div>
+        <a href="{{ url_for('Input_Documents', filename=myFile) }}">download </a>
+    </div>
+{% endif %}
+
+
 	 <form class="content" action="results" method="POST" enctype="multipart/form-data">{% csrf_token %}
 	<a href="\tmp\Input_Documents">Download!</a>
 	<label for="algorithm" class="content">Choose the best algorithm for download:</label>

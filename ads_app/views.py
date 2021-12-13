@@ -21,12 +21,15 @@ def results(request):
     if request.method == 'POST' and request.FILES['filename']:
             myFile = request.FILES['filename']
             fs = FileSystemStorage()
-            filename = fs.save('\tmp\Input_Documents', myFile)
+            #filename = fs.save('\tmp\Input_Documents', myFile)
             #uploaded_file_url = fs.url(filename)
             manipulate_docs = Manipulate_Documents()
             lessons, ganga  = manipulate_docs.import_schedule_documents()
             classes = manipulate_docs.import_classrooms()
             
+            
+            app.config['UPLOAD_FOLDER'] = "app/tmp/"
+            filename = send_from_directory(app.config['UPLOAD_FOLDER'], myFile)
             a = Allocator(classes,lessons,ganga)
             a.lessons = [l for l in a.lessons if l.start]
             '''for lesson in lessons:
