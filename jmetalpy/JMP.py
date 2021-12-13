@@ -8,9 +8,9 @@ from typing import List
 import numpy as np
 import random
 
-
 from experimenting_scores_alloc.AndreAllocProblem import AndreAllocProblem
 from file_manager.Manipulate_Documents import Manipulate_Documents
+from jmetalpy.TimeTablingProblem import TimeTablingProblem
 from metrics.Metric import *
 
 
@@ -21,8 +21,8 @@ class JMP:
 
         alg = getattr(JMP, alg_name)
 
-        problem = AndreAllocProblem(lessons, classrooms, metrics)
-        #problem = TimeTablingProblem(lessons, classrooms, metrics)
+        #problem = AndreAllocProblem(lessons, classrooms, metrics)
+        problem = TimeTablingProblem(lessons, classrooms, metrics)
         #problem = Problem(lessons, classrooms, metrics)
 
         algorithm = alg(problem)
@@ -41,16 +41,43 @@ class JMP:
         #answers = [f.variables for f in front][:len(lessons)]
         #print(new_classrooms)
 
-        result = self.get_best_result(front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight)
+        # result = self.get_best_result_static(front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight)
+        result = self.get_best_result(front, metrics)
+
         new_classrooms = [classroom for classroom in result.variables]
         new_schedule = [(lessons[i], new_classrooms[i]) for i in range(len(lessons))]
 
         return new_schedule
         #return [f.variables for f in front][:len(lessons)]
 
+    # The weights in each metric are in a range of 0 to 1
+    def get_best_result(self, front, metrics):
+
+        # Making lists of each objective's value
+        # Getting the max and min of each objective
+        # Choosing the percentage said in the weight within the range (as in from min to max) of each objective
+        objectives_scores = []
+        for i in range(len(metrics)):
+            objective         = [result.objective[i] for result in front]
+            objective_lims   = (min(objective), max(objective))
+            objectives_scores.append((objective_lims[1] - objective_lims[0]) * metrics[i] + objective_lims[0])
+
+        # Choosing which result is closer on average of
+        chosen_result = None
+        chosen_proximity = float('inf')
+        for result in front:
+            new_prox = 0
+            for i in range(len(objectives_scores)):
+                new_prox += self.distance(result.objective[i], objectives_scores[i])
+
+            if new_prox < chosen_proximity:
+                chosen_result = result
+                chosen_proximity = new_prox
+
+        return chosen_result
 
     # The weights are in a range of 0 to 1
-    def get_best_result(self, front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight):
+    def get_best_result_static(self, front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight):
 
         # Making lists of each objective's value
         roomlesses    = [result.objective[0] for result in front]
@@ -136,11 +163,12 @@ def testar():
     md = Manipulate_Documents("../input_documents", "../output_documents", "../input_classrooms")
     gangs, l = md.import_schedule_documents(False)
     classrooms = md.import_classrooms()
-    metrics = [Overbooking(), Underbooking(), BadClassroom()]
+    metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
     # metrics = [Overbooking()]
     lessons = [le[0] for le in l][:100]
 
-    print(JMP().run_algorithm("nsgaii", lessons, classrooms, metrics))
+    result = JMP().run_algorithm("nsgaii", lessons, classrooms, metrics)
+    print(result)
 
 if __name__ == "__main__":
    testar()
