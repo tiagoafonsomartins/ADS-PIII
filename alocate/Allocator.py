@@ -1,7 +1,7 @@
 import time
 
 from classroom import Classroom
-# from jmetalpy.JMP import JMP
+from jmetalpy.JMP import JMP
 from lesson import Lesson
 import numpy as np
 import datetime as dt
