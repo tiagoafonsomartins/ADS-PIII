@@ -5,7 +5,6 @@ from jmetalpy.JMP import JMP
 from lesson import Lesson
 import numpy as np
 import datetime as dt
-
 from metrics.Metric import RoomlessLessons, Overbooking
 from swrlAPI.SWRL_API import query_result
 
@@ -134,7 +133,6 @@ class Allocator:
         rll.calculate(lessons30[troublesome_lessons30])
         ob = Overbooking()
         ob.calculate(lessons30[troublesome_lessons30])
-
         # print("before", rll.get_total_metric_value(), ob.get_total_metric_value())
         trouble_l = []
         trouble_c = set()
@@ -143,9 +141,9 @@ class Allocator:
             trouble_c.add(t_c)
         metrics = [RoomlessLessons(), Overbooking()]
         JMP().run_algorithm(query_result()[0], trouble_l, list(trouble_c), metrics)
-
         # print(lessons30)
-        # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+
+        print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float,
