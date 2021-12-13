@@ -34,15 +34,17 @@ class JMP:
         algorithm.run()
         elapsed_time = time.time() - start
 
-        # print("Elapsed time: ", elapsed_time)
 
+        # print("Elapsed time: ", elapsed_time)
 
         print("hi")
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
 
+
         # for solution in front:
         # print("solution: ", solution.objectives)
+
 
         result = self.get_best_result(front, metrics)
 
@@ -124,7 +126,7 @@ class JMP:
             offspring_population_size=100,
             mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
             crossover=PMXCrossover(probability=0.5),
-            termination_criterion=StoppingByEvaluations(max_evaluations=10000)
+            termination_criterion=StoppingByEvaluations(max_evaluations=200)
         )
 
     def nsgaiii(problem):
