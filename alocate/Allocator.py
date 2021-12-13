@@ -85,7 +85,7 @@ class Allocator:
                 classroom_assigned = False
                 for classroom in classrooms_list:
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
-                            (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity() *
+                            (0 < lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity() *
                              (1 + (overbooking_percentage / 100))) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
                         classroom.set_unavailable(lesson.generate_time_blocks())
@@ -94,7 +94,7 @@ class Allocator:
                         break
                 if not classroom_assigned:
                     if lesson.requested_characteristics != "Não necessita de sala" and \
-                            lesson.requested_characteristics != "Lab ISTA":
+                            lesson.requested_characteristics != "Lab ISTA" and lesson.number_of_enrolled_students != 0:
                         self.assign_lessons30(lessons30, lesson, None)
                         number_of_roomless_lessons += 1
                         # Arq 9/5 com o horário cheio
@@ -111,7 +111,15 @@ class Allocator:
         ob = Overbooking()
         ob.calculate(lessons30[troublesome_lessons30])
 
-        print("before", rll.get_total_metric_value(), ob.get_percentage())
+        ub = Underbooking()
+        ub.calculate(lessons30[troublesome_lessons30])
+
+        bc = BadClassroom()
+        bc.calculate(lessons30[troublesome_lessons30])
+
+        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
+              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
+              ", BadClassroom:", round(bc.get_percentage(), 2))
 
         trouble_l = []
         trouble_c = set()
@@ -122,13 +130,19 @@ class Allocator:
         metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
         result = JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
 
-        rll = RoomlessLessons()
+        rll.reset_metric()
+        ob.reset_metric()
+        ub.reset_metric()
+        bc.reset_metric()
+
         rll.calculate(result)
-
-        ob = Overbooking()
         ob.calculate(result)
+        ub.calculate(result)
+        bc.calculate(result)
 
-        print("after", rll.get_percentage(), ob.get_percentage())
+        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
+              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
+              ", BadClassroom:", round(bc.get_percentage(), 2))
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
