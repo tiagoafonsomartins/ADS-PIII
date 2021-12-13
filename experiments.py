@@ -57,7 +57,7 @@ class Experiments:
     def test5(self):
         md = Manipulate_Documents()
         classrooms = md.import_classrooms()
-        gangs, schedule = md.import_schedule_documents(False)
+        gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_segundo_semestre.csv", False)
 
         # print(rarity_dict)
         # print(lessons)
@@ -67,6 +67,8 @@ class Experiments:
         g_copy = gangs.copy()
         s_copy = schedule.copy()
         a_simple = Allocator(c_copy, s_copy, g_copy)
+
+        print("\nsimple_allocation:\n")
 
         start = time.time()
 
@@ -86,15 +88,15 @@ class Experiments:
         bad_classroom_metric = BadClassroom()
         bad_classroom_metric.calculate(simple_schedule)
 
-        print("\nallocation_with_overbooking:\n")
-        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
-        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
-        print("Elapsed time: ", elapsed_time, "\n\n")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage() * 100, 2), "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage() * 100, 2), "%")
+        print("Elapsed time: ", elapsed_time, "\n")
 
         a_simple.remove_all_allocations()
 
+        print("\nallocation_with_overbooking:\n")
         start = time.time()
 
         allocation_with_overbooking = a_simple.allocation_with_overbooking(30)
@@ -118,11 +120,10 @@ class Experiments:
         bad_classroom_metric = BadClassroom()
         bad_classroom_metric.calculate(schedule_nuno)
 
-        print("\nallocation_with_overbooking:\n")
-        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
-        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage() * 100, 2), "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage() * 100, 2), "%")
         print("Elapsed time: ", elapsed_time)
 
 

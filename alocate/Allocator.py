@@ -79,7 +79,6 @@ class Allocator:
             if not c:
                 classroom_assigned = False
                 for classroom in self.classrooms:
-                    # TODO usar tolerância aqui
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
@@ -89,8 +88,10 @@ class Allocator:
                         break
 
                 if not classroom_assigned:
-                    schedule.append((lesson, None))
-                    number_of_roomless_lessons += 1
+                    if lesson.requested_characteristics != "Não necessita de sala" and \
+                            lesson.requested_characteristics != "Lab ISTA":
+                        schedule.append((lesson, None))
+                        number_of_roomless_lessons += 1
                 else:
                     classroom_assigned = False
             else:
@@ -127,6 +128,7 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
             else:
                 self.assign_lessons30(lessons30, lesson, c)
+
         '''
         troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
         rll = RoomlessLessons()
@@ -140,9 +142,10 @@ class Allocator:
             trouble_l.append(t_l)
             trouble_c.add(t_c)
         metrics = [RoomlessLessons(), Overbooking()]
-        JMP().run_algorithm(query_result()[0], trouble_l, list(trouble_c), metrics)
+        JMP().run_algorithm(query_result(len(metrics))[0], trouble_l, list(trouble_c), metrics)
         # print(lessons30)
         '''
+
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
 

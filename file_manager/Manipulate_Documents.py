@@ -28,8 +28,7 @@ class Manipulate_Documents:
 
         self.classroom_list = []
 
-
-    def import_schedule_documents(self, use_classrooms: bool):
+    def import_schedule_documents(self, file_name: str, use_classrooms: bool):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
@@ -43,9 +42,10 @@ class Manipulate_Documents:
         schedule = []
         gang_list = []
         create_gang = True
+
         for root, dirs, files in os.walk(self.input_path):
             for file in files:
-                if file.endswith(tuple(self.ext)):
+                if file.endswith(tuple(self.ext)) and file == file_name:
                     file_to_open = os.path.join(self.input_path, file)
                     f = open(file_to_open, 'r', encoding="utf8")
                     csvreader = csv.reader(f)
@@ -73,7 +73,6 @@ class Manipulate_Documents:
                             else:
                                 create_gang = True
                     f.close()
-
         return gang_list, schedule
 
     def import_classrooms(self):
@@ -113,7 +112,6 @@ class Manipulate_Documents:
             rarity = 1 - (min(characs) / sum(sum_classroom_characteristics.values()))
             classroom.set_rarity(rarity)
         return self.classroom_list
-
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
@@ -201,11 +199,3 @@ class Manipulate_Documents:
             string += str(e) + ", "
         string = string[:-2]
         return string
-
-
-
-# fazer sempre o import_classrooms antes do import_schedule_documents
-mn = Manipulate_Documents(input_path="../input_documents", input_classrooms="../input_classrooms")
-mn.import_classrooms()
-mn.import_schedule_documents(True)
-
