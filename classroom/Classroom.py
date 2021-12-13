@@ -18,16 +18,10 @@ class Classroom:
         self.characteristics = characteristics
         self.rarity = None
 
-
-    '''
-    def add_lesson(self, lesson):
-        self.schedule.append(lesson)
-    '''
-
-    def get_characteristics(self):
+    def get_characteristics(self) -> list:
         return self.characteristics
 
-    def get_normal_capacity(self):
+    def get_normal_capacity(self) -> int:
         return self.normal_capacity
 
     def empty_schedule(self):
@@ -43,13 +37,9 @@ class Classroom:
         :param time_blocks:
         :return:
         """
-        #print(self.schedule)
-        #print(time_blocks)
         for block in time_blocks:
             if block in self.schedule:
-                #print(False)
                 return False
-        #print(True)
         return True
 
     def set_unavailable(self, time_blocks: list) -> None:

@@ -17,49 +17,23 @@ class Allocator:
         self.gangs = gangs
         self.sum_classroom_characteristics = {}
 
-    def add_classroom(self, classroom: Classroom) -> None:
-        '''
-        Add object classroom to list of classrooms and count number of type of characteristics
-
-        :param classroom:
-        :return:
-        '''
-        self.classrooms.append(classroom)
-        for characteristic in classroom.get_characteristics():
-            if characteristic in self.sum_classroom_characteristics:
-                number_of_characteristic = self.sum_classroom_characteristics[characteristic]
-            else:
-                number_of_characteristic = 0
-
-            self.sum_classroom_characteristics.update({characteristic: number_of_characteristic + 1})
-
-    def add_lesson(self, lesson: Lesson) -> None:
-        '''
-        Add object lesson to list of lessons
-
-        :param lesson:
-        :return:
-        '''
-        self.lessons.append(lesson)
-
-    def sort_lessons(self) -> list:
+    def sorted_lessons(self) -> list:
         '''
         Sort lessons by day, start time and number of enrolled students
 
         :return list[Lesson]:
         '''
-        self.schedule.sort(key=lambda x: (
+        return sorted(self.schedule, key=lambda x: (
             x[0].number_of_enrolled_students, time.strptime(x[0].day, '%m/%d/%Y'),
-            time.strptime(x[0].start, '%H:%M:%S'),))
-        # self.lessons.sort(key=lambda x: (x.day, x.start, x.number_of_enrolled_students))
+            time.strptime(x[0].start, '%H:%M:%S')))
 
-    def sort_classrooms(self) -> list:
+    def sorted_classrooms(self) -> list:
         '''
         Sort classrooms by normal capacity
 
         :return list[Classroom]:
         '''
-        self.classrooms.sort(key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
+        return sorted(self.classrooms, key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
 
     def simple_allocation(self) -> list:
         '''
@@ -68,17 +42,17 @@ class Allocator:
 
         :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
         '''
-        self.sort_lessons()
-        self.sort_classrooms()
+        lessons_list = self.sorted_lessons()
+        classrooms_list = self.sorted_classrooms()
 
         number_of_roomless_lessons = 0
 
         schedule = []
 
-        for lesson, c in self.schedule:
+        for lesson, c in lessons_list:
             if not c:
                 classroom_assigned = False
-                for classroom in self.classrooms:
+                for classroom in classrooms_list:
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
@@ -102,14 +76,14 @@ class Allocator:
         return schedule
 
     def allocation_with_overbooking(self, overbooking_percentage: int) -> dict:
-        self.sort_lessons()
-        self.sort_classrooms()
+        lessons_list = self.sorted_lessons()
+        classrooms_list = self.sorted_classrooms()
         lessons30 = {}
         number_of_roomless_lessons = 0
-        for lesson, c in self.schedule:
+        for lesson, c in lessons_list:
             if not c:
                 classroom_assigned = False
-                for classroom in self.classrooms:
+                for classroom in classrooms_list:
                     if (lesson.get_requested_characteristics() in classroom.get_characteristics()) and \
                             (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity() *
                              (1 + (overbooking_percentage / 100))) and \
@@ -129,7 +103,6 @@ class Allocator:
             else:
                 self.assign_lessons30(lessons30, lesson, c)
 
-        '''
         troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
         rll = RoomlessLessons()
         rll.calculate(lessons30[troublesome_lessons30])
@@ -142,9 +115,8 @@ class Allocator:
             trouble_l.append(t_l)
             trouble_c.add(t_c)
         metrics = [RoomlessLessons(), Overbooking()]
-        JMP().run_algorithm(query_result(len(metrics))[0], trouble_l, list(trouble_c), metrics)
+        JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
         # print(lessons30)
-        '''
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30

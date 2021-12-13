@@ -50,7 +50,6 @@ class Manipulate_Documents:
                     f = open(file_to_open, 'r', encoding="utf8")
                     csvreader = csv.reader(f)
                     next(csvreader)
-
                     for row in csvreader:
                         if row[5] and row[6] and row[8]:
                             lesson = Lesson(row[0], row[1], row[2], row[3],

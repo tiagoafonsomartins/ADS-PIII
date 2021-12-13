@@ -16,11 +16,9 @@ class Lesson:
         self.end = end
         self.day = day
         self.requested_characteristics = requested_characteristics
-        # self.classroom = Classroom('Edifício Sedas Nunes (ISCTE-IUL)', 'Auditório 4', 250, 125, ["cenas", "mais cenas"])
         self.time_blocks = self.generate_time_blocks()
 
-
-    def get_requested_characteristics(self) -> list:
+    def get_requested_characteristics(self) -> str:
         '''
         Returns classroom characteristics requested by the lesson
         :return:
@@ -116,7 +114,7 @@ class Lesson:
         split = block.split("_")
         time_split = split[1].split("-")
 
-        return (split[0], time_split[0], time_split[1])
+        return split[0], time_split[0], time_split[1]
 
     def __str__(self):
         return "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"

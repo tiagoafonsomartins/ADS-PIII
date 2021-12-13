@@ -17,8 +17,13 @@ from metrics.Metric import *
 
 
 class JMP:
-    def run_algorithm(self, alg_name: str, lessons: list, classrooms: list, metrics: list) -> list:
-        alg = getattr(JMP, alg_name)
+    def run_algorithm(self, alg_list: str, lessons: list, classrooms: list, metrics: list) -> list:
+        for a in alg_list:
+            try:
+                alg = getattr(JMP, a)
+                break
+            except:
+                alg = getattr(JMP, "nsgaii")
         problem = TimeTablingProblem(lessons, classrooms, metrics)
         #problem = Problem(lessons, classrooms, metrics)
 
@@ -32,9 +37,7 @@ class JMP:
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
 
-
-
-        print(alg_name)
+        print(a)
         [print(f.objectives, f.variables[:len(lessons)]) for f in front]
         return [f.variables for f in front][:len(lessons)]
 
