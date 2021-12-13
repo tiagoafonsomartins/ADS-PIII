@@ -28,7 +28,7 @@ def results(request):
             classes = manipulate_docs.import_classrooms()
             
             
-            app.config['UPLOAD_FOLDER'] = "/app/tmp/"
+            app.config['UPLOAD_FOLDER'] = "/tmp/"
             filename = send_from_directory(app.config['UPLOAD_FOLDER'], myFile)
             a = Allocator(classes,lessons,ganga)
             a.lessons = [l for l in a.lessons if l.start]
