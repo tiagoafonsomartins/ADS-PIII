@@ -78,7 +78,6 @@ class Overbooking(Metric):
             else:
                 self.value.append(0)
 
-
     def get_percentage(self):
         return sum(self.value) / len(self.value)
 
