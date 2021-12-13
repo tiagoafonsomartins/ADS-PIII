@@ -299,7 +299,7 @@ class ClassroomConsistency(Metric):
                 lesson.shift == previous_lesson.shift and lesson.week_day == previous_lesson.week_day) and \
                     classroom == previous_classroom:
                 self.value += 1
-
+                
     def get_total_metric_value(self):
         return self.value
 

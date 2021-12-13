@@ -16,3 +16,20 @@ class Gang:
 
     def __repr__(self):
         return str(self)
+
+    def has_simultaneous_classes(self):
+        blocks = {}
+        found = False
+        for lesson in self.schedule:
+            for block in lesson.time_blocks:
+                if block in blocks.keys():
+                    print("Found: ", lesson)
+                    print("There was: ", blocks[block])
+                    found = True
+                    break
+            for block in lesson.time_blocks:
+                blocks[block]=lesson
+        if found:
+            print(self)
+        print("done")
+        print(True)

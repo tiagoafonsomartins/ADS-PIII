@@ -10,7 +10,7 @@ from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
-import numpy as np
+import random
 
 
 
@@ -102,10 +102,14 @@ class Experiments:
 
         elapsed_time = time.time() - start
 
+        tamanho = sys.getsizeof(lessons30)
+
+        start_convert = time.time()
         schedule_andre = []
         for sublist in lessons30.values():
             for item in sublist:
                 schedule_andre.append(item)
+        elapsed_time_convert = time.time() - start_convert
 
         start_metricas = time.time()
 
@@ -132,6 +136,9 @@ class Experiments:
 
         print("Elapsed time: ", elapsed_time)
         print("Elapsed time on metricas: ", elapsed_time_metricas)
+        print("Elapsed time on convert: ", elapsed_time_convert)
+        print("Tamanho do lessons30: ", tamanho)
+
 
         #md.export_schedule_lessons30(andre_schedule, "Teste_andre")
         #md.export_schedule(andre_schedule, "outputMens")
@@ -311,16 +318,18 @@ class Experiments:
         else:
             print("Adeus")
 
+        for item in l:
+            print(item)
+
+
     def test20(self):
-        string = "hello"
-        string2 = "hello"
-        print(string == string2)
+        print(random.uniform(0.1, 0.657))
 
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test5()
+e.test20()
 
 

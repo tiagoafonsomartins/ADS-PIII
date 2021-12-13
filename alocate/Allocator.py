@@ -6,6 +6,7 @@ import numpy as np
 import datetime as dt
 
 
+
 class Allocator:
 
     def __init__(self, classrooms, schedule, gangs):  # starting_date, ending_date
@@ -139,8 +140,6 @@ class Allocator:
         return schedule
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float, len_characs_div: float, rarity: float, overbooking: float, underbooking: float):
-        #if not classroom.is_available(lesson.generate_time_blocks()): return 0
-
         score = 0
 
         if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += characs
@@ -157,7 +156,7 @@ class Allocator:
 
         return score
 
-    def andre_alocation(self, characs = 100, len_characs = 20, len_characs_div = 4, rarity = 10, overbooking = 50, underbooking = 50) -> list:
+    def andre_alocation(self, characs = 100, len_characs = 20, len_characs_div = 4, rarity = 10, overbooking = 50, underbooking = 50, overbooking_tolerance = 0.20) -> dict:
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
                 and the same lessons in different weeks
@@ -184,7 +183,7 @@ class Allocator:
                     for classroom in self.classrooms:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
-                        new_score = self.get_classroom_score(lesson, classroom,)
+                        new_score = self.get_classroom_score(lesson, classroom, characs, len_characs, len_characs_div, rarity, overbooking, underbooking)
                         if new_score > cur_score:
                             cur_classroom = classroom
                             cur_score = new_score
@@ -202,6 +201,30 @@ class Allocator:
                 self.assign_lessons30(lessons30, lesson, c)
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+
+        # TODO JMetalPy
+        """for block, half_hour in lessons30.items():
+            room_metric = RoomlessLessons()
+            room_metric.calculate(half_hour)
+
+            overbooking_metric = Overbooking()
+            overbooking_metric.calculate(half_hour)
+
+            underbooking_metric = Underbooking()
+            underbooking_metric.calculate(half_hour)
+
+            bad_classroom_metric = BadClassroom()
+            bad_classroom_metric.calculate(half_hour)
+
+            if room_metric.get_percentage() > 0.05 or overbooking_metric.get_total_metric_value() > overbooking_tolerance or bad_classroom_metric.get_percentage() > 0.05:
+                #classrooms = []
+                #for classroom in self.classrooms:
+                #    if classroom.is_available([block]):
+                #        classrooms.append(classroom)
+                classrooms = [c for c in self.classrooms if c.is_available([block])]
+                lessons = [item[0] for item in half_hour]
+
+                JMP.run_algorithm("nsgaii", lessons, classrooms, [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()])"""
 
         return lessons30
 

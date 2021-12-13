@@ -35,8 +35,6 @@ class Manipulate_Documents:
 
         :return: a list with a list Classroom objects and a list of Gang objects
         """
-        start_day = dt.date(2100, 1, 1)
-        end_day = dt.date(1900, 1, 1)
         classroom_dict = {}
         for classroom in self.classroom_list:
             classroom_dict[classroom.name] = classroom
