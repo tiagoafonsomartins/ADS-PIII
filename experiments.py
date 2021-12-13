@@ -5,7 +5,8 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
+    BuildingMovements, ClassroomInconsistency
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -57,7 +58,7 @@ class Experiments:
     def test5(self):
         md = Manipulate_Documents()
         classrooms = md.import_classrooms()
-        gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_segundo_semestre.csv", False)
+        gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
 
         # print(rarity_dict)
         # print(lessons)
@@ -88,10 +89,30 @@ class Experiments:
         bad_classroom_metric = BadClassroom()
         bad_classroom_metric.calculate(simple_schedule)
 
+        gaps_metric = Gaps()
+        gaps_metric.calculate(simple_schedule)
+
+        room_movements_metric = RoomMovements()
+        room_movements_metric.calculate(simple_schedule)
+
+        building_movements_metric = BuildingMovements()
+        building_movements_metric.calculate(simple_schedule)
+
+        used_rooms_metric = UsedRooms()
+        used_rooms_metric.calculate(simple_schedule)
+
+        classroom_inconsistency_metric = ClassroomInconsistency()
+        classroom_inconsistency_metric.calculate(simple_schedule)
+
         print("Roomless Lessons Percentage:", round(room_metric.get_percentage() * 100, 2), "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value() * 100, 2), "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_percentage() * 100, 2), "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_percentage() * 100, 2), "%")
         print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage() * 100, 2), "%")
+        print("Gaps Percentage:", round(gaps_metric.get_percentage() * 100, 2), "%")
+        print("Room Movement Percentage:", round(room_movements_metric.get_percentage() * 100, 2), "%")
+        print("Building movement Percentage:", round(building_movements_metric.get_percentage() * 100, 2), "%")
+        print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
+        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2), "%")
         print("Elapsed time: ", elapsed_time, "\n")
 
         a_simple.remove_all_allocations()
@@ -120,11 +141,31 @@ class Experiments:
         bad_classroom_metric = BadClassroom()
         bad_classroom_metric.calculate(schedule_nuno)
 
+        gaps_metric = Gaps()
+        gaps_metric.calculate(schedule_nuno)
+
+        room_movements_metric = RoomMovements()
+        room_movements_metric.calculate(schedule_nuno)
+
+        building_movements_metric = BuildingMovements()
+        building_movements_metric.calculate(schedule_nuno)
+
+        used_rooms_metric = UsedRooms()
+        used_rooms_metric.calculate(schedule_nuno)
+
+        classroom_inconsistency_metric = ClassroomInconsistency()
+        classroom_inconsistency_metric.calculate(schedule_nuno)
+
         print("Roomless Lessons Percentage:", round(room_metric.get_percentage() * 100, 2), "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value() * 100, 2), "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value() * 100, 2), "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_percentage() * 100, 2), "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_percentage() * 100, 2), "%")
         print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage() * 100, 2), "%")
-        print("Elapsed time: ", elapsed_time)
+        print("Gaps Percentage:", round(gaps_metric.get_percentage() * 100, 2), "%")
+        print("Room Movement Percentage:", round(room_movements_metric.get_percentage() * 100, 2), "%")
+        print("Building movement Percentage:", round(building_movements_metric.get_percentage() * 100, 2), "%")
+        print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
+        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2), "%")
+        print("Elapsed time: ", elapsed_time, "\n")
 
 
 """

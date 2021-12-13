@@ -71,13 +71,12 @@ class JMP:
 #            termination_criterion=StoppingByEvaluations(max_evaluations=1000)
 #        )
 
+def testar():
+    md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
+    classrooms = md.import_classrooms()
+    gangs, l = md.import_schedule_documents("Exemplo_de_horario_segundo_semestre.csv", False)
+    metrics = [Overbooking(), Underbooking(), BadClassroom()]
+    #metrics = [Overbooking()]
+    lessons = [le[0] for le in l][:100]
 
-
-md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
-gangs, l = md.import_schedule_documents(False)
-classrooms = md.import_classrooms()
-metrics = [Overbooking(), Underbooking(), BadClassroom()]
-#metrics = [Overbooking()]
-lessons = [le[0] for le in l][:100]
-
-JMP().run_algorithm("nsgaiii", lessons, classrooms, metrics)
+    JMP().run_algorithm("nsgaiii", lessons, classrooms, metrics)

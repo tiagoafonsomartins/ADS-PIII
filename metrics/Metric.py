@@ -327,7 +327,7 @@ class UsedRooms(Metric):
         super().__init__("UsedRooms")
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
-        self.value = 0
+        self.value = []
         self.total = 0
 
     def calculate(self, schedule: list):
@@ -339,16 +339,16 @@ class UsedRooms(Metric):
         for lesson, classroom in schedule:
             self.total += 1
             if classroom not in self.value:
-                self.value += 1
+                self.value.append(classroom)
 
     def get_total_metric_value(self):
-        return self.value
+        return len(self.value)
 
     def get_percentage(self):
-        return self.value / self.total
+        return len(self.value) / self.total
 
     def reset_metric(self):
-        self.value = 0
+        self.value = []
         self.total = 0
 
 
@@ -360,7 +360,7 @@ class ClassroomInconsistency(Metric):
         self.m_type = "gangs"
         self.value = []
 
-    def calculate(self, schedule: dict):
+    def calculate(self, schedule: list):
         '''
         Receives a Schedule and calculates the ClassroomInconsistency
         :param schedule:

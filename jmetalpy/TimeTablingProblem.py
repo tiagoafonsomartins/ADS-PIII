@@ -33,7 +33,7 @@ class TimeTablingProblem(PermutationProblem):
             #for j in created_schedule:
             #    metric.calculate(j[0], j[1])
             metric.calculate(created_schedule)
-            solution.objectives[i] = metric.get_total_metric_value()
+            solution.objectives[i] = metric.get_percentage()
             metric.reset_metric()
 
         return solution
