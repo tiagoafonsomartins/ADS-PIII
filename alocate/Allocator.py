@@ -97,10 +97,11 @@ class Allocator:
 
         return schedule
 
-    def allocation_with_overbooking(self, overbooking_percentage: int) -> list:
+    def allocation_with_overbooking(self, overbooking_percentage: int) -> dict:
         self.sort_lessons()
         self.sort_classrooms()
 
+        lessons30 = {}
         number_of_roomless_lessons = 0
         schedule = []
 
@@ -113,14 +114,14 @@ class Allocator:
                              (1 + (overbooking_percentage / 100))) and \
                             (classroom.is_available(lesson.generate_time_blocks())):
                         classroom.set_unavailable(lesson.generate_time_blocks())
-                        schedule.append((lesson, classroom))
+                        self.assign_lessons30(lessons30, lesson, classroom)
                         classroom_assigned = True
                         break
 
                 if not classroom_assigned:
                     if lesson.requested_characteristics != "Não necessita de sala" and \
                             lesson.requested_characteristics != "Lab ISTA":
-                        schedule.append((lesson, None))
+                        self.assign_lessons30(lessons30, lesson, None)
                         number_of_roomless_lessons += 1
 
                         # Arq 9/5 com o horário cheio
@@ -128,18 +129,14 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
 
             else:
-                schedule.append((lesson, c))
-        '''
-                for c in self.classrooms:
-            if "Arq 9" in c.get_characteristics():
-                print(c.get_normal_capacity(), c.name, c.schedule)
-        '''
+                self.assign_lessons30(lessons30, lesson, c)
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
-        return schedule
+        return lessons30
 
-    def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float, len_characs_div: float, rarity: float, overbooking: float, underbooking: float):
-        #if not classroom.is_available(lesson.generate_time_blocks()): return 0
+    def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float,
+                            len_characs_div: float, rarity: float, overbooking: float, underbooking: float):
+        # if not classroom.is_available(lesson.generate_time_blocks()): return 0
 
         score = 0
 
@@ -157,7 +154,8 @@ class Allocator:
 
         return score
 
-    def andre_alocation(self, characs = 100, len_characs = 20, len_characs_div = 4, rarity = 10, overbooking = 50, underbooking = 50) -> list:
+    def andre_alocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
+                        underbooking=50) -> list:
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
                 and the same lessons in different weeks
@@ -178,13 +176,15 @@ class Allocator:
                     self.assign_lessons30(lessons30, lesson, None)
                     continue
 
-                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(lesson.time_blocks):
+                if last_lesson != (
+                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(
+                        lesson.time_blocks):
                     last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
                     cur_score = 0
                     for classroom in self.classrooms:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
-                        new_score = self.get_classroom_score(lesson, classroom,)
+                        new_score = self.get_classroom_score(lesson, classroom, )
                         if new_score > cur_score:
                             cur_classroom = classroom
                             cur_score = new_score
