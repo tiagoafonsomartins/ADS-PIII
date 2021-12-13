@@ -5,7 +5,7 @@ import csv
 
 from gang.Gang import Gang
 from metrics import Metric
-from metrics.Metric import Movements, Gaps, UsedRooms
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from alocate.Allocator import Allocator
@@ -60,25 +60,82 @@ class Experiments:
         classrooms = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents(False)
 
+        # print(rarity_dict)
         # print(lessons)
         # print(classrooms)
-        a = Allocator(classrooms, schedule, gangs)
 
+        c_copy = classrooms.copy()
+        g_copy = gangs.copy()
+        s_copy = schedule.copy()
+        a_simple = Allocator(c_copy, s_copy, g_copy)
+
+        """simple_schedule = a_simple.simple_allocation()
+        a_simple.remove_all_allocations()
+		
         start = time.time()
-        simple_schedule = a.simple_allocation()
+
+        allocation_with_overbooking = a_simple.allocation_with_overbooking(10)
+
+        room_metric = RoomlessLessons()
+        room_metric.calculate(allocation_with_overbooking)
+
+        overbooking_metric = Overbooking()
+        overbooking_metric.calculate(allocation_with_overbooking)
+
+        underbooking_metric = Underbooking()
+        underbooking_metric.calculate(allocation_with_overbooking)
+
+        print("\n\nallocation_with_overbooking:\n")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+
         elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
+"""
+        # andre_allocation
+        a_simple.remove_all_allocations()
 
-        """all_true = True
-        for i in range(len(schedule)):
-            if schedule[i][1]:
-                print(schedule[i][1]==simple_schedule[i][1])
-                if schedule[i][1] != simple_schedule[i][1]:
-                    all_true = False
-                #print(simple_schedule[i][1])
-        print("all_true: ", all_true)"""
+        start = time.time()
 
-        md.export_schedule(simple_schedule, "outputMens")
+        lessons30 = a_simple.andre_alocation()
+
+        elapsed_time = time.time() - start
+
+        schedule_andre = []
+        for sublist in lessons30.values():
+            for item in sublist:
+                schedule_andre.append(item)
+
+        start_metricas = time.time()
+
+        room_metric = RoomlessLessons()
+        room_metric.calculate(schedule_andre)
+
+        overbooking_metric = Overbooking()
+        overbooking_metric.calculate(schedule_andre)
+
+        underbooking_metric = Underbooking()
+        underbooking_metric.calculate(schedule_andre)
+
+        bad_classroom_metric = BadClassroom()
+        bad_classroom_metric.calculate(schedule_andre)
+
+        elapsed_time_metricas = time.time() - start_metricas
+
+        print("\n\nandre_algorithm:\n")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
+
+
+        print("Elapsed time: ", elapsed_time)
+        print("Elapsed time on metricas: ", elapsed_time_metricas)
+
+        #md.export_schedule_lessons30(andre_schedule, "Teste_andre")
+        #md.export_schedule(andre_schedule, "outputMens")
+
 
     def test6(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
@@ -93,18 +150,18 @@ class Experiments:
 
     def test7(self):
         md = Manipulate_Documents()
-        results = md.import_schedule_documents()
-        lessons = results[0]
+        results = md.import_schedule_documents(True)
+        lessons = results[1]
 
         earliest = "23:59:59"
         latest = "00:00:00"
         for lesson in lessons:
-            if lesson.start == " " or lesson.start == "": continue
-            if lesson.end == " " or lesson.end == "": continue
-            new_start = lesson.start
-            new_end = lesson.end
-            if len(lesson.start) < 8: new_start = "0" + new_start
-            if len(lesson.end) < 8: new_end = "0" + new_end
+            if lesson[0].start == " " or lesson[0].start == "": continue
+            if lesson[0].end == " " or lesson[0].end == "": continue
+            new_start = lesson[0].start
+            new_end = lesson[0].end
+            if len(lesson[0].start) < 8: new_start = "0" + new_start
+            if len(lesson[0].end) < 8: new_end = "0" + new_end
             #print(lesson.start)
             #print(lesson.end, "\n")
             print(new_start, "<", earliest)
@@ -161,15 +218,15 @@ class Experiments:
 
         g = Gaps()
         g.calculate(gang)
-        m = Movements()
-        m.calculate(gang)
+        #m = Movements()
+        #m.calculate(gang)
         u_r = UsedRooms()
         u_r.calculate(lesson1, classroom1)
         u_r.calculate(lesson2, classroom1)
         u_r.calculate(lesson3, classroom1)
 
         print(g.value)
-        print(m.value)
+        #print(m.value)
         print(u_r.value)
 
     def test13(self):
@@ -208,12 +265,62 @@ class Experiments:
         else:
             print("Não hello")
 
+    def test16(self):
+        md = Manipulate_Documents()
+        classrooms = md.import_classrooms()
+        gangs, schedule = md.import_schedule_documents(False)
+        days = set()
+        for i, tuple in enumerate(schedule):
+            #if tuple[0].start.split(":")[1] != "00" and tuple[0].start.split(":")[1] != "30":
+                #print("Here: ", i)
+                #print(tuple[0].end)
+            if tuple[0].day not in days:
+                days.add(tuple[0].day)
+                print(tuple[0].day)
+        print(len(days))
+
+    def test17(self):
+        l = [1,2,3]
+        print(l[:2])
+        print(l[2:])
+
+    def test18(self):
+        md = Manipulate_Documents()
+        classrooms = md.import_classrooms()
+        gangs, schedule, date = md.import_schedule_documents(False)
+        print(date)
+
+        max = 0
+        min = 20
+        for c in classrooms:
+            if len(c.get_characteristics()) > max: max = len(c.get_characteristics())
+            if len(c.get_characteristics()) > min: min = len(c.get_characteristics())
+
+        print(max)
+        print(min)
+        #a = Allocator(classrooms, schedule, gangs)
+        #a.get_index_of_block()
+
+    def test19(self):
+        l = {}
+        l["a"] = 1
+        l["b"] = 2
+
+        if "c" in l.keys():
+            print("hello")
+        else:
+            print("Adeus")
+
+    def test20(self):
+        string = "hello"
+        string2 = "hello"
+        print(string == string2)
 
 
 def get_tuplo():
     return (1, 2)
 
 e = Experiments()
-e.test15()
+e.test5()
 
 

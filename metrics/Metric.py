@@ -102,7 +102,9 @@ class Underbooking(Metric):
         :return:
         '''
         for lesson, classroom in schedule:
-            if lesson.number_of_enrolled_students < classroom.normal_capacity:
+
+            if classroom and lesson.number_of_enrolled_students < classroom.normal_capacity:
+
                 self.value.append(lesson.number_of_enrolled_students / classroom.normal_capacity)
             else:
                 self.value.append(0)
@@ -130,8 +132,7 @@ class BadClassroom(Metric):
         :return:
         '''
         for lesson, classroom in schedule:
-            characteristics = classroom.characteristics
-            if lesson.requested_characteristics not in characteristics:
+            if classroom and lesson.requested_characteristics not in classroom.characteristics:
                 self.value += 1
             self.total += 1
 

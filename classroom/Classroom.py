@@ -16,6 +16,8 @@ class Classroom:
         self.normal_capacity = normal_capacity
         self.exam_capacity = exam_capacity
         self.characteristics = characteristics
+        self.rarity = None
+
 
     '''
     def add_lesson(self, lesson):
@@ -41,9 +43,13 @@ class Classroom:
         :param time_blocks:
         :return:
         """
+        #print(self.schedule)
+        #print(time_blocks)
         for block in time_blocks:
             if block in self.schedule:
+                #print(False)
                 return False
+        #print(True)
         return True
 
     def set_unavailable(self, time_blocks: list) -> None:
@@ -57,9 +63,15 @@ class Classroom:
             for block in time_blocks:
                 self.schedule.add(block)
 
+    def set_rarity(self, rarity: float):
+        self.rarity = rarity
+
+    def get_rarity(self):
+        return self.rarity
+
     def __str__(self):
         return "(" + self.building + " | " + self.name + " | " + str(self.normal_capacity) + " | " + str(
-            self.exam_capacity) + ")"
+            self.exam_capacity) + " | " + str(self.get_characteristics()) + ")"
 
     def __repr__(self):
         return str(self)
