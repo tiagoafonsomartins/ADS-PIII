@@ -35,7 +35,10 @@ class Problem(IntegerProblem, ABC):
 
         '''1 inteiro e juntar classroom com lesson atual'''
         for i, classroom in enumerate(solution.variables):
-            created_schedule.append((self.lessons[i], self.classrooms[classroom]))
+            if self.classrooms[classroom].is_available(self.lessons[i].time_blocks):
+                created_schedule.append((self.lessons[i], self.classrooms[classroom]))
+            else:
+                created_schedule.append((self.lessons[i], None))
 
         for i, metric in enumerate(self.metrics):
             for j in created_schedule:

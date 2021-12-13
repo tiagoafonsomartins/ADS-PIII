@@ -13,6 +13,7 @@ class Metric(ABC):
     def __init__(self, name):
         self.name = name
         self.value = []
+        self.weight = 0.5
 
     @abstractmethod
     def calculate(self, input):
