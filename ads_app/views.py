@@ -41,7 +41,7 @@ def results(request):
             #    a.add_classroom(classroom)
 
             #schedule = a.simple_allocation()
-            output_file = open("Output_Documents\Output_Schedule.csv")
+            filename = open("/app/tmp/Exemplo_de_horario_do_1o_Semestre.csv")
             #data = output_file.read()
             #object.save()
             #context = upload.objects.all()
