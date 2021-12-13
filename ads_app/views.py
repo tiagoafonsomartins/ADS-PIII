@@ -29,7 +29,7 @@ def results(request):
             try:
                 os.mkdir(os.path.join('/app', '/tmp/'))
             except Exception:
-                
+                print("didnt create dir")
             filename = fs.save('/app/tmp', myFile)
             #app.config['UPLOAD_FOLDER'] = "/tmp/"
             #filename = send_from_directory("/tmp/", myFile)
