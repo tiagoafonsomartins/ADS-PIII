@@ -1,9 +1,13 @@
 import time
 
 from classroom import Classroom
+from jmetalpy.JMP import JMP
 from lesson import Lesson
 import numpy as np
 import datetime as dt
+
+from metrics.Metric import RoomlessLessons, Overbooking
+from swrlAPI.SWRL_API import query_result
 
 
 class Allocator:
@@ -100,11 +104,8 @@ class Allocator:
     def allocation_with_overbooking(self, overbooking_percentage: int) -> dict:
         self.sort_lessons()
         self.sort_classrooms()
-
         lessons30 = {}
         number_of_roomless_lessons = 0
-        schedule = []
-
         for lesson, c in self.schedule:
             if not c:
                 classroom_assigned = False
@@ -117,21 +118,34 @@ class Allocator:
                         self.assign_lessons30(lessons30, lesson, classroom)
                         classroom_assigned = True
                         break
-
                 if not classroom_assigned:
                     if lesson.requested_characteristics != "Não necessita de sala" and \
                             lesson.requested_characteristics != "Lab ISTA":
                         self.assign_lessons30(lessons30, lesson, None)
                         number_of_roomless_lessons += 1
-
                         # Arq 9/5 com o horário cheio
                         # Laboratórios de informática com demasiados alunos (sala com mais capacidade tem 50, turmas com inscritos que chegam aos 106)
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
-
             else:
                 self.assign_lessons30(lessons30, lesson, c)
 
-        print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+        troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
+        rll = RoomlessLessons()
+        rll.calculate(lessons30[troublesome_lessons30])
+        ob = Overbooking()
+        ob.calculate(lessons30[troublesome_lessons30])
+
+        # print("before", rll.get_total_metric_value(), ob.get_total_metric_value())
+        trouble_l = []
+        trouble_c = set()
+        for t_l, t_c in lessons30[troublesome_lessons30]:
+            trouble_l.append(t_l)
+            trouble_c.add(t_c)
+        metrics = [RoomlessLessons(), Overbooking()]
+        JMP().run_algorithm(query_result()[0], trouble_l, list(trouble_c), metrics)
+
+        # print(lessons30)
+        # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
 
     def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float,
@@ -178,7 +192,7 @@ class Allocator:
 
                 if last_lesson != (
                         lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(
-                        lesson.time_blocks):
+                    lesson.time_blocks):
                     last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
                     cur_score = 0
                     for classroom in self.classrooms:

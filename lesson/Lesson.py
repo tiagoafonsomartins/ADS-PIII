@@ -119,8 +119,7 @@ class Lesson:
         return (split[0], time_split[0], time_split[1])
 
     def __str__(self):
-        # "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"
-        return "(" + str(self.number_of_enrolled_students) + "|" + str(self.requested_characteristics) + ")"
+        return "(" + self.subject + " | " + self.day + " | " + self.start + "-" + self.end + ")"
 
     def __repr__(self):
         return str(self)

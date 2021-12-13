@@ -37,7 +37,7 @@ class JMP:
         [print(f.objectives, f.variables[:len(lessons)]) for f in front]
         return [f.variables for f in front][:len(lessons)]
 
-    def pnsgaii(problem):
+    def nsgaii(problem):
         return NSGAII(
             problem=problem,
             population_size=100,
@@ -57,8 +57,7 @@ class JMP:
             termination_criterion=StoppingByEvaluations(max_evaluations=1000)
         )
 
-
-
+'''
 md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
 gangs, l = md.import_schedule_documents(False)
 classrooms = md.import_classrooms()
@@ -67,3 +66,4 @@ metrics = [Overbooking(), Underbooking(), BadClassroom()]
 lessons = [le[0] for le in l][:100]
 
 JMP().run_algorithm("pnsgaii", lessons, classrooms, metrics)
+'''
