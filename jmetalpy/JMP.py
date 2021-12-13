@@ -1,5 +1,6 @@
 import time
 from jmetal.algorithm.multiobjective import NSGAII
+from jmetal.algorithm.multiobjective.nsgaiii import NSGAIII, UniformReferenceDirectionFactory
 from jmetal.operator.crossover import PMXCrossover
 from jmetal.operator.mutation import PermutationSwapMutation, IntegerPolynomialMutation
 from jmetal.util.solution import get_non_dominated_solutions
@@ -47,17 +48,31 @@ class JMP:
             termination_criterion=StoppingByEvaluations(max_evaluations=1000)
         )
 
-    def insgaii(problem):
-        return NSGAII(
+    def nsgaiii(problem):
+        return NSGAIII(
             problem=problem,
-            population_size=500,
-            offspring_population_size=500,
-            mutation=IntegerPolynomialMutation(probability=0.4),  # (probability=1.0 / problem.number_of_variables),
-            crossover=DrenasCrossover(),
+            population_size=100,
+            mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
+            crossover=PMXCrossover(probability=0.5),
+            reference_directions=UniformReferenceDirectionFactory(problem.number_of_objectives, n_points=99),
             termination_criterion=StoppingByEvaluations(max_evaluations=1000)
         )
 
-'''
+
+
+
+#    def insgaii(problem):
+#        return NSGAII(
+#            problem=problem,
+#            population_size=500,
+#            offspring_population_size=500,
+#            mutation=IntegerPolynomialMutation(probability=0.4),  # (probability=1.0 / problem.number_of_variables),
+#            crossover=DrenasCrossover(),
+#            termination_criterion=StoppingByEvaluations(max_evaluations=1000)
+#        )
+
+
+
 md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
 gangs, l = md.import_schedule_documents(False)
 classrooms = md.import_classrooms()
@@ -65,5 +80,4 @@ metrics = [Overbooking(), Underbooking(), BadClassroom()]
 #metrics = [Overbooking()]
 lessons = [le[0] for le in l][:100]
 
-JMP().run_algorithm("pnsgaii", lessons, classrooms, metrics)
-'''
+JMP().run_algorithm("nsgaiii", lessons, classrooms, metrics)
