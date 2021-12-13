@@ -15,7 +15,10 @@ from metrics.Metric import *
 
 
 class JMP:
-    def run_algorithm(self, alg_name: str, lessons: list, classrooms: list, metrics: list) -> list:
+
+    def run_algorithm(self, alg_name: str, lessons: list, classrooms: list, metrics: list,
+                      roomless_weight = 0.5, overbooking_weight = 0.5, underbooking_weight = 0.5, badclassroom_weight = 0.5) -> list:
+
         alg = getattr(JMP, alg_name)
 
         problem = AndreAllocProblem(lessons, classrooms, metrics)
@@ -37,13 +40,17 @@ class JMP:
         #[print(f.objectives, f.variables[:len(lessons)]) for f in front]
         #answers = [f.variables for f in front][:len(lessons)]
         #print(new_classrooms)
-        
-        new_schedule = [(lessons[i], new_classrooms[i]) for i in range(len(new_classrooms))]
-        return [f.variables for f in front][:len(lessons)]
+
+        result = self.get_best_result(front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight)
+        new_classrooms = [classroom for classroom in result.variables]
+        new_schedule = [(lessons[i], new_classrooms[i]) for i in range(len(lessons))]
+
+        return new_schedule
+        #return [f.variables for f in front][:len(lessons)]
 
 
     # The weights are in a range of 0 to 1
-    def get_best_result(self, front, roomless_weight = 0.5, overbooking_weight = 0.5, underbooking_weight = 0.5, badclassroom_weight = 0.5):
+    def get_best_result(self, front, roomless_weight, overbooking_weight, underbooking_weight, badclassroom_weight):
 
         # Making lists of each objective's value
         roomlesses    = [result.objective[0] for result in front]
@@ -76,11 +83,6 @@ class JMP:
                 chosen_proximity = new_prox
 
         return chosen_result
-
-
-
-
-
 
     def distance(self, num1: float, num2: float) -> float:
         return abs(num1 - num2)
