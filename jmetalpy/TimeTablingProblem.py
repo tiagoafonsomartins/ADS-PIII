@@ -25,7 +25,10 @@ class TimeTablingProblem(PermutationProblem):
             if i >= len(self.lessons):
                 break
             if classroom_index != -1:
-                created_schedule.append((self.lessons[i], self.classrooms[classroom_index]))
+                if self.classrooms[classroom_index].is_available(self.lessons[i].time_blocks):
+                    created_schedule.append((self.lessons[i], self.classrooms[classroom_index]))
+                else:
+                    created_schedule.append((self.lessons, None))
             else:
                 created_schedule.append((self.lessons, None))
 

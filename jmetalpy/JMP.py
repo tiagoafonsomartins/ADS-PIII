@@ -8,7 +8,6 @@ from typing import List
 import numpy as np
 import random
 
-from experimenting_scores_alloc.AndreAllocProblem import AndreAllocProblem
 from file_manager.Manipulate_Documents import Manipulate_Documents
 from jmetalpy.TimeTablingProblem import TimeTablingProblem
 from metrics.Metric import *
@@ -16,7 +15,7 @@ from metrics.Metric import *
 
 class JMP:
 
-    def run_algorithm(self, alg_list: str, lessons: list, classrooms: list, metrics: list) -> list:
+    def run_algorithm(self, alg_list: list, lessons: list, classrooms: list, metrics: list) -> list:
         for a in alg_list:
             try:
                 alg = getattr(JMP, a)
@@ -37,6 +36,9 @@ class JMP:
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
 
+        for solution in front:
+            print("solution: ", solution.objectives)
+
         result = self.get_best_result(front, metrics)
 
         new_classrooms = [classroom for classroom in result.variables]
@@ -52,22 +54,23 @@ class JMP:
         # Choosing the percentage said in the weight within the range (as in from min to max) of each objective
         objectives_scores = []
         for i in range(len(metrics)):
-            objective         = [result.objective[i] for result in front]
-            objective_lims   = (min(objective), max(objective))
-            objectives_scores.append((objective_lims[1] - objective_lims[0]) * metrics[i] + objective_lims[0])
+            objective      = [result.objectives[i] for result in front]
+            objective_lims = (min(objective), max(objective))
+            objectives_scores.append((objective_lims[1] - objective_lims[0]) * (1-metrics[i].weight) + objective_lims[0])
 
+        
         # Choosing which result is closer on average of
         chosen_result = None
         chosen_proximity = float('inf')
         for result in front:
             new_prox = 0
             for i in range(len(objectives_scores)):
-                new_prox += self.distance(result.objective[i], objectives_scores[i])
+                new_prox += self.distance(result.objectives[i], objectives_scores[i])
 
             if new_prox < chosen_proximity:
                 chosen_result = result
                 chosen_proximity = new_prox
-
+        print(chosen_result.objectives)
         return chosen_result
 
     # The weights are in a range of 0 to 1
@@ -115,7 +118,7 @@ class JMP:
             offspring_population_size=100,
             mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
             crossover=PMXCrossover(probability=0.5),
-            termination_criterion=StoppingByEvaluations(max_evaluations=10) # TODO
+            termination_criterion=StoppingByEvaluations(max_evaluations=10000)
         )
 
     def floatnsgaii(problem):
@@ -155,18 +158,9 @@ def testar():
     md = Manipulate_Documents("../input_documents", "../output_documents","../input_classrooms")
     classrooms = md.import_classrooms()
     gangs, l = md.import_schedule_documents("Exemplo_de_horario_segundo_semestre.csv", False)
-    metrics = [Overbooking(), Underbooking(), BadClassroom()]
-    #metrics = [Overbooking()]
-    lessons = [le[0] for le in l][:100]
-
-
-def testar1():
-    md = Manipulate_Documents("../input_documents", "../output_documents", "../input_classrooms")
-    gangs, l = md.import_schedule_documents(False)
-    classrooms = md.import_classrooms()
     metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-    # metrics = [Overbooking()]
-    lessons = [le[0] for le in l][:100]
+    #metrics = [Overbooking()]
+    lessons = [le[0] for le in l][5000:5040]
 
     result = JMP().run_algorithm("nsgaii", lessons, classrooms, metrics)
     print(result)
