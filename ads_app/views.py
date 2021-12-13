@@ -26,8 +26,10 @@ def results(request):
             manipulate_docs = Manipulate_Documents()
             lessons, ganga  = manipulate_docs.import_schedule_documents()
             classes = manipulate_docs.import_classrooms()
-            
-            os.mkdir(os.path.join('/app', '/tmp/'))
+            try:
+                os.mkdir(os.path.join('/app', '/tmp/'))
+            except Exception:
+                print("couldnt create folder")
             filename = fs.save('/app/tmp', myFile)
             #app.config['UPLOAD_FOLDER'] = "/tmp/"
             #filename = send_from_directory("/tmp/", myFile)
