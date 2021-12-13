@@ -68,12 +68,38 @@ class Experiments:
         s_copy = schedule.copy()
         a_simple = Allocator(c_copy, s_copy, g_copy)
 
+        start = time.time()
+
         simple_schedule = a_simple.simple_allocation()
+
+        elapsed_time = time.time() - start
+
+        room_metric = RoomlessLessons()
+        room_metric.calculate(simple_schedule)
+
+        overbooking_metric = Overbooking()
+        overbooking_metric.calculate(simple_schedule)
+
+        underbooking_metric = Underbooking()
+        underbooking_metric.calculate(simple_schedule)
+
+        bad_classroom_metric = BadClassroom()
+        bad_classroom_metric.calculate(simple_schedule)
+
+        print("\nallocation_with_overbooking:\n")
+        print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
+        print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
+        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
+        print("Elapsed time: ", elapsed_time, "\n\n")
+
         a_simple.remove_all_allocations()
 
         start = time.time()
 
-        allocation_with_overbooking = a_simple.allocation_with_overbooking(10)
+        allocation_with_overbooking = a_simple.allocation_with_overbooking(30)
+
+        elapsed_time = time.time() - start
 
         schedule_nuno = []
         for sublist in allocation_with_overbooking.values():
@@ -92,13 +118,11 @@ class Experiments:
         bad_classroom_metric = BadClassroom()
         bad_classroom_metric.calculate(schedule_nuno)
 
-        print("\n\nallocation_with_overbooking:\n")
+        print("\nallocation_with_overbooking:\n")
         print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")
         print("Overbooking Percentage:", round(overbooking_metric.get_total_metric_value(), 2) * 100, "%")
         print("Underbooking Percentage:", round(underbooking_metric.get_total_metric_value(), 2) * 100, "%")
         print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage(), 2) * 100, "%")
-
-        elapsed_time = time.time() - start
         print("Elapsed time: ", elapsed_time)
 
 

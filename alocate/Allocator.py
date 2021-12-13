@@ -127,7 +127,7 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
             else:
                 self.assign_lessons30(lessons30, lesson, c)
-
+        '''
         troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
         rll = RoomlessLessons()
         rll.calculate(lessons30[troublesome_lessons30])
@@ -142,7 +142,7 @@ class Allocator:
         metrics = [RoomlessLessons(), Overbooking()]
         JMP().run_algorithm(query_result()[0], trouble_l, list(trouble_c), metrics)
         # print(lessons30)
-
+        '''
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
 
