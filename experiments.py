@@ -112,7 +112,8 @@ class Experiments:
         print("Room Movement Percentage:", round(room_movements_metric.get_percentage() * 100, 2), "%")
         print("Building movement Percentage:", round(building_movements_metric.get_percentage() * 100, 2), "%")
         print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
-        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2), "%")
+        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2),
+              "%")
         print("Elapsed time: ", elapsed_time, "\n")
 
         a_simple.remove_all_allocations()
@@ -164,9 +165,9 @@ class Experiments:
         print("Room Movement Percentage:", round(room_movements_metric.get_percentage() * 100, 2), "%")
         print("Building movement Percentage:", round(building_movements_metric.get_percentage() * 100, 2), "%")
         print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
-        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2), "%")
+        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2),
+              "%")
         print("Elapsed time: ", elapsed_time, "\n")
-
 
     def test6(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
@@ -176,10 +177,8 @@ class Experiments:
                                    "Good, Not stinky, Very good")))
         print(sys.getsizeof(""))
 
-
     def get_earliest(self):
         pass
-
 
     def test7(self):
         md = Manipulate_Documents()
@@ -207,18 +206,15 @@ class Experiments:
         print("earliest: ", earliest)
         print("latest: ", latest)
 
-
     def test8(self):
         string1 = "a"
         string2 = "b"
         print(string1 < string2)
 
-
     def test9(self):
         a, b = get_tuplo()
         print(a)
         print(b)
-
 
     def test10(self):
         ngosta = getattr(Metric, 'OverBooking')
@@ -227,13 +223,11 @@ class Experiments:
         print(atr.value)
         print(atr.name)
 
-
     def test11(self):
         metrics = [Metric.Overbooking(), Metric.Gaps()]
 
         for metric in [m for m in metrics if m.m_type == "lesson"]:
             metric.calculate()
-
 
     def test12(self):
         lesson1 = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",
@@ -265,7 +259,6 @@ class Experiments:
         # print(m.value)
         print(u_r.value)
 
-
     def test13(self):
         dix = {}
         for i in range(10000000):
@@ -280,14 +273,12 @@ class Experiments:
 
         print("Elapsed time: ", elapsed_time)
 
-
     class TestYa:
         def __init__(self, i):
             self.i = i
 
         def __repr__(self):
             return str(self.i)
-
 
     def test14(self):
         l = []
@@ -298,14 +289,12 @@ class Experiments:
 
         print(l)
 
-
     def test15(self):
         cena = None
         if cena and cena + 1 == 2:
             print("hello")
         else:
             print("Não hello")
-
 
     def test16(self):
         md = Manipulate_Documents()
@@ -321,12 +310,10 @@ class Experiments:
                 print(tuple[0].day)
         print(len(days))
 
-
     def test17(self):
         l = [1, 2, 3]
         print(l[:2])
         print(l[2:])
-
 
     def test18(self):
         md = Manipulate_Documents()
@@ -345,7 +332,6 @@ class Experiments:
         # a = Allocator(classrooms, schedule, gangs)
         # a.get_index_of_block()
 
-
     def test19(self):
         l = {}
         l["a"] = 1
@@ -355,7 +341,6 @@ class Experiments:
             print("hello")
         else:
             print("Adeus")
-
 
     def test20(self):
         # andre_allocation
@@ -426,7 +411,4 @@ def get_tuplo():
 
 
 e = Experiments()
-e.test5()
-
-
-
+e.test20()
