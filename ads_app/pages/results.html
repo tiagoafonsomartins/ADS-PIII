@@ -47,9 +47,11 @@
   <link rel="stylesheet" href="{% static 'ads_app/styles.css' %}">
 </head>
 	<body>
-	
+
+	 <form class="content" action="results" method="POST" enctype="multipart/form-data">{% csrf_token %}
+	<a href="\tmp\Input_Documents">Download!</a>
 	<label for="algorithm" class="content">Choose the best algorithm for download:</label>
-<select name="algorithm" id="algorithm"  >
+<select name="algorithm" id="algorithm">
   <option value="volvo">Volvo</option>
   <option value="saab">Saab</option>
   <option value="opel">Opel</option>
@@ -84,6 +86,8 @@
 		
 
 </script>
+
+</form>
 		{% load static %}
 		<link rel="stylesheet" href="{% static 'ads_app/styles.css' %}">
 	<div class="sidenav">

@@ -21,7 +21,7 @@ def results(request):
     if request.method == 'POST' and request.FILES['filename']:
             myFile = request.FILES['filename']
             fs = FileSystemStorage()
-            filename = fs.save('Input_Documents', myFile)
+            filename = fs.save('\tmp\Input_Documents', myFile)
             #uploaded_file_url = fs.url(filename)
             manipulate_docs = Manipulate_Documents()
             lessons, ganga  = manipulate_docs.import_schedule_documents()
@@ -49,7 +49,7 @@ def results(request):
             context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2" : "50%"},{"Metric": "2", "Algorithm - 1": "10.5%", "Algorithm - 2" : "99.7%"}]
             context = json.dumps(context)
             
-            return render(request, 'results.html', {"context": context,"table_headers": headers})
+            return render(request, 'results.html', {"context": context,"table_headers": headers, "myFile": filename})
     return render(request, 'index.html')
     #return HttpResponse(s.nice())
     
