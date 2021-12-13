@@ -27,9 +27,10 @@ def results(request):
             lessons, ganga  = manipulate_docs.import_schedule_documents()
             classes = manipulate_docs.import_classrooms()
             
-            
+            os.mkdir(os.path.join('/app', '/tmp/'))
+            filename = fs.save('/app/tmp', myFile)
             #app.config['UPLOAD_FOLDER'] = "/tmp/"
-            filename = send_from_directory("/tmp/", myFile)
+            #filename = send_from_directory("/tmp/", myFile)
             a = Allocator(classes,lessons,ganga)
             a.lessons = [l for l in a.lessons if l.start]
             '''for lesson in lessons:
