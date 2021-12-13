@@ -29,7 +29,7 @@ def results(request):
             try:
                 os.mkdir(os.path.join('/app', '/tmp/'))
             except Exception:
-                print("couldnt create folder")
+                
             filename = fs.save('/app/tmp', myFile)
             #app.config['UPLOAD_FOLDER'] = "/tmp/"
             #filename = send_from_directory("/tmp/", myFile)
@@ -41,7 +41,7 @@ def results(request):
             #    a.add_classroom(classroom)
 
             #schedule = a.simple_allocation()
-            filename = open("/app/tmp/Exemplo_de_horario_do_1o_Semestre.csv")
+            filename = open("/app/tmp/Exemplo_de_horario_do_1o_Semestre.csv", "w")
             #data = output_file.read()
             #object.save()
             #context = upload.objects.all()
