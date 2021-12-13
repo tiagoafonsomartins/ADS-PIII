@@ -131,7 +131,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '/ads_app/static/ads_apps'),  # Here you tell django to look for a folder named 'assets'
 ]
 MEDIA_URL = '/Output_Documents/'
-MEDIA_ROOT = os.path.join(BASE_DIR, '/Output_Documents/')
+MEDIA_ROOT = os.path.join(BASE_DIR, '/app/tmp/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
