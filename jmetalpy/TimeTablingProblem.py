@@ -12,7 +12,8 @@ class TimeTablingProblem(PermutationProblem):
         self.metrics = metrics
 
         self.number_of_objectives = len(metrics)
-        self.number_of_variables = max(len(self.lessons), len(self.lessons))
+        self.number_of_variables = max(len(self.lessons), len(self.classrooms))
+        #self.number_of_variables = len(self.classrooms)
         self.number_of_constraints = 0
 
         self.obj_directions = [m.objective for m in metrics] # metrics[0].objective
@@ -25,6 +26,7 @@ class TimeTablingProblem(PermutationProblem):
             if i >= len(self.lessons):
                 break
             if classroom_index != -1:
+                #print("c:", classroom_index, " i:", i)
                 if self.classrooms[classroom_index].is_available(self.lessons[i].time_blocks):
                     created_schedule.append((self.lessons[i], self.classrooms[classroom_index]))
                 else:
