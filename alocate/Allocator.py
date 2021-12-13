@@ -138,26 +138,26 @@ class Allocator:
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return schedule
 
-    def get_classroom_score(self, lesson: Lesson, classroom: Classroom):
+    def get_classroom_score(self, lesson: Lesson, classroom: Classroom, characs: float, len_characs: float, len_characs_div: float, rarity: float, overbooking: float, underbooking: float):
         #if not classroom.is_available(lesson.generate_time_blocks()): return 0
 
         score = 0
 
-        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += 100
-        score += (20 - len(classroom.get_characteristics())) / 4
-        score += (1 - classroom.get_rarity()) * 10
+        if lesson.get_requested_characteristics() in classroom.get_characteristics(): score += characs
+        score += (len_characs - len(classroom.get_characteristics())) / len_characs_div
+        score += (1 - classroom.get_rarity()) * rarity
         if lesson.number_of_enrolled_students > classroom.normal_capacity:
-            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * 50
+            score += (classroom.normal_capacity / lesson.number_of_enrolled_students) * overbooking
         else:
-            score += 50
+            score += overbooking
         if lesson.number_of_enrolled_students < classroom.normal_capacity:
-            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * 50
+            score += (lesson.number_of_enrolled_students / classroom.normal_capacity) * underbooking
         else:
-            score += 50
+            score += underbooking
 
         return score
 
-    def andre_alocation(self) -> list:
+    def andre_alocation(self, characs = 100, len_characs = 20, len_characs_div = 4, rarity = 10, overbooking = 50, underbooking = 50) -> list:
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
                 and the same lessons in different weeks
@@ -177,26 +177,15 @@ class Allocator:
                 if lesson.requested_characteristics == "Não necessita de sala":
                     self.assign_lessons30(lessons30, lesson, None)
                     continue
-<<<<<<< HEAD
-                if last_lesson != (
-                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(
-                    lesson.time_blocks):
-                    # available_classrooms = []
-                    # for classroom in self.classrooms:
-                    # if classroom.is_available(lesson.time_blocks[0]):
-                    # available_classrooms.append(classroom)
-=======
->>>>>>> 170d759c6833bea6911227b16df25cd2bd3357c3
 
-                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (not (cur_classroom.is_available(lesson.time_blocks))):
+                if last_lesson != (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or not cur_classroom.is_available(lesson.time_blocks):
                     last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
                     cur_score = 0
                     for classroom in self.classrooms:
                         if not classroom.is_available(lesson.time_blocks):
                             continue
-                        new_score = self.get_classroom_score(lesson, classroom)
+                        new_score = self.get_classroom_score(lesson, classroom,)
                         if new_score > cur_score:
-
                             cur_classroom = classroom
                             cur_score = new_score
 
