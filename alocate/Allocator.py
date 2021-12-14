@@ -1,4 +1,7 @@
 import time
+from operator import itemgetter
+
+from cytoolz import take
 
 from classroom import Classroom
 from jmetalpy.JMP import JMP
@@ -103,46 +106,60 @@ class Allocator:
             else:
                 self.assign_lessons30(lessons30, lesson, c)
 
-        troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
-
-        rll = RoomlessLessons()
-        rll.calculate(lessons30[troublesome_lessons30])
-
-        ob = Overbooking()
-        ob.calculate(lessons30[troublesome_lessons30])
-
-        ub = Underbooking()
-        ub.calculate(lessons30[troublesome_lessons30])
-
-        bc = BadClassroom()
-        bc.calculate(lessons30[troublesome_lessons30])
-
-        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-              ", BadClassroom:", round(bc.get_percentage(), 2))
-
-        trouble_l = []
-        trouble_c = set()
-        for t_l, t_c in lessons30[troublesome_lessons30]:
-            trouble_l.append(t_l)
-            if t_c is not None:
-                trouble_c.add(t_c)
         metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-        result = JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
+        queryresult = query_result(len(metrics))
+        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]), reverse=True)[:5]
+        time_blocks_afected = set()
+        for time_blocks in lessons30.keys():
+            lesson_time_blocks = lessons30[time_blocks][0][0].generate_time_blocks()
+            for i in lesson_time_blocks:
+                for j in troublesome_lessons30_key_list:
+                    if i in list(lessons30.keys()) and j in lesson_time_blocks:
+                        time_blocks_afected.add(i)
+        print(time_blocks_afected)
+        for tba in time_blocks_afected:
 
-        rll.reset_metric()
-        ob.reset_metric()
-        ub.reset_metric()
-        bc.reset_metric()
+            rll = RoomlessLessons()
+            rll.calculate(lessons30[tba])
 
-        rll.calculate(result)
-        ob.calculate(result)
-        ub.calculate(result)
-        bc.calculate(result)
+            ob = Overbooking()
+            ob.calculate(lessons30[tba])
 
-        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-              ", BadClassroom:", round(bc.get_percentage(), 2))
+            ub = Underbooking()
+            ub.calculate(lessons30[tba])
+
+            bc = BadClassroom()
+            bc.calculate(lessons30[tba])
+
+            print("before: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
+                  round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
+                  ", BadClassroom:", round(bc.get_percentage(), 2))
+
+            trouble_l = []
+            trouble_c = set()
+            for t_l, t_c in lessons30[tba]:
+                trouble_l.append(t_l)
+                if t_c is not None:
+                    trouble_c.add(t_c)
+
+            result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), metrics)
+
+            lessons30[tba] = result
+
+            rll.reset_metric()
+            ob.reset_metric()
+            ub.reset_metric()
+            bc.reset_metric()
+
+            rll.calculate(result)
+            ob.calculate(result)
+            ub.calculate(result)
+            bc.calculate(result)
+
+            print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
+                  round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
+                  ", BadClassroom:", round(bc.get_percentage(), 2))
+
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
@@ -167,7 +184,7 @@ class Allocator:
         return score
 
     def andre_alocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
-                        underbooking=50, use_JMP = True) -> dict:
+                        underbooking=50, use_JMP=True) -> dict:
 
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
@@ -190,7 +207,8 @@ class Allocator:
                     continue
 
                 if last_lesson != (
-                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (cur_classroom and not cur_classroom.is_available(lesson.time_blocks)):
+                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (
+                        cur_classroom and not cur_classroom.is_available(lesson.time_blocks)):
                     last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
                     cur_score = 0
                     for classroom in self.classrooms:
@@ -216,7 +234,7 @@ class Allocator:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, c)
 
-        #print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+        # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
         # TODO JMetalPy
         count = 0
@@ -235,8 +253,8 @@ class Allocator:
                 bad_classroom_metric.calculate(half_hour)
 
                 if room_metric.get_percentage() > 0.2 or overbooking_metric.get_percentage() > 0.4 or bad_classroom_metric.get_percentage() > 0.15:
-                    #classrooms = []
-                    #for classroom in self.classrooms:
+                    # classrooms = []
+                    # for classroom in self.classrooms:
                     #    if classroom.is_available([block]):
                     #        classrooms.append(classroom)
                     classrooms = [c for c in self.classrooms if c.is_available([block])]
@@ -244,7 +262,9 @@ class Allocator:
 
                     if len(lessons) >= 3:
                         count += 1
-                        new_schedule = JMP().run_algorithm(["nsgaii"], lessons, classrooms, [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()])
+                        new_schedule = JMP().run_algorithm(["nsgaii"], lessons, classrooms,
+                                                           [RoomlessLessons(), Overbooking(), Underbooking(),
+                                                            BadClassroom()])
                         lessons30[block] = new_schedule
 
         print("Count = ", count)
