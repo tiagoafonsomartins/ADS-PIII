@@ -9,7 +9,7 @@ import numpy as np
 import datetime as dt
 from metrics.Metric import RoomlessLessons, Overbooking, Underbooking, BadClassroom
 from swrlAPI.SWRL_API import query_result
-
+import copy
 
 class Allocator:
 
@@ -229,7 +229,18 @@ class Allocator:
                     #for classroom in self.classrooms:
                     #    if classroom.is_available([block]):
                     #        classrooms.append(classroom)
-                    classrooms = [c for c in self.classrooms if c.is_available([block])]
+
+                    temp_classrooms = [item[1] for item in half_hour]
+                    classrooms = copy.deepcopy(temp_classrooms)
+
+                    for i in range(len(half_hour)):
+                        if classrooms[i] is not None:
+                            classrooms[i].set_available(half_hour[i][0].time_blocks)
+
+                    classrooms = [classroom for classroom in classrooms if classroom is not None]
+
+                    classrooms.extend([self.classrooms[i] for i in range(len(self.classrooms))
+                                       if self.classrooms[i] not in temp_classrooms and self.classrooms[i].is_available([block])])
                     lessons = [item[0] for item in half_hour]
 
                     if len(lessons) >= 3:
@@ -241,6 +252,9 @@ class Allocator:
                                                    underbooking_metric.get_percentage(), bad_classroom_metric.get_percentage()]
 
                         if self.new_schedule_is_better(old_metric_results, JMP_metric_results, metrics, max(len(lessons), len(classrooms))):
+                            print("old: ", old_metric_results)
+                            print("new: ", JMP_metric_results)
+                            print("switching")
                             lessons30[block] = new_schedule
 
         print("Count = ", count)
