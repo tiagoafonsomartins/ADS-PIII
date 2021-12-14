@@ -108,15 +108,22 @@ class Allocator:
 
         metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
         queryresult = query_result(len(metrics))
-        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]), reverse=True)[:5]
+        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
         time_blocks_afected = set()
-        for time_blocks in lessons30.keys():
-            lesson_time_blocks = lessons30[time_blocks][0][0].generate_time_blocks()
-            for i in lesson_time_blocks:
+
+        # retirar chech das lessons30
+        # tentar usar o score para comparação
+        # meter métricas como atributo
+
+        for time_block in lessons30.keys():
+            lesson_time_block = lessons30[time_block][0][0].generate_time_blocks()
+            for i in lesson_time_block:
                 for j in troublesome_lessons30_key_list:
-                    if i in list(lessons30.keys()) and j in lesson_time_blocks:
+                    if i in list(lessons30.keys()) and j in lesson_time_block:
                         time_blocks_afected.add(i)
-        print(time_blocks_afected)
+
+        # print(time_blocks_afected)
+
         for tba in time_blocks_afected:
 
             rll = RoomlessLessons()
@@ -142,24 +149,24 @@ class Allocator:
                 if t_c is not None:
                     trouble_c.add(t_c)
 
-            result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), metrics)
+            print("len less", len(trouble_l))
+            if len(trouble_l) > 3:
+                result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), metrics)
+                # lessons30[tba] = result
 
-            lessons30[tba] = result
+                rll.reset_metric()
+                ob.reset_metric()
+                ub.reset_metric()
+                bc.reset_metric()
 
-            rll.reset_metric()
-            ob.reset_metric()
-            ub.reset_metric()
-            bc.reset_metric()
+                rll.calculate(result)
+                ob.calculate(result)
+                ub.calculate(result)
+                bc.calculate(result)
 
-            rll.calculate(result)
-            ob.calculate(result)
-            ub.calculate(result)
-            bc.calculate(result)
-
-            print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-                  round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-                  ", BadClassroom:", round(bc.get_percentage(), 2))
-
+                print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
+                      round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
+                      ", BadClassroom:", round(bc.get_percentage(), 2))
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30

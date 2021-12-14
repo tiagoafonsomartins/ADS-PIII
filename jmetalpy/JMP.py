@@ -187,7 +187,7 @@ class JMP:
     def nsgaiii(problem):
         return NSGAIII(
             problem=problem,
-            population_size=1000,
+            population_size=100,
             mutation=PermutationSwapMutation(probability=0.5),  # (probability=1.0 / problem.number_of_variables),
             crossover=PMXCrossover(probability=0.5),
             reference_directions=UniformReferenceDirectionFactory(problem.number_of_objectives, n_points=99),
