@@ -1,7 +1,6 @@
 import datetime
 from abc import ABC, abstractmethod
 from jmetal.core.problem import Problem
-from gang import Gang
 from classroom import Classroom
 from lesson import Lesson
 import time

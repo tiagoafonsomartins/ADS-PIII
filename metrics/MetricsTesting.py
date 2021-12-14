@@ -1,7 +1,6 @@
 from metrics.Metric import *
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
-from gang.Gang import Gang
 
 
 def test_gaps():

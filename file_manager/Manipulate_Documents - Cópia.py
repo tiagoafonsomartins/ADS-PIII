@@ -83,8 +83,6 @@ class Manipulate_Documents:
         for classroom in self.classroom_list:
             classroom_dict[classroom.name] = classroom
         schedule = []
-        gang_list = []
-        create_gang = True
         
         csvreader = csv.reader(io.StringIO(file_name.read().decode('utf-8')))
         next(csvreader)
@@ -98,19 +96,8 @@ class Manipulate_Documents:
                 else:
                     classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
                     schedule.append((lesson, classroom_dict[row[10]]))
-
-                for gang in gang_list:
-                    if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
-                        gang.add_lesson(lesson)
-                        create_gang = False
-                        break
-                if create_gang:
-                    gang_list.append(Gang(lesson.gang, lesson.course))
-                    gang_list[-1].add_lesson(lesson)
-                else:
-                    create_gang = True
         file_name.close()
-        return gang_list, schedule
+        return schedule
 
     def import_classrooms(self):
         """

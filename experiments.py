@@ -2,14 +2,11 @@ import sys
 import time
 
 import csv
-
-from gang.Gang import Gang
 from metrics import Metric
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
 from classroom.Classroom import Classroom
 from file_manager.Manipulate_Documents import Manipulate_Documents
-from alocate.Allocator import Allocator
 from lesson.Lesson import Lesson
 import random
 
@@ -21,7 +18,7 @@ class Experiments:
     def test5(self):
         md = Manipulate_Documents()
         classrooms = md.import_classrooms()
-        gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
+        schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
 
         # print(rarity_dict)
         # print(lessons)

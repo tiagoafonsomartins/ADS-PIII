@@ -35,7 +35,7 @@ def results(request):
         mp = Manipulate_Documents()
         myFile = request.FILES['filename']
         myFile.seek(0)
-        gang_list, schedule = mp.import_schedule_documents(myFile, False)
+        schedule = mp.import_schedule_documents(myFile, False)
         metrics_chosen = request.POST.getlist('metrics')
         metrics = []
         metrics_jmp_compatible = []
@@ -122,16 +122,16 @@ def results(request):
         
         #metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
         c_copy = copy.deepcopy(classrooms)
-        g_copy = copy.deepcopy(gang_list)
+
         s_copy = copy.deepcopy(schedule)
         a_simple = simple_allocation(s_copy, c_copy)
         c_copy = copy.deepcopy(classrooms)
-        g_copy = copy.deepcopy(gang_list)
+
         s_copy = copy.deepcopy(schedule)
 
         #a_weekly = weekly_allocation(s_copy, c_copy)
         c_copy = copy.deepcopy(classrooms)
-        g_copy = copy.deepcopy(gang_list)
+
         s_copy = copy.deepcopy(schedule)
         a_jmp = overbooking_with_jmp_algorithm(30, s_copy, c_copy, metrics_jmp_compatible)
 
@@ -251,16 +251,11 @@ def results(request):
             for item in sublist:
                 schedule_nuno.append(item)
 
-        for m in metrics_jmp_compatible:
+        for m in metrics:
             m.calculate(schedule_nuno)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(round(m.get_percentage() * 100, 2))
         #"Gaps", "RoomMovements", "BuildingMovements", "UsedRooms", "ClassroomInconsistency"
-        results_metrics["Algorithm - Overbooking"].append(0)
-        results_metrics["Algorithm - Overbooking"].append(0)
-        results_metrics["Algorithm - Overbooking"].append(0)
-        results_metrics["Algorithm - Overbooking"].append(0)
-        results_metrics["Algorithm - Overbooking"].append(0)
         #room_metric = RoomlessLessons()
         #room_metric.calculate(schedule_nuno)
         #
