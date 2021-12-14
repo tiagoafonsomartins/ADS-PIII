@@ -8,6 +8,8 @@ from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
 import datetime as dt
 import time
+from django.core.files.uploadedfile import TemporaryUploadedFile
+import io
 
 
 class Manipulate_Documents:
@@ -27,8 +29,51 @@ class Manipulate_Documents:
         self.input_classrooms = input_classrooms
 
         self.classroom_list = []
-
-    def import_schedule_documents(self, file_name: str, use_classrooms: bool):
+    #def import_schedule_documents(self, file_name: str, use_classrooms: bool):
+    #    """
+    #    Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
+    #
+    #    :return: a list with a list Classroom objects and a list of Gang objects
+    #    """
+    #    classroom_dict = {}
+    #    for classroom in self.classroom_list:
+    #        classroom_dict[classroom.name] = classroom
+    #    schedule = []
+    #    gang_list = []
+    #    create_gang = True
+    #
+    #    for root, dirs, files in os.walk(self.input_path):
+    #        for file in files:
+    #            if file.endswith(tuple(self.ext)) and file == file_name:
+    #                file_to_open = os.path.join(self.input_path, file)
+    #                f = open(file_to_open, 'r', encoding="utf8")
+    #                csvreader = csv.reader(f)
+    #                next(csvreader)
+    #                for row in csvreader:
+    #                    if row[5] and row[6] and row[8]:
+    #                        lesson = Lesson(row[0], row[1], row[2], row[3],
+    #                                        int(row[4]), row[5], row[6], row[7], row[8], row[9])
+    #
+    #                        if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+    #                            schedule.append((lesson, None))
+    #                        else:
+    #                            classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+    #                            schedule.append((lesson, classroom_dict[row[10]]))
+    #
+    #                        for gang in gang_list:
+    #                            if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
+    #                                gang.add_lesson(lesson)
+    #                                create_gang = False
+    #                                break
+    #                        if create_gang:
+    #                            gang_list.append(Gang(lesson.gang, lesson.course))
+    #                            gang_list[-1].add_lesson(lesson)
+    #                        else:
+    #                            create_gang = True
+    #                f.close()
+    #    return gang_list, schedule
+        
+    def import_schedule_documents(self, file_name: TemporaryUploadedFile, use_classrooms: bool):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
@@ -40,36 +85,31 @@ class Manipulate_Documents:
         schedule = []
         gang_list = []
         create_gang = True
+        
+        csvreader = csv.reader(io.StringIO(file_name.read().decode('utf-8')))
+        next(csvreader)
+        for row in csvreader:
+            if row[5] and row[6] and row[8]:
+                lesson = Lesson(row[0], row[1], row[2], row[3],
+                                int(row[4]), row[5], row[6], row[7], row[8], row[9])
 
-        for root, dirs, files in os.walk(self.input_path):
-            for file in files:
-                if file.endswith(tuple(self.ext)) and file == file_name:
-                    file_to_open = os.path.join(self.input_path, file)
-                    f = open(file_to_open, 'r', encoding="utf8")
-                    csvreader = csv.reader(f)
-                    next(csvreader)
-                    for row in csvreader:
-                        if row[5] and row[6] and row[8]:
-                            lesson = Lesson(row[0], row[1], row[2], row[3],
-                                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
+                if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+                    schedule.append((lesson, None))
+                else:
+                    classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+                    schedule.append((lesson, classroom_dict[row[10]]))
 
-                            if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
-                                schedule.append((lesson, None))
-                            else:
-                                classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
-                                schedule.append((lesson, classroom_dict[row[10]]))
-
-                            for gang in gang_list:
-                                if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
-                                    gang.add_lesson(lesson)
-                                    create_gang = False
-                                    break
-                            if create_gang:
-                                gang_list.append(Gang(lesson.gang, lesson.course))
-                                gang_list[-1].add_lesson(lesson)
-                            else:
-                                create_gang = True
-                    f.close()
+                for gang in gang_list:
+                    if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
+                        gang.add_lesson(lesson)
+                        create_gang = False
+                        break
+                if create_gang:
+                    gang_list.append(Gang(lesson.gang, lesson.course))
+                    gang_list[-1].add_lesson(lesson)
+                else:
+                    create_gang = True
+        file_name.close()
         return gang_list, schedule
 
     def import_classrooms(self):
@@ -112,7 +152,7 @@ class Manipulate_Documents:
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
-        Export to a csv file the schedule generated with tuples of Lesson and Classroom
+        Export to a csv file the list of Lesson objects
 
         :param schedule: it's a list of tuples like this (Lesson, Classroom)
         :param file_name:
@@ -184,36 +224,6 @@ class Manipulate_Documents:
         except EnvironmentError as e:  # parent of IOError, OSError *and* WindowsError where available
             print("Something went wrong with creating a file to export the results into")
             print(e)
-
-    def export_schedule_str(self, schedule: list) -> str:
-        """
-        Export to a list the schedule generated with tuples of Lesson and Classroom
-
-        :param schedule:
-        :return:
-        """
-
-        rows = []
-
-        # write first row with headers
-        header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana",
-                  "Início",
-                  "Fim", "Dia", "Características da sala pedida para a aula",
-                  "Sala de aula", "Lotação", "Características reais da sala"]
-        rows.append(header)
-
-        # write lessons and classrooms to rows list
-        for tuple in schedule:
-            # make row initially with the lesson infos
-            row = tuple[0].get_row()
-            if tuple[1] is not None:
-                # add the classroom
-                row +=  "," + tuple[1].name + "," + tuple[1].normal_capacity + "," + \
-                        "\"" + self.list_to_comma_sep_string(tuple[1].characteristics) + "\""
-            rows.append(row)
-        print(rows)
-        return rows
-
 
     def list_to_comma_sep_string(self, my_list: list) -> str:
         """
