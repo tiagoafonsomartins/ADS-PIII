@@ -90,7 +90,7 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
                 if len(lessons) >= 3:
                     count += 1
 
-                    new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
+                    new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
 
                     old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
                                           underbooking_metric.get_percentage(),
@@ -104,5 +104,4 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                         lessons30[block] = new_schedule
 
-    print("Count = ", count)
     return lessons30
