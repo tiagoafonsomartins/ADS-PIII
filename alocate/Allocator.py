@@ -112,14 +112,6 @@ class Allocator:
 
         # retirar check das lessons30
         # tentar usar o score para comparação
-        '''
-        for time_block in lessons30.keys():
-            lesson_time_block = lessons30[time_block][0][0].generate_time_blocks()
-            for i in lesson_time_block:
-                for j in troublesome_lessons30_key_list:
-                    if i in list(lessons30.keys()) and j in lesson_time_block:
-                        time_blocks_afected.add(i)
-        '''
 
         for tbl in troublesome_lessons30_key_list:
             for m in self.metrics:
@@ -262,7 +254,7 @@ class Allocator:
         old_solution.objectives = old_metric_results
 
         front = [new_solution, old_solution]
-        return JMP().get_best_result(self, front, metrics) == new_solution
+        return JMP().get_best_result(front, metrics) == new_solution
 
 
     def assign_lessons30(self, lessons30, lesson, classroom):
