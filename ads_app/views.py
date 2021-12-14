@@ -7,8 +7,11 @@ from operator import itemgetter
 from cytoolz import take
 
 from django.http import HttpResponse, FileResponse
+
+from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
+from alocate.simple_allocation import simple_allocation
+from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
-from alocate.Allocator import *
 from metrics import Metric
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
@@ -122,20 +125,28 @@ def results(request):
         c_copy = copy.deepcopy(classrooms)
         g_copy = copy.deepcopy(gang_list)
         s_copy = copy.deepcopy(schedule)
-        a_simple = Allocator(c_copy, s_copy, g_copy, metrics)
-        a_jmp = Allocator(c_copy, s_copy, g_copy, metrics_jmp_compatible)
+        a_simple = simple_allocation(s_copy, c_copy)
+        c_copy = copy.deepcopy(classrooms)
+        g_copy = copy.deepcopy(gang_list)
+        s_copy = copy.deepcopy(schedule)
+
+        #a_weekly = weekly_allocation(s_copy, c_copy)
+        c_copy = copy.deepcopy(classrooms)
+        g_copy = copy.deepcopy(gang_list)
+        s_copy = copy.deepcopy(schedule)
+        a_jmp = overbooking_with_jmp_algorithm(30, s_copy, c_copy, metrics_jmp_compatible)
 
         print("\nsimple_allocation:\n")
 
         start = time.time()
 
-        simple_schedule = a_simple.simple_allocation()
+        #simple_schedule = a_simple.simple_allocation()
 
         elapsed_time = time.time() - start
         
         results_metrics = {"Metric":[],"Algorithm - Simple":[],"Algorithm - Weekly":[], "Algorithm - Overbooking": []};
         for m in metrics:
-            m.calculate(simple_schedule)
+            m.calculate(a_simple)
             print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(round(m.get_percentage() * 100, 2))
@@ -180,21 +191,21 @@ def results(request):
         #      "%")
         print("Elapsed time: ", elapsed_time, "\n")
 
-        a_simple.remove_all_allocations()
+        #a_simple.remove_all_allocations()
 
         print("\nallocation_with_overbooking:\n")
 
         start = time.time()
 
-        lessons30 = a_simple.weekly_allocation()
+        #lessons30 = a_simple.weekly_allocation()
 
         elapsed_time = time.time() - start
 
-        tamanho = sys.getsizeof(lessons30)
+        tamanho = sys.getsizeof(a_weekly)
 
         start_convert = time.time()
         schedule_andre = []
-        for sublist in lessons30.values():
+        for sublist in a_weekly.values():
             for item in sublist:
                 schedule_andre.append(item)
         elapsed_time_convert = time.time() - start_convert
@@ -231,13 +242,13 @@ def results(request):
         #print("Elapsed time on convert: ", elapsed_time_convert)
         #print("Tamanho do lessons30: ", tamanho)
 
-        a_jmp.remove_all_allocations()
-        allocation_with_overbooking = a_jmp.allocation_with_overbooking(30)
+        #a_jmp.remove_all_allocations()
+        #allocation_with_overbooking = a_jmp.allocation_with_overbooking(30)
 
         elapsed_time = time.time() - start
 
         schedule_nuno = []
-        for sublist in allocation_with_overbooking.values():
+        for sublist in a_jmp.values():
             for item in sublist:
                 schedule_nuno.append(item)
 
@@ -245,7 +256,12 @@ def results(request):
             m.calculate(schedule_nuno)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(round(m.get_percentage() * 100, 2))
-            
+        #"Gaps", "RoomMovements", "BuildingMovements", "UsedRooms", "ClassroomInconsistency"
+        results_metrics["Algorithm - Overbooking"].append(0)
+        results_metrics["Algorithm - Overbooking"].append(0)
+        results_metrics["Algorithm - Overbooking"].append(0)
+        results_metrics["Algorithm - Overbooking"].append(0)
+        results_metrics["Algorithm - Overbooking"].append(0)
         #room_metric = RoomlessLessons()
         #room_metric.calculate(schedule_nuno)
         #
@@ -297,8 +313,18 @@ def results(request):
         # context = upload.objects.all()
         # request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
         # return render(request, 'results.html', {"context": output_file})
-        for key, val in results_metrics.items():
-            print(key, " ", val)
+        iterator = len(results_metrics["Metric"])
+        i = 0
+        final_dict = []
+        for x, y in results_metrics.items():
+            print(x,y)
+        while i < iterator:
+            tmp_dict = {}
+            for key, values in results_metrics.items():
+                tmp_dict[key] = values[i]
+            final_dict.append(tmp_dict)
+            i+=1
+        results_metrics = final_dict
         # table columns
         headers = {"Metric": "Metrics", "Algorithm - Simple": "Algorithm - Simple", "Algorithm - Weekly": "Algorith - Weekly", "Algorithm - Overbooking": "Algorithm - Overbooking"}
 
@@ -308,8 +334,7 @@ def results(request):
         context = json.dumps(context)
         results_metrics = json.dumps(results_metrics)
         # content of all algorithms to show on page, append to render
-        return render(request, 'results.html', {"context": context, "table_headers": headers, "results_metrics": results_weekly})
-
+        return render(request, 'results.html', {"context": context, "table_headers": headers, "results_metrics": results_metrics})
         # return render(request, 'results.html', {"context": context,"table_headers": headers, "myFile": filename})
 
     return render(request, 'index.html')
