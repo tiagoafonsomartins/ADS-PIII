@@ -20,7 +20,6 @@ class Allocator:
         self.metrics = metrics
         self.sum_classroom_characteristics = {}
 
-
     def sorted_lessons(self) -> list:
         '''
         Sort lessons by day, start time and number of enrolled students
@@ -80,6 +79,14 @@ class Allocator:
         return schedule
 
     def allocation_with_overbooking(self, overbooking_percentage: int) -> dict:
+        """
+        This Algorithm iterates by the schedule and classroom and tries to allocate lessons to classroom if
+        every requirement gets fulfilled by the conditions. Then uses JMetalPy to improve some problematic zones of
+        our schedule.
+
+        :param overbooking_percentage: percentage of overbooking inputed by the user
+        :return:
+        """
         lessons_list = self.sorted_lessons()
         classrooms_list = self.sorted_classrooms()
         lessons30 = {}
@@ -106,16 +113,16 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
             else:
                 self.assign_lessons30(lessons30, lesson, c)
-
+        
         queryresult = query_result(len(self.metrics))
         troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
 
-        # tentar usar o score para comparação
-
         for tbl in troublesome_lessons30_key_list:
+            old_metrics = []
+
             for m in self.metrics:
                 m.calculate(lessons30[tbl])
-                print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
+                old_metrics.append(m.get_percentage())
 
             trouble_l = []
             trouble_c = set()
@@ -126,13 +133,12 @@ class Allocator:
                     trouble_c.add(t_c)
 
             if len(trouble_l) > 3:
-                result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), self.metrics)
-                lessons30[tbl] = result
-
-                for m in self.metrics:
-                    m.reset_metric()
-                    m.calculate(result)
-                    print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
+                new_schedule, jmp_metric_results = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c),
+                                                                       self.metrics)
+                print("Old metrics", old_metrics, "New metrics", jmp_metric_results)
+                if self.new_schedule_is_better(old_metrics, jmp_metric_results, self.metrics,
+                                               max(len(trouble_l), len(list(trouble_c)))):
+                    lessons30[tbl] = new_schedule
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
@@ -157,7 +163,7 @@ class Allocator:
         return score
 
     def weekly_allocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
-                        underbooking=50, use_JMP = True) -> dict:
+                          underbooking=50, use_JMP=True) -> dict:
 
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
@@ -181,7 +187,8 @@ class Allocator:
                     continue
 
                 if last_lesson != (
-                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (cur_classroom and not cur_classroom.is_available(lesson.time_blocks)):
+                        lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day) or (
+                        cur_classroom and not cur_classroom.is_available(lesson.time_blocks)):
                     last_lesson = (lesson.course + lesson.subject + lesson.shift + lesson.gang + lesson.week_day)
                     cur_score = 0
                     for classroom in self.classrooms:
@@ -207,7 +214,7 @@ class Allocator:
                 cur_classroom.set_unavailable(lesson.time_blocks)
                 self.assign_lessons30(lessons30, lesson, c)
 
-        #print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+        # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
         count = 0
         if use_JMP:
@@ -225,8 +232,8 @@ class Allocator:
                 bad_classroom_metric.calculate(half_hour)
 
                 if room_metric.get_percentage() > 0.2 or overbooking_metric.get_percentage() > 0.4 or bad_classroom_metric.get_percentage() > 0.15:
-                    #classrooms = []
-                    #for classroom in self.classrooms:
+                    # classrooms = []
+                    # for classroom in self.classrooms:
                     #    if classroom.is_available([block]):
                     #        classrooms.append(classroom)
 
@@ -249,12 +256,14 @@ class Allocator:
                         new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
 
                         old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
-                                                   underbooking_metric.get_percentage(), bad_classroom_metric.get_percentage()]
+                                              underbooking_metric.get_percentage(),
+                                              bad_classroom_metric.get_percentage()]
 
                         if self.new_schedule_is_better(old_metric_results, JMP_metric_results, metrics, max(len(lessons), len(classrooms))):
                             print("old: ", old_metric_results)
                             print("new: ", JMP_metric_results)
                             print("switching")
+
                             lessons30[block] = new_schedule
 
         print("Count = ", count)
@@ -268,7 +277,6 @@ class Allocator:
 
         front = [new_solution, old_solution]
         return JMP().get_best_result(front, metrics) == new_solution
-
 
     def assign_lessons30(self, lessons30, lesson, classroom):
         if lesson.time_blocks[0] in lessons30.keys():
