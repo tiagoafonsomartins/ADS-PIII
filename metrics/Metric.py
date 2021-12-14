@@ -9,9 +9,10 @@ import time
 class Metric(ABC):
     m_type = None
 
-    def __init__(self, name):
+    def __init__(self, name, prefered_max = 0.4):
         self.name = name
         self.value = []
+        self.prefered_max = 0.4
         self.weight = 0.5
 
     @abstractmethod
@@ -87,10 +88,11 @@ class Overbooking(Metric):
 
 class Underbooking(Metric):
 
-    def __init__(self):
+    def __init__(self, prefered_max=0.7):
         super().__init__("Underbooking")
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
+        self.prefered_max = 0.7
         self.weight = 0.25
 
     def calculate(self, schedule: list):
