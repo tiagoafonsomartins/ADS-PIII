@@ -85,7 +85,7 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                 if len(lessons) >= 3:
 
-                    new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
+                    new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
 
                     if new_schedule_is_better(old_metric_results, JMP_metric_results, metrics,
                                               max(len(lessons), len(classrooms))):

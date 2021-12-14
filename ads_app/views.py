@@ -125,13 +125,12 @@ def results(request):
 
         s_copy = copy.deepcopy(schedule)
         a_simple = simple_allocation(s_copy, c_copy)
-        c_copy = copy.deepcopy(classrooms)
 
+        c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
+        a_weekly = weekly_allocation(s_copy, c_copy)
 
-        #a_weekly = weekly_allocation(s_copy, c_copy)
         c_copy = copy.deepcopy(classrooms)
-
         s_copy = copy.deepcopy(schedule)
         a_jmp = overbooking_with_jmp_algorithm(30, s_copy, c_copy, metrics_jmp_compatible)
 
@@ -148,7 +147,7 @@ def results(request):
             m.calculate(a_simple)
             print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
-            results_metrics["Algorithm - Simple"].append(round(m.get_percentage() * 100, 2))
+            results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
 
 
         #room_metric = RoomlessLessons()
@@ -188,12 +187,12 @@ def results(request):
         #print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
         #print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2),
         #      "%")
-        print("Elapsed time: ", elapsed_time, "\n")
+        # print("Elapsed time: ", elapsed_time, "\n")
 
         #a_simple.remove_all_allocations()
 
-        print("\nallocation_with_overbooking:\n")
-#ANDRE
+        # print("\nallocation_with_overbooking:\n")
+
         #start = time.time()
 #
         ##lessons30 = a_simple.weekly_allocation()
@@ -201,20 +200,19 @@ def results(request):
         #elapsed_time = time.time() - start
 #
         #tamanho = sys.getsizeof(a_weekly)
-#
-        #start_convert = time.time()
-        #schedule_andre = []
-        #for sublist in a_weekly.values():
-        #    for item in sublist:
-        #        schedule_andre.append(item)
-        #elapsed_time_convert = time.time() - start_convert
-#
-        #start_metricas = time.time()
-#
-        #for m in metrics:
-        #    m.calculate(schedule_andre)
-        #    results_metrics["Metric"].append(m.name)
-        #    results_metrics["Algorithm - Weekly"].append(round(m.get_percentage() * 100, 2))
+
+        '''
+        schedule_andre = []
+        for sublist in a_weekly.values():
+            for item in sublist:
+                schedule_andre.append(item)
+
+
+        for m in metrics:
+            m.calculate(schedule_andre)
+            results_metrics["Metric"].append(m.name)
+            results_metrics["Algorithm - Weekly"].append(str(round(m.get_percentage() * 100, 2)) + "%")
+        '''
        
         #room_metric = RoomlessLessons()
         #room_metric.calculate(schedule_andre)
@@ -244,7 +242,7 @@ def results(request):
         #a_jmp.remove_all_allocations()
         #allocation_with_overbooking = a_jmp.allocation_with_overbooking(30)
 
-        elapsed_time = time.time() - start
+        # elapsed_time = time.time() - start
 
         schedule_nuno = []
         for sublist in a_jmp.values():
@@ -254,7 +252,7 @@ def results(request):
         for m in metrics:
             m.calculate(schedule_nuno)
             results_metrics["Metric"].append(m.name)
-            results_metrics["Algorithm - Overbooking"].append(round(m.get_percentage() * 100, 2))
+            results_metrics["Algorithm - Overbooking"].append(str(round(m.get_percentage() * 100, 2)) + "%")
         #"Gaps", "RoomMovements", "BuildingMovements", "UsedRooms", "ClassroomInconsistency"
         #room_metric = RoomlessLessons()
         #room_metric.calculate(schedule_nuno)
