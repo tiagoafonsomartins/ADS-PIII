@@ -16,34 +16,64 @@ from metrics.Metric import *
 class JMP:
 
     def run_algorithm(self, alg_list: list, lessons: list, classrooms: list, metrics: list) -> list:
-        for a in alg_list:
-            try:
-                alg = getattr(JMP, a)
-                break
-            except:
-                alg = getattr(JMP, "nsgaii")
+        '''
+        Receive list of name of algorithms to run on given lessons and classrooms to end up with better metrics
+        :param alg_list:
+        :param lessons:
+        :param classrooms:
+        :param metrics:
+        :return:
+        '''
+        alg = self.find_algorithm(alg_list)
 
         problem = TimeTablingProblem(lessons, classrooms, metrics)
         # problem = Problem(lessons, classrooms, metrics)
 
         algorithm = alg(problem)
 
-        start = time.time()
+        # start = time.time()
         algorithm.run()
-        elapsed_time = time.time() - start
-
-
+        # elapsed_time = time.time() - start
         # print("Elapsed time: ", elapsed_time)
 
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
-
+        result = self.get_best_result(front, metrics)
         # for solution in front:
         # print("solution: ", solution.objectives)
 
-        result = self.get_best_result(front, metrics)
+        # new_classrooms = [classroom for classroom in result.variables]
+        # new_schedule = []
+        # for i in range(len(lessons)):
+        #     if new_classrooms[i] > -1:
+        #         new_schedule.append((lessons[i], classrooms[new_classrooms[i]]))
+        #     else:
+        #         new_schedule.append((lessons[i], None))
 
-        new_classrooms = [classroom for classroom in result.variables]
+        #return new_schedule
+        return self.variables_to_schedule(result, lessons, classrooms)
+
+    def find_algorithm(self, alg_list):
+        '''
+        Returns algorithm object
+        :param alg_list:
+        :return:
+        '''
+        for a in alg_list:
+            try:
+                return getattr(JMP, a)
+            except:
+                return getattr(JMP, "nsgaii")
+
+    def variables_to_schedule(self, algorithm_result, lessons, classrooms):
+        '''
+        Takes algorithm results and returns schedule
+        :param algorithm_result:
+        :param lessons:
+        :param classrooms:
+        :return:
+        '''
+        new_classrooms = [classroom for classroom in algorithm_result.variables]
         new_schedule = []
         for i in range(len(lessons)):
             if new_classrooms[i] > -1:
@@ -55,7 +85,12 @@ class JMP:
 
     # The weights in each metric are in a range of 0 to 1
     def get_best_result(self, front, metrics):
-
+        '''
+        Returns best result of non dominated results of the algorithm
+        :param front:
+        :param metrics:
+        :return:
+        '''
         # Making lists of each objective's value
         # Getting the max and min of each objective
         # Choosing the percentage said in the weight within the range (as in from min to max) of each objective
@@ -67,6 +102,26 @@ class JMP:
                 (objective_lims[1] - objective_lims[0]) * (1 - metrics[i].weight) + objective_lims[0])
 
         # Choosing which result is closer on average of
+        # chosen_result = None
+        # chosen_proximity = float('inf')
+        # for result in front:
+        #     new_prox = 0
+        #     for i in range(len(objectives_scores)):
+        #         new_prox += self.distance(result.objectives[i], objectives_scores[i])
+#
+        #     if new_prox < chosen_proximity:
+        #         chosen_result = result
+        #         chosen_proximity = new_prox
+
+        return self.result_choice(front, objectives_scores)
+
+    def result_choice(self, front, objectives_scores):
+        '''
+        Returns result with best score
+        :param front:
+        :param objectives_scores:
+        :return:
+        '''
         chosen_result = None
         chosen_proximity = float('inf')
         for result in front:

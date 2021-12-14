@@ -73,9 +73,9 @@ class Overbooking(Metric):
         '''
         for lesson, classroom in schedule:
             if classroom and lesson.number_of_enrolled_students > classroom.normal_capacity:
-                #self.value.append((lesson.number_of_enrolled_students - classroom.normal_capacity) / classroom.normal_capacity)
-                 self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
-                # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
+                # self.value.append((lesson.number_of_enrolled_students - classroom.normal_capacity) / classroom.normal_capacity)
+                self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
+            # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
             else:
                 self.value.append(0)
 
@@ -103,8 +103,8 @@ class Underbooking(Metric):
         for lesson, classroom in schedule:
 
             if classroom and lesson.number_of_enrolled_students < classroom.normal_capacity:
-                #self.value.append(
-                    #(classroom.normal_capacity - lesson.number_of_enrolled_students) / classroom.normal_capacity)
+                # self.value.append(
+                # (classroom.normal_capacity - lesson.number_of_enrolled_students) / classroom.normal_capacity)
                 self.value.append(lesson.number_of_enrolled_students / classroom.normal_capacity)
             else:
                 self.value.append(0)
@@ -162,7 +162,8 @@ class Gaps(Metric):
         :return:
         '''
 
-        schedule.sort(key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
+        schedule.sort(
+            key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
 
         first_day_lesson = schedule[0][0]
         previous_lesson = first_day_lesson
@@ -230,7 +231,8 @@ class RoomMovements(Metric):
         :param schedule:
         :return:
         '''
-        schedule.sort(key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
+        schedule.sort(
+            key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
 
         first_lesson = schedule[0][0]
         previous_classroom = schedule[0][1]
@@ -285,7 +287,8 @@ class BuildingMovements(Metric):
         :param schedule:
         :return:
         '''
-        schedule.sort(key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
+        schedule.sort(
+            key=lambda x: (x[0].gang, time.strptime(x[0].day, '%m/%d/%Y'), time.strptime(x[0].start, '%H:%M:%S')))
 
         first_lesson = schedule[0][0]
         previous_classroom = schedule[0][1]
@@ -398,7 +401,6 @@ class ClassroomInconsistency(Metric):
             previous_lesson = lesson
             previous_classroom = classroom
             possible_inc += 1
-
 
     def get_total_metric_value(self):
         return sum([m[0] for m in self.value]) / len(self.value)
