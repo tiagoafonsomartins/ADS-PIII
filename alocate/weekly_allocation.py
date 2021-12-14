@@ -1,9 +1,11 @@
 import copy
 import time
 
-from alocate.Algorithm_Utils import assign_lessons30, get_classroom_score, new_schedule_is_better
+from alocate.Algorithm_Utils import assign_lessons30, get_classroom_score, new_schedule_is_better, \
+    preparing_classrooms_to_jmp
 from jmetalpy.JMP import JMP
 from metrics.Metric import RoomlessLessons, Overbooking, Underbooking, BadClassroom
+from swrlAPI.SWRL_API import query_result
 
 
 def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=20, len_characs_div=4,
@@ -59,7 +61,8 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
             assign_lessons30(lessons30, lesson, c)
 
     # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
-
+    metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
+    queryresult = query_result(len(metrics))
     count = 0
     if use_JMP:
         for block, half_hour in lessons30.items():
@@ -81,24 +84,13 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
                 #    if classroom.is_available([block]):
                 #        classrooms.append(classroom)
 
-                temp_classrooms = [item[1] for item in half_hour]
-                classrooms = copy.deepcopy(temp_classrooms)
-
-                for i in range(len(half_hour)):
-                    if classrooms[i] is not None:
-                        classrooms[i].set_available(half_hour[i][0].time_blocks)
-
-                classrooms = [classroom for classroom in classrooms if classroom is not None]
-
-                classrooms.extend([classrooms[i] for i in range(len(main_classrooms))
-                                   if main_classrooms[i] not in temp_classrooms and main_classrooms[i].is_available(
-                        [block])])
+                classrooms = preparing_classrooms_to_jmp(main_classrooms, block, half_hour)
                 lessons = [item[0] for item in half_hour]
 
                 if len(lessons) >= 3:
                     count += 1
-                    metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-                    new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
+
+                    new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
 
                     old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
                                           underbooking_metric.get_percentage(),
@@ -106,9 +98,9 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                     if new_schedule_is_better(old_metric_results, JMP_metric_results, metrics,
                                               max(len(lessons), len(classrooms))):
-                        print("old: ", old_metric_results)
+                        '''print("old: ", old_metric_results)
                         print("new: ", JMP_metric_results)
-                        print("switching")
+                        print("switching")'''
 
                         lessons30[block] = new_schedule
 

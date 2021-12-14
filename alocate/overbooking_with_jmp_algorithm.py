@@ -1,4 +1,5 @@
-from alocate.Algorithm_Utils import sorted_lessons, sorted_classrooms, assign_lessons30, new_schedule_is_better
+from alocate.Algorithm_Utils import sorted_lessons, sorted_classrooms, assign_lessons30, new_schedule_is_better, \
+    preparing_classrooms_to_jmp
 from jmetalpy.JMP import JMP
 from swrlAPI.SWRL_API import query_result
 
@@ -49,15 +50,8 @@ def overbooking_with_jmp_algorithm(overbooking_percentage: int, schedule: list, 
         for m in metrics:
             m.calculate(lessons30[tbl])
             old_metrics.append(m.get_percentage())
-
-        trouble_l = []
-        trouble_c = set()
-        for t_l, t_c in lessons30[tbl]:
-            trouble_l.append(t_l)
-            if t_c is not None:
-                t_c.set_available(t_l.generate_time_blocks())
-                trouble_c.add(t_c)
-
+        trouble_l = [item[0] for item in lessons30[tbl]]
+        trouble_c = preparing_classrooms_to_jmp(classrooms, tbl, lessons30[tbl])
         if len(trouble_l) > 3:
             new_schedule, jmp_metric_results = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c),
                                                                    metrics)

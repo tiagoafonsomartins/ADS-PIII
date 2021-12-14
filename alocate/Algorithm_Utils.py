@@ -1,3 +1,4 @@
+import copy
 import time
 from jmetal.core.solution import PermutationSolution
 
@@ -60,3 +61,20 @@ def get_classroom_score(lesson: Lesson, classroom: Classroom, characs: float, le
         score += underbooking
 
     return score
+
+
+def preparing_classrooms_to_jmp(main_classrooms: list, block: str, half_hour: list) -> list:
+    temp_classrooms = [item[1] for item in half_hour]
+    classrooms = copy.deepcopy(temp_classrooms)
+
+    for i in range(len(half_hour)):
+        if classrooms[i] is not None:
+            classrooms[i].set_available(half_hour[i][0].time_blocks)
+
+    classrooms = [classroom for classroom in classrooms if classroom is not None]
+
+    classrooms.extend([main_classrooms[i] for i in range(len(main_classrooms))
+                       if main_classrooms[i] not in temp_classrooms and main_classrooms[i].is_available(
+            [block])])
+
+    return classrooms
