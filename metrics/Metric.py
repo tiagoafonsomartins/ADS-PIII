@@ -16,7 +16,7 @@ class Metric(ABC):
         self.weight = 0.5
 
     @abstractmethod
-    def calculate(self, schedule):
+    def calculate(self, input):
         pass
 
     @abstractmethod
@@ -73,8 +73,7 @@ class Overbooking(Metric):
         '''
         for lesson, classroom in schedule:
             if classroom and lesson.number_of_enrolled_students > classroom.normal_capacity:
-                # self.value.append((lesson.number_of_enrolled_students - classroom.normal_capacity) /
-                # classroom.normal_capacity)
+                # self.value.append((lesson.number_of_enrolled_students - classroom.normal_capacity) / classroom.normal_capacity)
                 self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
             # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
             else:

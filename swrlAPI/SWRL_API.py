@@ -3,8 +3,9 @@ import subprocess
 
 def query_result(number_of_metrics: int):
     query_result_temp = subprocess.run(
-        ['java', '-jar', "swrlAPI\\SWRLAPIExample.jar", str(number_of_metrics)],
+        ['java', '-jar', "SWRLAPIExample.jar", str(number_of_metrics)],
         universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(query_result_temp.stdout)
     query_result = []
     for i in query_result_temp.stdout.split("Result:")[1].split("\n")[1:-1]:
         aux_clean_alg = i.split("\r")[0]
