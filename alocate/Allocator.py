@@ -14,10 +14,11 @@ from swrlAPI.SWRL_API import query_result
 
 class Allocator:
 
-    def __init__(self, classrooms, schedule, gangs):  # starting_date, ending_date
+    def __init__(self, classrooms, schedule, gangs, metrics):  # starting_date, ending_date
         self.classrooms = classrooms
         self.schedule = schedule
         self.gangs = gangs
+        self.metrics = metrics
         self.sum_classroom_characteristics = {}
 
     def sorted_lessons(self) -> list:
@@ -106,8 +107,7 @@ class Allocator:
             else:
                 self.assign_lessons30(lessons30, lesson, c)
 
-        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-        queryresult = query_result(len(metrics))
+        queryresult = query_result(len(self.metrics))
         troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
         time_blocks_afected = set()
 
@@ -151,7 +151,7 @@ class Allocator:
 
             print("len less", len(trouble_l))
             if len(trouble_l) > 3:
-                result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), metrics)
+                result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), self.metrics)
                 # lessons30[tba] = result
 
                 rll.reset_metric()

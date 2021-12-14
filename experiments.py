@@ -60,14 +60,11 @@ class Experiments:
         classrooms = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
 
-        # print(rarity_dict)
-        # print(lessons)
-        # print(classrooms)
-
+        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
         c_copy = classrooms.copy()
         g_copy = gangs.copy()
         s_copy = schedule.copy()
-        a_simple = Allocator(c_copy, s_copy, g_copy)
+        a_simple = Allocator(c_copy, s_copy, g_copy, metrics)
 
         print("\nsimple_allocation:\n")
 
@@ -77,48 +74,16 @@ class Experiments:
 
         elapsed_time = time.time() - start
 
-        room_metric = RoomlessLessons()
-        room_metric.calculate(simple_schedule)
+        for m in metrics:
+            m.calculate(simple_schedule)
+            print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
 
-        overbooking_metric = Overbooking()
-        overbooking_metric.calculate(simple_schedule)
-
-        underbooking_metric = Underbooking()
-        underbooking_metric.calculate(simple_schedule)
-
-        bad_classroom_metric = BadClassroom()
-        bad_classroom_metric.calculate(simple_schedule)
-
-        gaps_metric = Gaps()
-        gaps_metric.calculate(simple_schedule)
-
-        room_movements_metric = RoomMovements()
-        room_movements_metric.calculate(simple_schedule)
-
-        building_movements_metric = BuildingMovements()
-        building_movements_metric.calculate(simple_schedule)
-
-        used_rooms_metric = UsedRooms()
-        used_rooms_metric.calculate(simple_schedule)
-
-        classroom_inconsistency_metric = ClassroomInconsistency()
-        classroom_inconsistency_metric.calculate(simple_schedule)
-
-        print("Roomless Lessons Percentage:", round(room_metric.get_percentage() * 100, 2), "%")
-        print("Overbooking Percentage:", round(overbooking_metric.get_percentage() * 100, 2), "%")
-        print("Underbooking Percentage:", round(underbooking_metric.get_percentage() * 100, 2), "%")
-        print("Bad Classroom Percentage:", round(bad_classroom_metric.get_percentage() * 100, 2), "%")
-        print("Gaps Percentage:", round(gaps_metric.get_percentage() * 100, 2), "%")
-        print("Room Movement Percentage:", round(room_movements_metric.get_percentage() * 100, 2), "%")
-        print("Building movement Percentage:", round(building_movements_metric.get_percentage() * 100, 2), "%")
-        print("Used Rooms Percentage:", round(used_rooms_metric.get_percentage() * 100, 2), "%")
-        print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2),
-              "%")
         print("Elapsed time: ", elapsed_time, "\n")
 
         a_simple.remove_all_allocations()
 
         print("\nallocation_with_overbooking:\n")
+
         start = time.time()
 
         allocation_with_overbooking = a_simple.allocation_with_overbooking(30)
@@ -130,6 +95,15 @@ class Experiments:
             for item in sublist:
                 schedule_nuno.append(item)
 
+        for m in metrics:
+            m.calculate(simple_schedule)
+            print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
+
+        print("Elapsed time: ", elapsed_time, "\n")
+
+
+
+        '''
         room_metric = RoomlessLessons()
         room_metric.calculate(schedule_nuno)
 
@@ -168,6 +142,7 @@ class Experiments:
         print("Classroom Inconsistency Percentage:", round(classroom_inconsistency_metric.get_percentage() * 100, 2),
               "%")
         print("Elapsed time: ", elapsed_time, "\n")
+        '''
 
     def test6(self):
         lesson = Lesson("MEI", "ADS", "69420blz", "t-69", 420, "Sex", "3:00:00", "10:00:00", "4/23/2005",

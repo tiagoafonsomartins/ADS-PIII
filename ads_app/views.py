@@ -86,10 +86,11 @@ def results(request):
         #filename = fs.save('/app/tmp', myFile)
         #app.config['UPLOAD_FOLDER'] = "/tmp/"
         #filename = send_from_directory("/tmp/", myFile)
+        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
         c_copy = classrooms.copy()
         g_copy = gang_list.copy()
         s_copy = schedule.copy()
-        a_simple = Allocator(c_copy, s_copy, g_copy)
+        a_simple = Allocator(c_copy, s_copy, g_copy, metrics)
 
         print("\nsimple_allocation:\n")
 
