@@ -1,4 +1,5 @@
 import time
+import copy
 
 from classroom import Classroom
 from jmetalpy.JMP import JMP
@@ -23,7 +24,8 @@ class Allocator:
 
         :return list[Lesson]:
         '''
-        return sorted(self.schedule, key=lambda x: (
+        schedule_copy = copy.deepcopy(self.schedule)
+        return sorted(schedule_copy, key=lambda x: (
             x[0].number_of_enrolled_students, time.strptime(x[0].day, '%m/%d/%Y'),
             time.strptime(x[0].start, '%H:%M:%S')))
 
@@ -33,7 +35,8 @@ class Allocator:
 
         :return list[Classroom]:
         '''
-        return sorted(self.classrooms, key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
+        classrooms_copy = copy.deepcopy(self.classrooms)
+        return sorted(classrooms_copy, key=lambda x: (x.normal_capacity, x.rarity, len(x.get_characteristics())))
 
     def simple_allocation(self) -> list:
         '''

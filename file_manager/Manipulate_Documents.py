@@ -49,28 +49,70 @@ class Manipulate_Documents:
                     csvreader = csv.reader(f)
                     next(csvreader)
                     for row in csvreader:
-                        if row[5] and row[6] and row[8]:
-                            lesson = Lesson(row[0], row[1], row[2], row[3],
-                                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
+                        self.read_schedule_row(row, use_classrooms, classroom_dict, schedule)
 
-                            if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
-                                schedule.append((lesson, None))
-                            else:
-                                classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
-                                schedule.append((lesson, classroom_dict[row[10]]))
-
-                            for gang in gang_list:
-                                if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
-                                    gang.add_lesson(lesson)
-                                    create_gang = False
-                                    break
-                            if create_gang:
-                                gang_list.append(Gang(lesson.gang, lesson.course))
-                                gang_list[-1].add_lesson(lesson)
-                            else:
-                                create_gang = True
+                        # if row[5] and row[6] and row[8]:
+                        #     lesson = Lesson(row[0], row[1], row[2], row[3],
+                        #                     int(row[4]), row[5], row[6], row[7], row[8], row[9])
+#
+                        #     if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+                        #         schedule.append((lesson, None))
+                        #     else:
+                        #         classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+                        #         schedule.append((lesson, classroom_dict[row[10]]))
+#
+                        #     for gang in gang_list:
+                        #         if gang.name == lesson.gang:  # TODO tratar de várias turmas para a mesma Lesson
+                        #             gang.add_lesson(lesson)
+                        #             create_gang = False
+                        #             break
+                        #     if create_gang:
+                        #         gang_list.append(Gang(lesson.gang, lesson.course))
+                        #         gang_list[-1].add_lesson(lesson)
+                        #     else:
+                        #         create_gang = True
                     f.close()
         return gang_list, schedule
+
+    def read_schedule_row(self, row, use_classrooms, classroom_dict, schedule):
+        '''
+        Reads row of shchedule file
+        :param row:
+        :param use_classrooms:
+        :param classroom_dict:
+        :param schedule:
+        :return:
+        '''
+        if row[5] and row[6] and row[8]:
+            lesson = Lesson(row[0], row[1], row[2], row[3],
+                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
+
+            if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+                schedule.append((lesson, None))
+            else:
+                classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+                schedule.append((lesson, classroom_dict[row[10]]))
+
+    def read_classroom_row(self, row, header, sum_classroom_characteristics):
+        '''
+        Read row of classroom file
+        :param row:
+        :param header:
+        :param sum_classroom_characteristics:
+        :return:
+        '''
+        charact_list = []
+        for i in range(5, len(row)):
+            if row[i].lower() == "x":
+                charact_list.append(header[i])
+        classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
+        self.classroom_list.append(classroom)
+
+        for characteristic in classroom.get_characteristics():
+            if characteristic in sum_classroom_characteristics:
+                sum_classroom_characteristics[characteristic] += 1
+            else:
+                sum_classroom_characteristics[characteristic] = 1
 
     def import_classrooms(self):
         """
@@ -88,18 +130,19 @@ class Manipulate_Documents:
                     csvreader = csv.reader(f)
                     header = next(csvreader)
                     for row in csvreader:
-                        charact_list = []
-                        for i in range(5, len(row)):
-                            if row[i].lower() == "x":
-                                charact_list.append(header[i])
-                        classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
-                        self.classroom_list.append(classroom)
-
-                        for characteristic in classroom.get_characteristics():
-                            if characteristic in sum_classroom_characteristics:
-                                sum_classroom_characteristics[characteristic] += 1
-                            else:
-                                sum_classroom_characteristics[characteristic] = 1
+                        self.read_classroom_row(row, header, sum_classroom_characteristics)
+                        # charact_list = []
+                        # for i in range(5, len(row)):
+                        #     if row[i].lower() == "x":
+                        #         charact_list.append(header[i])
+                        # classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
+                        # self.classroom_list.append(classroom)
+#
+                        # for characteristic in classroom.get_characteristics():
+                        #     if characteristic in sum_classroom_characteristics:
+                        #         sum_classroom_characteristics[characteristic] += 1
+                        #     else:
+                        #         sum_classroom_characteristics[characteristic] = 1
 
                     f.close()
         for classroom in self.classroom_list:
