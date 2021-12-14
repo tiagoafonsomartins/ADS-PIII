@@ -41,9 +41,10 @@ class RoomlessLessons(Metric):
         '''
         # if classroom == None: self.value += 1
         # self.total += 1
+        print("Sei lá: ", schedule)
         for lesson, classroom in schedule:
             self.total += 1
-            if not classroom:
+            if lesson.requested_characteristics != "Não necessita de sala" and not classroom:
                 self.value += 1
 
     def get_total_metric_value(self):
