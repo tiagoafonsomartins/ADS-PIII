@@ -51,7 +51,7 @@ class JMP:
             else:
                 new_schedule.append((lessons[i], None))
 
-        return new_schedule
+        return new_schedule, result.objectives
 
     # The weights in each metric are in a range of 0 to 1
     def get_best_result(self, front, metrics):

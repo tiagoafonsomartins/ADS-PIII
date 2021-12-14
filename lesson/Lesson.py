@@ -40,6 +40,20 @@ class Lesson:
         return [self.course, self.subject, self.shift, self.gang, str(self.number_of_enrolled_students),
                 self.week_day, self.start, self.end, self.day, self.requested_characteristics]
 
+    def get_row_str(self) -> str:
+        """
+        Returns a list of strings with the correct order and informations to use on the export function in the Manipulate_Documents class.
+        :return:
+        """
+        course = self.course if "," not in self.course else "\"" + self.course + "\""
+        subject = self.subject if "," not in self.subject else "\"" + self.subject + "\""
+        shift = self.shift if "," not in self.shift else "\"" + self.shift + "\""
+        gang = self.gang if "," not in self.gang else "\"" + self.gang + "\""
+        req_characs = self.requested_characteristics if "," not in self.requested_characteristics else "\"" + self.requested_characteristics + "\""
+
+        return course + "," + subject + "," + shift + "," + gang + "," + str(self.number_of_enrolled_students) + "," + \
+                self.week_day + "," + self.start + "," + self.end + "," + self.day + "," + req_characs
+
     def generate_time_blocks(self) -> list:  # Retorna lista de blocos de tempo da aula numa lista de strings
         """
         Returns a list of strings with the following format: "10/16/2015_09:30:00-10:00:00", one for every 30 minutes that is inside the time interval of the lesson.

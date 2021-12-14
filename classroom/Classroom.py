@@ -49,9 +49,18 @@ class Classroom:
         :param time_blocks:
         :return:
         """
-        if self.is_available(time_blocks):
-            for block in time_blocks:
-                self.schedule.add(block)
+        for block in time_blocks:
+            self.schedule.add(block)
+
+    def set_available(self, time_blocks: list) -> None:
+        """
+        Allocates the time block in the schedule, making that time block unavailable
+
+        :param time_blocks:
+        :return:
+        """
+        for block in time_blocks:
+            self.schedule.remove(block)
 
     def set_rarity(self, rarity: float):
         self.rarity = rarity

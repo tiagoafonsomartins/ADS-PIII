@@ -1,5 +1,7 @@
 import time
 
+from jmetal.core.solution import PermutationSolution
+
 from classroom import Classroom
 from jmetalpy.JMP import JMP
 from lesson import Lesson
@@ -166,7 +168,7 @@ class Allocator:
 
         return score
 
-    def andre_alocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
+    def weekly_allocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
                         underbooking=50, use_JMP = True) -> dict:
 
         '''
@@ -177,6 +179,7 @@ class Allocator:
                 '''
 
         # self.classrooms.sort(key=lambda x: x.normal_capacity)
+        self.schedule.sort(key=lambda x: (x[0].gang, x[0].subject, x[0].week_day, time.strptime(x[0].day, '%m/%d/%Y')))
         number_of_roomless_lessons = 0
         lessons30 = {}
         last_lesson = ""
@@ -218,7 +221,6 @@ class Allocator:
 
         #print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 
-        # TODO JMetalPy
         count = 0
         if use_JMP:
             for block, half_hour in lessons30.items():
@@ -244,11 +246,27 @@ class Allocator:
 
                     if len(lessons) >= 3:
                         count += 1
-                        new_schedule = JMP().run_algorithm(["nsgaii"], lessons, classrooms, [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()])
-                        lessons30[block] = new_schedule
+                        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
+                        new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
+
+                        old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
+                                                   underbooking_metric.get_percentage(), bad_classroom_metric.get_percentage()]
+
+                        if self.new_schedule_is_better(old_metric_results, JMP_metric_results, metrics, max(len(lessons), len(classrooms))):
+                            lessons30[block] = new_schedule
 
         print("Count = ", count)
         return lessons30
+
+    def new_schedule_is_better(self, old_metric_results: list, JMP_metric_results: list, metrics, len_variables):
+        new_solution = PermutationSolution(len_variables, len(metrics))
+        new_solution.objectives = JMP_metric_results
+        old_solution = PermutationSolution(len_variables, len(metrics))
+        old_solution.objectives = old_metric_results
+
+        front = [new_solution, old_solution]
+        return JMP().get_best_result(self, front, metrics) == new_solution
+
 
     def assign_lessons30(self, lessons30, lesson, classroom):
         if lesson.time_blocks[0] in lessons30.keys():

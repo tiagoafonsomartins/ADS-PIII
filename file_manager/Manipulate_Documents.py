@@ -112,7 +112,7 @@ class Manipulate_Documents:
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
-        Export to a csv file the list of Lesson objects
+        Export to a csv file the schedule generated with tuples of Lesson and Classroom
 
         :param schedule: it's a list of tuples like this (Lesson, Classroom)
         :param file_name:
@@ -184,6 +184,36 @@ class Manipulate_Documents:
         except EnvironmentError as e:  # parent of IOError, OSError *and* WindowsError where available
             print("Something went wrong with creating a file to export the results into")
             print(e)
+
+    def export_schedule_str(self, schedule: list) -> str:
+        """
+        Export to a list the schedule generated with tuples of Lesson and Classroom
+
+        :param schedule:
+        :return:
+        """
+
+        rows = []
+
+        # write first row with headers
+        header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana",
+                  "Início",
+                  "Fim", "Dia", "Características da sala pedida para a aula",
+                  "Sala de aula", "Lotação", "Características reais da sala"]
+        rows.append(header)
+
+        # write lessons and classrooms to rows list
+        for tuple in schedule:
+            # make row initially with the lesson infos
+            row = tuple[0].get_row()
+            if tuple[1] is not None:
+                # add the classroom
+                row +=  "," + tuple[1].name + "," + tuple[1].normal_capacity + "," + \
+                        "\"" + self.list_to_comma_sep_string(tuple[1].characteristics) + "\""
+            rows.append(row)
+        print(rows)
+        return rows
+
 
     def list_to_comma_sep_string(self, my_list: list) -> str:
         """
