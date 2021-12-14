@@ -69,7 +69,7 @@ class Classroom:
         return self.rarity
 
     def __str__(self):
-        return "(" + self.building + " | " + self.name + " | " + str(self.normal_capacity) + ")"
+        return "<" + self.building + " | " + self.name + " | " + str(self.normal_capacity) + ">"
 
     def __repr__(self):
         return str(self)

@@ -30,10 +30,9 @@ class TimeTablingProblem(PermutationProblem):
                 if self.classrooms[classroom_index].is_available(self.lessons[i].time_blocks):
                     created_schedule.append((self.lessons[i], self.classrooms[classroom_index]))
                 else:
-                    created_schedule.append((self.lessons, None))
+                    created_schedule.append((self.lessons[i], None))
             else:
-                created_schedule.append((self.lessons, None))
-
+                created_schedule.append((self.lessons[i], None))
         for i, metric in enumerate(self.metrics):
             #for j in created_schedule:
             #    metric.calculate(j[0], j[1])

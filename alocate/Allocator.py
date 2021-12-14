@@ -11,6 +11,7 @@ from metrics.Metric import RoomlessLessons, Overbooking, Underbooking, BadClassr
 from swrlAPI.SWRL_API import query_result
 import copy
 
+
 class Allocator:
 
     def __init__(self, classrooms, schedule, gangs, metrics):  # starting_date, ending_date
@@ -113,9 +114,9 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
             else:
                 self.assign_lessons30(lessons30, lesson, c)
-        
+
         queryresult = query_result(len(self.metrics))
-        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
+        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]), reverse=True)[:5]
 
         for tbl in troublesome_lessons30_key_list:
             old_metrics = []
@@ -135,7 +136,6 @@ class Allocator:
             if len(trouble_l) > 3:
                 new_schedule, jmp_metric_results = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c),
                                                                        self.metrics)
-                print("Old metrics", old_metrics, "New metrics", jmp_metric_results)
                 if self.new_schedule_is_better(old_metrics, jmp_metric_results, self.metrics,
                                                max(len(trouble_l), len(list(trouble_c)))):
                     lessons30[tbl] = new_schedule
@@ -247,7 +247,8 @@ class Allocator:
                     classrooms = [classroom for classroom in classrooms if classroom is not None]
 
                     classrooms.extend([self.classrooms[i] for i in range(len(self.classrooms))
-                                       if self.classrooms[i] not in temp_classrooms and self.classrooms[i].is_available([block])])
+                                       if self.classrooms[i] not in temp_classrooms and self.classrooms[i].is_available(
+                            [block])])
                     lessons = [item[0] for item in half_hour]
 
                     if len(lessons) >= 3:
@@ -259,11 +260,11 @@ class Allocator:
                                               underbooking_metric.get_percentage(),
                                               bad_classroom_metric.get_percentage()]
 
-                        if self.new_schedule_is_better(old_metric_results, JMP_metric_results, metrics, max(len(lessons), len(classrooms))):
-                            print("old: ", old_metric_results)
+                        if self.new_schedule_is_better(old_metric_results, JMP_metric_results, metrics,
+                                                       max(len(lessons), len(classrooms))):
+                            '''print("old: ", old_metric_results)
                             print("new: ", JMP_metric_results)
-                            print("switching")
-
+                            print("switching")'''
                             lessons30[block] = new_schedule
 
         print("Count = ", count)
