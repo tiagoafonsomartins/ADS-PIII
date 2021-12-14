@@ -1,12 +1,7 @@
 import csv
 import os
-
-from typing import List
-
 from classroom.Classroom import Classroom
 from lesson.Lesson import Lesson
-import datetime as dt
-import time
 from django.core.files.uploadedfile import TemporaryUploadedFile
 import io
 
@@ -43,18 +38,29 @@ class Manipulate_Documents:
         csvreader = csv.reader(io.StringIO(file_name.read().decode('utf-8')))
         next(csvreader)
         for row in csvreader:
-            if row[5] and row[6] and row[8]:
-                lesson = Lesson(row[0], row[1], row[2], row[3],
-                                int(row[4]), row[5], row[6], row[7], row[8], row[9])
-
-                if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
-                    schedule.append((lesson, None))
-                else:
-                    classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
-                    schedule.append((lesson, classroom_dict[row[10]]))
+            self.read_schedule_row(row, use_classrooms, classroom_dict, schedule)
 
         file_name.close()
         return schedule
+
+    def read_schedule_row(self, row, use_classrooms, classroom_dict, schedule):
+        '''
+        Reads row of schedule file
+        :param row:
+        :param use_classrooms:
+        :param classroom_dict:
+        :param schedule:
+        :return:
+        '''
+        if row[5] and row[6] and row[8]:
+            lesson = Lesson(row[0], row[1], row[2], row[3],
+                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
+
+            if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
+                schedule.append((lesson, None))
+            else:
+                classroom_dict[row[10]].set_unavailable(lesson.generate_time_blocks())
+                schedule.append((lesson, classroom_dict[row[10]]))
 
     def import_classrooms(self):
         """
@@ -72,27 +78,45 @@ class Manipulate_Documents:
                     csvreader = csv.reader(f)
                     header = next(csvreader)
                     for row in csvreader:
-                        charact_list = []
-                        for i in range(5, len(row)):
-                            if row[i].lower() == "x":
-                                charact_list.append(header[i])
-                        classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
-                        self.classroom_list.append(classroom)
-
-                        for characteristic in classroom.get_characteristics():
-                            if characteristic in sum_classroom_characteristics:
-                                sum_classroom_characteristics[characteristic] += 1
-                            else:
-                                sum_classroom_characteristics[characteristic] = 1
+                        self.read_classroom_row(row, header, sum_classroom_characteristics)
 
                     f.close()
+        self.calculate_classroom_rarity(sum_classroom_characteristics)
+        return self.classroom_list
+
+    def calculate_classroom_rarity(self, sum_classroom_characteristics):
+        '''
+        Calculates rarity and saves value in Classroom objects
+        :param sum_classroom_characteristics:
+        :return:
+        '''
         for classroom in self.classroom_list:
             characs = []
             for charac in classroom.get_characteristics():
                 characs.append(sum_classroom_characteristics[charac])
             rarity = 1 - (min(characs) / sum(sum_classroom_characteristics.values()))
             classroom.set_rarity(rarity)
-        return self.classroom_list
+
+    def read_classroom_row(self, row, header, sum_classroom_characteristics):
+        '''
+        Read row of classroom file
+        :param row:
+        :param header:
+        :param sum_classroom_characteristics:
+        :return:
+        '''
+        charact_list = []
+        for i in range(5, len(row)):
+            if row[i].lower() == "x":
+                charact_list.append(header[i])
+        classroom = Classroom(row[0], row[1], int(row[2]), int(row[3]), charact_list)
+        self.classroom_list.append(classroom)
+
+        for characteristic in classroom.get_characteristics():
+            if characteristic in sum_classroom_characteristics:
+                sum_classroom_characteristics[characteristic] += 1
+            else:
+                sum_classroom_characteristics[characteristic] = 1
 
     def export_schedule(self, schedule: list, file_name: str) -> None:
         """
