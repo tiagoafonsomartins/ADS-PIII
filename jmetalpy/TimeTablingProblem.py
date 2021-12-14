@@ -25,7 +25,7 @@ class TimeTablingProblem(PermutationProblem):
         for i, classroom_index in enumerate(solution.variables):
             if i >= len(self.lessons):
                 break
-            if classroom_index != -1:
+            if classroom_index > -1:
                 #print("c:", classroom_index, " i:", i)
                 if self.classrooms[classroom_index].is_available(self.lessons[i].time_blocks):
                     created_schedule.append((self.lessons[i], self.classrooms[classroom_index]))
@@ -52,12 +52,13 @@ class TimeTablingProblem(PermutationProblem):
         else:
             # sample = random.sample(range(len(self.classrooms)), len(self.classrooms))
 
+            variables = []
             for i in range(len(self.lessons)):
                 if i < len(self.classrooms):
-                    new_solution.variables[i] = i
+                    variables.append(i)
                 else:
-                    new_solution.variables[i] = -1
-
+                    variables.append(-1 * i)
+            new_solution.variables = variables
         return new_solution
 
     def get_name(self) -> str:

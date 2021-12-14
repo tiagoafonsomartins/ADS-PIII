@@ -564,13 +564,13 @@ class Experiments:
         classrooms = md.import_classrooms()
         gangs, schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
 
-        a_simple = Allocator(classrooms, schedule, gangs)
+        a_simple = Allocator(classrooms, schedule[:10], gangs)
 
         a_simple.remove_all_allocations()
 
         start = time.time()
 
-        lessons30 = a_simple.andre_alocation()
+        lessons30 = a_simple.andre_alocation(use_JMP=False)
 
         elapsed_time = time.time() - start
 
@@ -598,6 +598,8 @@ class Experiments:
         bad_classroom_metric.calculate(schedule_andre)
 
         elapsed_time_metricas = time.time() - start_metricas
+
+        print(schedule_andre)
 
         print("\n\nandre_algorithm:\n")
         print("Roomless Lessons Percentage:", round(room_metric.get_percentage(), 2) * 100, "%")

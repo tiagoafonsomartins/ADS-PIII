@@ -28,8 +28,6 @@ class JMP:
 
         algorithm = alg(problem)
 
-        print(len(lessons), " Lessons: ", lessons)
-        print(len(classrooms), "Classrooms: ", classrooms)
         start = time.time()
         algorithm.run()
         elapsed_time = time.time() - start
@@ -37,19 +35,21 @@ class JMP:
 
         # print("Elapsed time: ", elapsed_time)
 
-        print("hi")
         solutions = algorithm.get_result()
         front = get_non_dominated_solutions(solutions)
-
 
         # for solution in front:
         # print("solution: ", solution.objectives)
 
-
         result = self.get_best_result(front, metrics)
 
         new_classrooms = [classroom for classroom in result.variables]
-        new_schedule = [(lessons[i], classrooms[new_classrooms[i]]) for i in range(len(lessons))]
+        new_schedule = []
+        for i in range(len(lessons)):
+            if new_classrooms[i] > -1:
+                new_schedule.append((lessons[i], classrooms[new_classrooms[i]]))
+            else:
+                new_schedule.append((lessons[i], None))
 
         return new_schedule
 

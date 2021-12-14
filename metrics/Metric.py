@@ -73,7 +73,8 @@ class Overbooking(Metric):
         '''
         for lesson, classroom in schedule:
             if classroom and lesson.number_of_enrolled_students > classroom.normal_capacity:
-                self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
+                #self.value.append((lesson.number_of_enrolled_students - classroom.normal_capacity) / classroom.normal_capacity)
+                 self.value.append(classroom.normal_capacity / lesson.number_of_enrolled_students)
                 # self.value.append(lesson.number_of_enrolled_students - classroom.normal_capacity)
             else:
                 self.value.append(0)
@@ -102,7 +103,8 @@ class Underbooking(Metric):
         for lesson, classroom in schedule:
 
             if classroom and lesson.number_of_enrolled_students < classroom.normal_capacity:
-
+                #self.value.append(
+                    #(classroom.normal_capacity - lesson.number_of_enrolled_students) / classroom.normal_capacity)
                 self.value.append(lesson.number_of_enrolled_students / classroom.normal_capacity)
             else:
                 self.value.append(0)

@@ -167,7 +167,7 @@ class Allocator:
         return score
 
     def andre_alocation(self, characs=100, len_characs=20, len_characs_div=4, rarity=10, overbooking=50,
-                        underbooking=50, overbooking_tolerance=0.20) -> dict:
+                        underbooking=50, use_JMP = True) -> dict:
 
         '''
                 More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
@@ -220,31 +220,32 @@ class Allocator:
 
         # TODO JMetalPy
         count = 0
-        for block, half_hour in lessons30.items():
-            room_metric = RoomlessLessons()
-            room_metric.calculate(half_hour)
+        if use_JMP:
+            for block, half_hour in lessons30.items():
+                room_metric = RoomlessLessons()
+                room_metric.calculate(half_hour)
 
-            overbooking_metric = Overbooking()
-            overbooking_metric.calculate(half_hour)
+                overbooking_metric = Overbooking()
+                overbooking_metric.calculate(half_hour)
 
-            underbooking_metric = Underbooking()
-            underbooking_metric.calculate(half_hour)
+                underbooking_metric = Underbooking()
+                underbooking_metric.calculate(half_hour)
 
-            bad_classroom_metric = BadClassroom()
-            bad_classroom_metric.calculate(half_hour)
+                bad_classroom_metric = BadClassroom()
+                bad_classroom_metric.calculate(half_hour)
 
-            if room_metric.get_percentage() > 0.2 or overbooking_metric.get_percentage() > 0.2 or bad_classroom_metric.get_percentage() > 0.1:
-                #classrooms = []
-                #for classroom in self.classrooms:
-                #    if classroom.is_available([block]):
-                #        classrooms.append(classroom)
-                classrooms = [c for c in self.classrooms if c.is_available([block])]
-                lessons = [item[0] for item in half_hour]
+                if room_metric.get_percentage() > 0.2 or overbooking_metric.get_percentage() > 0.4 or bad_classroom_metric.get_percentage() > 0.15:
+                    #classrooms = []
+                    #for classroom in self.classrooms:
+                    #    if classroom.is_available([block]):
+                    #        classrooms.append(classroom)
+                    classrooms = [c for c in self.classrooms if c.is_available([block])]
+                    lessons = [item[0] for item in half_hour]
 
-                if len(lessons) >= 3:
-                    count += 1
-                    new_schedule = JMP().run_algorithm(["nsgaii"], lessons, classrooms, [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()])
-                    lessons30[block] = new_schedule
+                    if len(lessons) >= 3:
+                        count += 1
+                        new_schedule = JMP().run_algorithm(["nsgaii"], lessons, classrooms, [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()])
+                        lessons30[block] = new_schedule
 
         print("Count = ", count)
         return lessons30
