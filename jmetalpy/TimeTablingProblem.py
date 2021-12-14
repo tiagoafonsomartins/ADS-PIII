@@ -20,6 +20,11 @@ class TimeTablingProblem(PermutationProblem):
         # self.obj_labels = ['Lower_half']
 
     def evaluate(self, solution: PermutationSolution):
+        '''
+        Evaluates solution given by algorithm
+        :param solution:
+        :return:
+        '''
         created_schedule = []
 
         for i, classroom_index in enumerate(solution.variables):
@@ -44,6 +49,10 @@ class TimeTablingProblem(PermutationProblem):
         return solution
 
     def create_solution(self) -> PermutationSolution:
+        '''
+        Creates initial solution for algorithm
+        :return:
+        '''
         new_solution = PermutationSolution(self.number_of_variables, self.number_of_objectives) # No clue about lower and upper
         if len(self.lessons) < len(self.classrooms):
             #new_solution.variables = random.sample(range(len(self.classrooms)), len(self.classrooms))
@@ -51,14 +60,15 @@ class TimeTablingProblem(PermutationProblem):
             new_solution.variables = [i for i in range(len(self.classrooms))]
         else:
             # sample = random.sample(range(len(self.classrooms)), len(self.classrooms))
-
-            variables = []
+#            variables = []
             for i in range(len(self.lessons)):
                 if i < len(self.classrooms):
-                    variables.append(i)
+                    new_solution.variables[i] = i
+                    #variables.append(i)
                 else:
-                    variables.append(-1 * i)
-            new_solution.variables = variables
+                    new_solution.variables[i] = -i
+                    #variables.append(-1 * i)
+            #new_solution.variables = variables
         return new_solution
 
     def get_name(self) -> str:
