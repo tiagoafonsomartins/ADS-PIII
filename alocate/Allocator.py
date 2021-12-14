@@ -110,7 +110,6 @@ class Allocator:
         queryresult = query_result(len(self.metrics))
         troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
 
-        # retirar check das lessons30
         # tentar usar o score para comparação
 
         for tbl in troublesome_lessons30_key_list:
@@ -123,12 +122,12 @@ class Allocator:
             for t_l, t_c in lessons30[tbl]:
                 trouble_l.append(t_l)
                 if t_c is not None:
-                    # set available
+                    t_c.set_available(t_l.generate_time_blocks())
                     trouble_c.add(t_c)
 
             if len(trouble_l) > 3:
                 result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), self.metrics)
-                # lessons30[tba] = result
+                lessons30[tbl] = result
 
                 for m in self.metrics:
                     m.reset_metric()
