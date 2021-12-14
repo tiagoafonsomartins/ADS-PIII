@@ -9,14 +9,14 @@ from swrlAPI.SWRL_API import query_result
 
 
 def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=20, len_characs_div=4,
-                      rarity=10, overbooking=50,
-                      underbooking=50, use_JMP=True) -> dict:
+                      rarity=10, overbooking=50, underbooking=50, use_JMP=True,
+                      metrics=[RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]) -> dict:
     '''
-            More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
-            and the same lessons in different weeks
+    More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
+    and the same lessons in different weeks
 
-            :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
-            '''
+    :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
+    '''
 
     # self.classrooms.sort(key=lambda x: x.normal_capacity)
     main_schedule.sort(key=lambda x: (x[0].gang, x[0].subject, x[0].week_day, time.strptime(x[0].day, '%m/%d/%Y')))
@@ -64,37 +64,28 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
     metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
     queryresult = query_result(len(metrics))
     count = 0
-    if use_JMP:
+    if use_JMP and len(metrics) > 0:
         for block, half_hour in lessons30.items():
-            room_metric = RoomlessLessons()
-            room_metric.calculate(half_hour)
 
-            overbooking_metric = Overbooking()
-            overbooking_metric.calculate(half_hour)
+            half_hour_is_bad = False
+            old_metric_results = []
+            for metric in metrics:
 
-            underbooking_metric = Underbooking()
-            underbooking_metric.calculate(half_hour)
+                metric.calculate(half_hour)
+                old_metric_results.append(metric.get_percentage())
 
-            bad_classroom_metric = BadClassroom()
-            bad_classroom_metric.calculate(half_hour)
+                if metric.get_percentage() > metric.prefered_max:
+                    half_hour_is_bad = True
 
-            if room_metric.get_percentage() > 0.2 or overbooking_metric.get_percentage() > 0.4 or bad_classroom_metric.get_percentage() > 0.15:
-                # classrooms = []
-                # for classroom in self.classrooms:
-                #    if classroom.is_available([block]):
-                #        classrooms.append(classroom)
+
+            if half_hour_is_bad:
 
                 classrooms = preparing_classrooms_to_jmp(main_classrooms, block, half_hour)
                 lessons = [item[0] for item in half_hour]
 
                 if len(lessons) >= 3:
-                    count += 1
 
                     new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
-
-                    old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
-                                          underbooking_metric.get_percentage(),
-                                          bad_classroom_metric.get_percentage()]
 
                     if new_schedule_is_better(old_metric_results, JMP_metric_results, metrics,
                                               max(len(lessons), len(classrooms))):
@@ -104,5 +95,4 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                         lessons30[block] = new_schedule
 
-    print("Count = ", count)
     return lessons30
