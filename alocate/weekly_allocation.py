@@ -4,17 +4,18 @@ import time
 from alocate.Algorithm_Utils import assign_lessons30, get_classroom_score, new_schedule_is_better
 from jmetalpy.JMP import JMP
 from metrics.Metric import RoomlessLessons, Overbooking, Underbooking, BadClassroom
+from swrlAPI.SWRL_API import query_result
 
 
 def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=20, len_characs_div=4,
                       rarity=10, overbooking=50,
                       underbooking=50, use_JMP=True) -> dict:
-    '''
+    """
             More advanced allocation algorithm that allocates the apparent best fitting room for the presented lesson
             and the same lessons in different weeks
 
             :return list[(Lesson, Classroom)]: Returns list of tuples that associates lesson with allocated classroom
-            '''
+            """
 
     # self.classrooms.sort(key=lambda x: x.normal_capacity)
     main_schedule.sort(key=lambda x: (x[0].gang, x[0].subject, x[0].week_day, time.strptime(x[0].day, '%m/%d/%Y')))
@@ -59,7 +60,8 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
             assign_lessons30(lessons30, lesson, c)
 
     # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
-
+    metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
+    queryresult = query_result(len(metrics))
     count = 0
     if use_JMP:
         for block, half_hour in lessons30.items():
@@ -97,8 +99,8 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                 if len(lessons) >= 3:
                     count += 1
-                    metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-                    new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
+
+                    new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
 
                     old_metric_results = [room_metric.get_percentage(), overbooking_metric.get_percentage(),
                                           underbooking_metric.get_percentage(),

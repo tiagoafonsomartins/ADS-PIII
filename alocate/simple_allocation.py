@@ -10,11 +10,8 @@ def simple_allocation(schedule: list, classrooms: list) -> list:
     '''
     lessons_list = sorted_lessons(schedule)
     classrooms_list = sorted_classrooms(classrooms)
-
     number_of_roomless_lessons = 0
-
     schedule = []
-
     for lesson, c in lessons_list:
         if not c:
             classroom_assigned = False
@@ -34,7 +31,5 @@ def simple_allocation(schedule: list, classrooms: list) -> list:
                     number_of_roomless_lessons += 1
         else:
             schedule.append((lesson, c))
-
     print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
-
     return schedule
