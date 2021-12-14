@@ -359,7 +359,7 @@ class UsedRooms(Metric):
 class ClassroomInconsistency(Metric):
 
     def __init__(self):
-        super().__init__("UsedRooms")
+        super().__init__("ClassroomInconsistency")
         self.objective = Problem.MAXIMIZE
         self.m_type = "gangs"
         self.value = []

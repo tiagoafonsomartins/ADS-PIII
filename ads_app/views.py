@@ -37,7 +37,6 @@ def results(request):
         myFile.seek(0)
         gang_list, schedule = mp.import_schedule_documents(myFile, False)
         metrics_chosen = request.POST.getlist('metrics')
-        all_metrics = ["RoomlessLessons", "Overbooking", "Underbooking", "BadClassroom", "Gaps", "RoomMovements", "BuildingMovements", "UsedRooms", "ClassroomInconsistency"]
         metrics = []
         metrics_jmp_compatible = []
         for metric in metrics_chosen:
@@ -136,7 +135,7 @@ def results(request):
         s_copy = copy.deepcopy(schedule)
         a_jmp = overbooking_with_jmp_algorithm(30, s_copy, c_copy, metrics_jmp_compatible)
 
-        print("\nsimple_allocation:\n")
+        print("\nsimple_allocation:\n",metrics)
 
         start = time.time()
 
@@ -194,28 +193,28 @@ def results(request):
         #a_simple.remove_all_allocations()
 
         print("\nallocation_with_overbooking:\n")
-
-        start = time.time()
-
-        #lessons30 = a_simple.weekly_allocation()
-
-        elapsed_time = time.time() - start
-
-        tamanho = sys.getsizeof(a_weekly)
-
-        start_convert = time.time()
-        schedule_andre = []
-        for sublist in a_weekly.values():
-            for item in sublist:
-                schedule_andre.append(item)
-        elapsed_time_convert = time.time() - start_convert
-
-        start_metricas = time.time()
-
-        for m in metrics:
-            m.calculate(schedule_andre)
-            results_metrics["Metric"].append(m.name)
-            results_metrics["Algorithm - Weekly"].append(round(m.get_percentage() * 100, 2))
+#ANDRE
+        #start = time.time()
+#
+        ##lessons30 = a_simple.weekly_allocation()
+#
+        #elapsed_time = time.time() - start
+#
+        #tamanho = sys.getsizeof(a_weekly)
+#
+        #start_convert = time.time()
+        #schedule_andre = []
+        #for sublist in a_weekly.values():
+        #    for item in sublist:
+        #        schedule_andre.append(item)
+        #elapsed_time_convert = time.time() - start_convert
+#
+        #start_metricas = time.time()
+#
+        #for m in metrics:
+        #    m.calculate(schedule_andre)
+        #    results_metrics["Metric"].append(m.name)
+        #    results_metrics["Algorithm - Weekly"].append(round(m.get_percentage() * 100, 2))
        
         #room_metric = RoomlessLessons()
         #room_metric.calculate(schedule_andre)
@@ -313,7 +312,8 @@ def results(request):
         # context = upload.objects.all()
         # request.FILES['filename'] = manipulate_docs.export_schedule(schedule, "Output_Schedule")
         # return render(request, 'results.html', {"context": output_file})
-        iterator = len(results_metrics["Metric"])
+        iterator = len(results_metrics["Algorithm - Simple"])
+        print("myiterator", iterator)
         i = 0
         final_dict = []
         for x, y in results_metrics.items():
@@ -321,10 +321,18 @@ def results(request):
         while i < iterator:
             tmp_dict = {}
             for key, values in results_metrics.items():
-                tmp_dict[key] = values[i]
+                #print(tmp_dict[key], "inside for", values[i])
+                try:
+                    tmp_dict[key] = values[i]
+                except Exception:
+                   print("didn't insert the value")
+
             final_dict.append(tmp_dict)
             i+=1
         results_metrics = final_dict
+        print("final dict")
+        for x in results_metrics:
+            print(x)
         # table columns
         headers = {"Metric": "Metrics", "Algorithm - Simple": "Algorithm - Simple", "Algorithm - Weekly": "Algorith - Weekly", "Algorithm - Overbooking": "Algorithm - Overbooking"}
 
