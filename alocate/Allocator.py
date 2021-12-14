@@ -13,11 +13,13 @@ from swrlAPI.SWRL_API import query_result
 
 class Allocator:
 
-    def __init__(self, classrooms, schedule, gangs):  # starting_date, ending_date
+    def __init__(self, classrooms, schedule, gangs, metrics):  # starting_date, ending_date
         self.classrooms = classrooms
         self.schedule = schedule
         self.gangs = gangs
+        self.metrics = metrics
         self.sum_classroom_characteristics = {}
+
 
     def sorted_lessons(self) -> list:
         '''
@@ -105,46 +107,41 @@ class Allocator:
             else:
                 self.assign_lessons30(lessons30, lesson, c)
 
-        troublesome_lessons30 = max(lessons30, key=lambda k: len(lessons30[k]))
+        queryresult = query_result(len(self.metrics))
+        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
 
-        rll = RoomlessLessons()
-        rll.calculate(lessons30[troublesome_lessons30])
+        # retirar check das lessons30
+        # tentar usar o score para comparação
+        '''
+        for time_block in lessons30.keys():
+            lesson_time_block = lessons30[time_block][0][0].generate_time_blocks()
+            for i in lesson_time_block:
+                for j in troublesome_lessons30_key_list:
+                    if i in list(lessons30.keys()) and j in lesson_time_block:
+                        time_blocks_afected.add(i)
+        '''
 
-        ob = Overbooking()
-        ob.calculate(lessons30[troublesome_lessons30])
+        for tbl in troublesome_lessons30_key_list:
+            for m in self.metrics:
+                m.calculate(lessons30[tbl])
+                print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
 
-        ub = Underbooking()
-        ub.calculate(lessons30[troublesome_lessons30])
+            trouble_l = []
+            trouble_c = set()
+            for t_l, t_c in lessons30[tbl]:
+                trouble_l.append(t_l)
+                if t_c is not None:
+                    # set available
+                    trouble_c.add(t_c)
 
-        bc = BadClassroom()
-        bc.calculate(lessons30[troublesome_lessons30])
+            if len(trouble_l) > 3:
+                result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), self.metrics)
+                # lessons30[tba] = result
 
-        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-              ", BadClassroom:", round(bc.get_percentage(), 2))
-
-        trouble_l = []
-        trouble_c = set()
-        for t_l, t_c in lessons30[troublesome_lessons30]:
-            trouble_l.append(t_l)
-            if t_c is not None:
-                trouble_c.add(t_c)
-        metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-        result = JMP().run_algorithm(query_result(len(metrics)), trouble_l, list(trouble_c), metrics)
-
-        rll.reset_metric()
-        ob.reset_metric()
-        ub.reset_metric()
-        bc.reset_metric()
-
-        rll.calculate(result)
-        ob.calculate(result)
-        ub.calculate(result)
-        bc.calculate(result)
-
-        print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-              round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-              ", BadClassroom:", round(bc.get_percentage(), 2))
+                for m in self.metrics:
+                    m.reset_metric()
+                    m.calculate(result)
+                    print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
