@@ -113,7 +113,7 @@ class Allocator:
                         # não estou a adicionar lessons que tenham as caracteristicas do if acima
             else:
                 self.assign_lessons30(lessons30, lesson, c)
-
+        
         queryresult = query_result(len(self.metrics))
         troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]))[:5]
 
