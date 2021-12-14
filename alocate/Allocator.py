@@ -113,7 +113,6 @@ class Allocator:
 
         # retirar chech das lessons30
         # tentar usar o score para comparação
-        # meter métricas como atributo
 
         for time_block in lessons30.keys():
             lesson_time_block = lessons30[time_block][0][0].generate_time_blocks()
@@ -122,25 +121,11 @@ class Allocator:
                     if i in list(lessons30.keys()) and j in lesson_time_block:
                         time_blocks_afected.add(i)
 
-        # print(time_blocks_afected)
-
         for tba in time_blocks_afected:
 
-            rll = RoomlessLessons()
-            rll.calculate(lessons30[tba])
-
-            ob = Overbooking()
-            ob.calculate(lessons30[tba])
-
-            ub = Underbooking()
-            ub.calculate(lessons30[tba])
-
-            bc = BadClassroom()
-            bc.calculate(lessons30[tba])
-
-            print("before: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-                  round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-                  ", BadClassroom:", round(bc.get_percentage(), 2))
+            for m in self.metrics:
+                m.calculate(lessons30[tba])
+                print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
 
             trouble_l = []
             trouble_c = set()
@@ -149,24 +134,14 @@ class Allocator:
                 if t_c is not None:
                     trouble_c.add(t_c)
 
-            print("len less", len(trouble_l))
             if len(trouble_l) > 3:
                 result = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c), self.metrics)
                 # lessons30[tba] = result
 
-                rll.reset_metric()
-                ob.reset_metric()
-                ub.reset_metric()
-                bc.reset_metric()
-
-                rll.calculate(result)
-                ob.calculate(result)
-                ub.calculate(result)
-                bc.calculate(result)
-
-                print("after: \n", "RoomlessLessons:", round(rll.get_percentage(), 2), ", Overbooking:",
-                      round(ob.get_percentage(), 2), ", Underbooking:", round(ub.get_percentage(), 2),
-                      ", BadClassroom:", round(bc.get_percentage(), 2))
+                for m in self.metrics:
+                    m.reset_metric()
+                    m.calculate(result)
+                    print(m.name, ":", round(m.get_percentage() * 100, 2), "%")
 
         print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
         return lessons30
