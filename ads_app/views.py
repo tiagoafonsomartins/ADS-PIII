@@ -172,6 +172,10 @@ def download_file(request):
         response = HttpResponse(content_type='text/csv')
         response['Content-Type'] = 'text/csv'
         response['Content-Disposition'] = 'attachment; filename=Algorithm_Results.csv'
+
+        content = ""
         for x in lines:
-            response.writelines(x+"\n")
+            content += x + "\n"
+        response.writelines(content)
+
     return response

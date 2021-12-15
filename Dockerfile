@@ -1,6 +1,6 @@
 # Install the base requirements for the app.
 # This stage is to support development.
-#FROM python:alpine AS base
+FROM python:alpine AS base
 #WORKDIR /app
 COPY requirements.txt .
 #RUN pip install -r requirements.txt
@@ -25,6 +25,18 @@ COPY ADS-PIII/output_testing_documents ./output_testing_documents
 COPY ADS-PIII/lesson ./lesson
 COPY ADS-PIII/lesson ./lesson
 COPY ADS-PIII/lesson ./lesson
+
+# Install OpenJDK-8
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk && \
+    apt-get install -y ant && \
+    apt-get clean;
+    
+# Fix certificate issues
+RUN apt-get update && \
+    apt-get install ca-certificates-java && \
+    apt-get clean && \
+    update-ca-certificates -f;
 
 # Run tests to validate app
 #FROM app-base AS test
