@@ -26,8 +26,8 @@ class Metric(ABC):
 
 class RoomlessLessons(Metric):
 
-    def __init__(self):
-        super().__init__("Roomless_lessons")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("Roomless_lessons", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
         self.value = 0
@@ -59,8 +59,8 @@ class RoomlessLessons(Metric):
 
 class Overbooking(Metric):
 
-    def __init__(self):
-        super().__init__("Overbooking")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("Overbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
         self.value = []
@@ -89,7 +89,7 @@ class Overbooking(Metric):
 class Underbooking(Metric):
 
     def __init__(self, prefered_max=0.7):
-        super().__init__("Underbooking")
+        super().__init__("Underbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
         self.prefered_max = prefered_max
@@ -119,8 +119,8 @@ class Underbooking(Metric):
 
 class BadClassroom(Metric):
 
-    def __init__(self):
-        super().__init__("Bad_classroom")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("Bad_classroom", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
         self.value = 0
@@ -150,8 +150,8 @@ class BadClassroom(Metric):
 
 class Gaps(Metric):
 
-    def __init__(self):
-        super().__init__("Gaps")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("Gaps", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "gangs"
         self.value = []
@@ -219,8 +219,8 @@ class Gaps(Metric):
 
 class RoomMovements(Metric):
 
-    def __init__(self):
-        super().__init__("RoomMovements")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("RoomMovements", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "gangs"
         self.value = []
@@ -274,8 +274,8 @@ class RoomMovements(Metric):
 
 class BuildingMovements(Metric):
 
-    def __init__(self):
-        super().__init__("BuildingMovements")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("BuildingMovements", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "gangs"
         self.value = []
@@ -328,8 +328,8 @@ class BuildingMovements(Metric):
 
 class UsedRooms(Metric):
 
-    def __init__(self):
-        super().__init__("UsedRooms")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("UsedRooms", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
         self.value = []
@@ -359,8 +359,8 @@ class UsedRooms(Metric):
 
 class ClassroomInconsistency(Metric):
 
-    def __init__(self):
-        super().__init__("ClassroomInconsistency")
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("ClassroomInconsistency", prefered_max)
         self.objective = Problem.MAXIMIZE
         self.m_type = "gangs"
         self.value = []
