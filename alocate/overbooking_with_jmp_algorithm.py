@@ -4,13 +4,14 @@ from jmetalpy.JMP import JMP
 from swrlAPI.SWRL_API import query_result
 
 
-def overbooking_with_jmp_algorithm(overbooking_percentage: int, schedule: list, classrooms: list,
-                                   metrics: list) -> dict:
+def overbooking_with_jmp_algorithm(schedule: list, classrooms: list, metrics: list, overbooking_percentage=20,
+                                   use_jmp=True) -> dict:
     """
     This Algorithm iterates by the schedule and classroom and tries to allocate lessons to classroom if
     every requirement gets fulfilled by the conditions. Then uses JMetalPy to improve some problematic zones of
     our schedule.
 
+    :param use_jmp:
     :param metrics:
     :param classrooms:
     :param schedule:
@@ -41,23 +42,25 @@ def overbooking_with_jmp_algorithm(overbooking_percentage: int, schedule: list, 
         else:
             assign_lessons30(lessons30, lesson, c)
 
-    queryresult = query_result(len(metrics))
-    troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]), reverse=True)[:5]
+    if use_jmp:
+        queryresult = query_result(len(metrics))
+        troublesome_lessons30_key_list = sorted(lessons30, key=lambda k: len(lessons30[k]), reverse=True)[:5]
 
-    for tbl in troublesome_lessons30_key_list:
-        old_metrics = []
+        for tbl in troublesome_lessons30_key_list:
+            old_metrics = []
 
-        for m in metrics:
-            m.calculate(lessons30[tbl])
-            old_metrics.append(m.get_percentage())
-        trouble_l = [item[0] for item in lessons30[tbl]]
-        trouble_c = preparing_classrooms_to_jmp(classrooms, tbl, lessons30[tbl])
-        if len(trouble_l) > 3:
-            new_schedule, jmp_metric_results = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c),
-                                                                   metrics)
-            if new_schedule_is_better(old_metrics, jmp_metric_results, metrics,
-                                      max(len(trouble_l), len(list(trouble_c)))):
-                lessons30[tbl] = new_schedule
+            for m in metrics:
+                m.calculate(lessons30[tbl])
+                old_metrics.append(m.get_percentage())
+
+            trouble_l = [item[0] for item in lessons30[tbl]]
+            trouble_c = preparing_classrooms_to_jmp(classrooms, tbl, lessons30[tbl])
+            if len(trouble_l) > 3:
+                new_schedule, jmp_metric_results = JMP().run_algorithm(queryresult, trouble_l, list(trouble_c),
+                                                                       metrics)
+                if new_schedule_is_better(old_metrics, jmp_metric_results, metrics,
+                                          max(len(trouble_l), len(list(trouble_c)))):
+                    lessons30[tbl] = new_schedule
 
     print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
     return lessons30
