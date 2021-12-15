@@ -16,6 +16,8 @@ from metrics.Metric import *
 class JMP:
 
     def run_algorithm(self, alg_list: list, lessons: list, classrooms: list, metrics: list) -> list:
+
+        alg_list.append("nsgaii")
         for a in alg_list:
             try:
                 alg = getattr(JMP, a)

@@ -204,20 +204,20 @@ class Manipulate_Documents:
         rows = []
 
         # write first row with headers
-        header = ["Curso", "Unidade de execução", "Turno", "Turma", "Inscritos no turno", "Dia da Semana",
-                  "Início",
-                  "Fim", "Dia", "Características da sala pedida para a aula",
-                  "Sala de aula", "Lotação", "Características reais da sala"]
+        header = "Curso,Unidade de execução,Turno,Turma,Inscritos no turno,Dia da Semana,Início,Fim,Dia,Características da sala pedida para a aula,Sala de aula,Lotação,Características reais da sala"
+
         rows.append(header)
 
         # write lessons and classrooms to rows list
         for tuple in schedule:
             # make row initially with the lesson infos
-            row = tuple[0].get_row()
+            row = tuple[0].get_row_str()
             if tuple[1] is not None:
                 # add the classroom
-                row += "," + tuple[1].name + "," + tuple[1].normal_capacity + "," + \
+                row += "," + tuple[1].name + "," + str(tuple[1].normal_capacity) + "," + \
                        "\"" + self.list_to_comma_sep_string(tuple[1].characteristics) + "\""
+            else:
+                row += ",,,"
             rows.append(row)
         print(rows)
         return rows

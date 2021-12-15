@@ -40,15 +40,19 @@
 	<!-- Add additional CSS in static file -->
 	{% load static %}
 	<link rel="stylesheet" href="{% static 'ads_app/styles.css' %}">
-	<body
+	<body>
 		<br>
 		<form class="content" action="download_file" method="POST" enctype="multipart/form-data">{% csrf_token %}
+			<label id="hidden_simple" name="hidden_simple" style="display: none;" type="hidden">{{simple_algorithm}}</label>
+			<label id="hidden_weekly" name="hidden_weekly" style="display: none;" type="hidden">{{weekly_algorithm}}</label>
+			<label id="hidden_overbooking" name="hidden_overbooking" style="display: none;" type="hidden">{{overbooking_algorithm}}</label>
+
+			<label>{{overbooking_algorithm}}</label>
 			<label for="algorithm" >Choose the best algorithm for download:</label>
 			<select name="algorithm" id="algorithm">
-				<option value="volvo">Volvo</option>
-				<option value="saab">Saab</option>
-				<option value="opel">Opel</option>
-				<option value="audi">Audi</option>
+				<option value="simple_algorithm">Simple</option>
+				<option value="weekly_algorithm">Weekly</option>
+				<option value="overbooking_algorithm">Overbooking</option>
 			</select>
 			<input type="submit" id="submit" >
 
@@ -73,54 +77,8 @@
 					},
 				});
 			</script>
+
 		</form>
-
-		<br>
-		<p>Schedule of Simple algorithm</p>
-		<div id="simple_algorithm" class="csv_table" name="metric_viewer">	</div>
-			<script>
-				var table_data = {{simple_algorithm|safe}};
-				//create Tabulator on DOM element with id "example-table"
-				var table = new Tabulator("#simple_algorithm", {
-					height:300, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-					 //assign data to table
-					data:table_data,
-					layout:"fitColumns", //fit columns to width of table (optional)
-					columns:[ //Define Table Columns
-						//{title:"Metric", field:"metric", width:150},
-						{% for key,value in table_headers.items %}
-						{title:"{{value}}", field:"{{key}}", hozAlign:"left"},
-						{% endfor %}
-					],
-					rowClick:function(e, row){ //trigger an alert message when the row is clicked
-						alert("Row " + row.getData().id + " Clicked!!!!");
-					},
-				});
-			</script>
-
-		<br>
-		<p>Schedule of Overbooking algorithm</p>
-		<div id="overbooking_algorithm" class="csv_table" name="metric_viewer">	</div>
-			<script>
-				var table_data = {{overbooking_algorithm|safe}};
-				//create Tabulator on DOM element with id "example-table"
-				var table = new Tabulator("#overbooking_algorithm", {
-					height:300, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-					 //assign data to table
-					data:table_data,
-					layout:"fitColumns", //fit columns to width of table (optional)
-					columns:[ //Define Table Columns
-						//{title:"Metric", field:"metric", width:150},
-						{% for key,value in table_headers.items %}
-						{title:"{{value}}", field:"{{key}}", hozAlign:"left"},
-						{% endfor %}
-					],
-					rowClick:function(e, row){ //trigger an alert message when the row is clicked
-						alert("Row " + row.getData().id + " Clicked!!!!");
-					},
-				});
-			</script>
-
 		{% load static %}
 		<link rel="stylesheet" href="{% static 'ads_app/styles.css' %}">
 		
