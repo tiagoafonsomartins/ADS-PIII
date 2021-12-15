@@ -63,6 +63,7 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
     # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
     metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
     queryresult = query_result(len(metrics))
+
     count = 0
     if use_JMP and len(metrics) > 0:
         for block, half_hour in lessons30.items():
@@ -77,7 +78,6 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
                 if metric.get_percentage() > metric.prefered_max:
                     half_hour_is_bad = True
 
-
             if half_hour_is_bad:
 
                 classrooms = preparing_classrooms_to_jmp(main_classrooms, block, half_hour)
@@ -85,7 +85,7 @@ def weekly_allocation(main_schedule, main_classrooms, characs=100, len_characs=2
 
                 if len(lessons) >= 3:
 
-                    new_schedule, JMP_metric_results = JMP().run_algorithm(["nsgaii"], lessons, classrooms, metrics)
+                    new_schedule, JMP_metric_results = JMP().run_algorithm(queryresult, lessons, classrooms, metrics)
 
                     if new_schedule_is_better(old_metric_results, JMP_metric_results, metrics,
                                               max(len(lessons), len(classrooms))):

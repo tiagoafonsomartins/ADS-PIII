@@ -92,7 +92,7 @@ class Underbooking(Metric):
         super().__init__("Underbooking")
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
-        self.prefered_max = 0.7
+        self.prefered_max = prefered_max
         self.weight = 0.25
 
     def calculate(self, schedule: list):
