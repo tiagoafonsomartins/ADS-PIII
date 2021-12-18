@@ -1,34 +1,34 @@
-import mimetypes
-from os import read
-import sys
-
-from django.shortcuts import render
-from operator import itemgetter
-from cytoolz import take
-
-from django.http import HttpResponse, FileResponse
-
 from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
 from alocate.simple_allocation import simple_allocation
 from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
-from metrics import Metric
+
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
 from django.shortcuts import render
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
+
 from django.http import HttpResponse, Http404
 import json
-import io
-from lesson.Lesson import *
+
 import copy
+
+from .forms import UploadForm
 
 global schedule_simple
 global schedule_overbooking
 
 def index(request):
     return render(request, 'index.html')
+
+
+# This might not be needed but it's a placeholder
+def loading(request):
+    form = UploadForm(request.POST or None, request.FILES or None)
+    context = {
+        'form': form,
+    }
+
+    # return render(request, 'uploads/main.html', context)
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
