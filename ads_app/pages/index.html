@@ -35,29 +35,29 @@
 		   {% block sidebar %}
 		   <ul class="sidebar-nav">
 			  <li class="web-title">ADS P3.14</li>
-			 <li><a href="{% url 'index' %}">Home</a></li>
-			 <li><a href="{% url 'results' %}">Results</a></li>
+			 <li><a href="{% url 'index' %}" id="home" name="home">Home</a></li>
+			 <li><a href="{% url 'results' %}" id="results" name="results">Results</a></li>
 		   </ul>
 		   {% endblock %}
 		</div>
 		
 		<form class="content" action="results" method="POST" enctype="multipart/form-data">{% csrf_token %}
 			<br>
-			<p>Select Metrics to evaluate the algorithm- To select multiple metrics, press CTRL + Left Click</p>
+			<p id="home-metrics_selection" name="home-metrics_selection">Select Metrics to evaluate the algorithm- To select multiple metrics, press CTRL + Left Click</p>
 			<select name="metrics" id="metrics" multiple>
-				<option value="RoomlessLessons">Roomless_Lessons</option>
-				<option value="Overbooking">Overbooking</option>
-				<option value="Underbooking">Underbooking</option>
-				<option value="BadClassroom">BadClassroom</option>
-					<option value="Gaps">Gaps</option>
-					<option value="RoomMovements">RoomMovements</option>
-					<option value="BuildingMovements">BuildingMovements</option>
-					<option value="UsedRooms">UsedRooms</option>
-					<option value="ClassroomInconsistency">ClassroomInconsistency</option>
+				<option value="RoomlessLessons" name="home-RoomlessLessons">Roomless_Lessons</option>
+				<option value="Overbooking" name="home-Overbooking">Overbooking</option>
+				<option value="Underbooking" name="home-Underbooking">Underbooking</option>
+				<option value="BadClassroom" name="home-BadClassroom">BadClassroom</option>
+					<option value="Gaps" name="home-Gaps">Gaps</option>
+					<option value="RoomMovements" name="home-RoomMovements">RoomMovements</option>
+					<option value="BuildingMovements" name="home-BuildingMovements">BuildingMovements</option>
+					<option value="UsedRooms" name="home-UsedRooms">UsedRooms</option>
+					<option value="ClassroomInconsistency" name="home-ClassroomInconsistency">ClassroomInconsistency</option>
 			</select>
 			<br><br>
 			
-			<p>Did you make any changes to the structure of the file?</p>
+			<p id="home-changes_to_file">Did you make any changes to the structure of the file?</p>
 
 			<div>
 				<input type="radio" id="no_changes" name="changed" value="false"
@@ -70,30 +70,30 @@
 
 				<br>
 				<p>Insert the corresponding maximum thresholds for the Algorithms (0 - 100%)</p>
-				<input type="text" class="max" id="RoomlessLessons_max" name="RoomlessLessons_max" >    <label class="max" for="RoomlessLessons_max">Roomless Lesson Threshold</label> <br>
-				<input type="text" class="max" id="Overbooking_max" name="Overbooking_max" >            <label class="max" for="Overbooking_max">Overbooking Threshold</label> <br>
-				<input type="text" class="max" id="Underbooking_max" name="Underbooking_max" >          <label class="max" for="Underbooking_max">Underbooking Threshold</label> <br>
-				<input type="text" class="max" id="BadClassroom_max" name="BadClassroom_max" >          <label class="max" for="BadClassroom_max">Bad Classroom Threshold</label> <br>
+				<input type="text" class="max" id="RoomlessLessons_max" name="RoomlessLessons_max" >    <label class="max" for="RoomlessLessons_max" name="home-RoomlessLessons_max">Roomless Lesson Threshold</label> <br>
+				<input type="text" class="max" id="Overbooking_max" name="Overbooking_max" >            <label class="max" for="Overbooking_max" name="home-Overbooking_max">Overbooking Threshold</label> <br>
+				<input type="text" class="max" id="Underbooking_max" name="Underbooking_max" >          <label class="max" for="Underbooking_max" name="home-Underbooking_max">Underbooking Threshold</label> <br>
+				<input type="text" class="max" id="BadClassroom_max" name="BadClassroom_max" >          <label class="max" for="BadClassroom_max" name="home-BadClassroom_max">Bad Classroom Threshold</label> <br>
 
 				<br>
 				<p>Please read each label and insert your custom name for it</p>
 		
-				<input type="text" class="ifChecked" id="degree" name="degree" >           					     <label class="ifChecked" for="degree">Curso</label> <br>
-				<input type="text" class="ifChecked" id="subject" name="subject" >         					     <label class="ifChecked" for="subject">Unidade de execução</label> <br>
-				<input type="text" class="ifChecked" id="shift" name="shift" >             					     <label class="ifChecked" for="shift">Turno</label> <br>
-				<input type="text" class="ifChecked" id="grade" name="grade" >             					   	 <label class="ifChecked" for="grade">Turma</label> <br>
-				<input type="text" class="ifChecked" id="enrolled" name="enrolled" >       					     <label class="ifChecked" for="enrolled">Inscritos no turno (no 1º semestre é baseado em estimativas)</label> <br>
-				<input type="text" class="ifChecked" id="day_week" name="day_week" >       					     <label class="ifChecked" for="day_week">Dia da Semana</label> <br>
-				<input type="text" class="ifChecked" id="begins_at" name="begins_at" >     					     <label class="ifChecked" for="begins_at">Início</label> <br>
-				<input type="text" class="ifChecked" id="ends" name="ends" >               					  	 <label class="ifChecked" for="ends">Fim</label> <br>
-				<input type="text" class="ifChecked" id="day" name="day" >                 					 	 <label class="ifChecked" for="day">Dia</label> <br>
-				<input type="text" class="ifChecked" id="characteristics_asked" name="characteristics_asked" >   <label class="ifChecked" for="characteristics_asked">Características da sala pedida para a aula</label> <br>
-				<input type="text" class="ifChecked" id="classroom" name="classroom" >              			 <label class="ifChecked" for="classroom">Sala da aula</label> <br>
-				<input type="text" class="ifChecked" id="max_capacity" name="max_capacity" >           			 <label class="ifChecked" for="max_capacity">Lotação</label> <br>
-				<input type="text" class="ifChecked" id="characteristics_actual" name="characteristics_actual" > <label class="ifChecked" for="characteristics_actual">Características reais da sala</label> <br>
+				<input type="text" class="ifChecked" id="degree" name="degree" >           					     <label class="ifChecked" for="degree" name="home-degree">Curso</label> <br>
+				<input type="text" class="ifChecked" id="subject" name="subject" >         					     <label class="ifChecked" for="subject" name="home-subject">Unidade de execução</label> <br>
+				<input type="text" class="ifChecked" id="shift" name="shift" >             					     <label class="ifChecked" for="shift" name="home-shift">Turno</label> <br>
+				<input type="text" class="ifChecked" id="grade" name="grade" >             					   	 <label class="ifChecked" for="grade" name="home-grade">Turma</label> <br>
+				<input type="text" class="ifChecked" id="enrolled" name="enrolled" >       					     <label class="ifChecked" for="enrolled" name="home-enrolled">Inscritos no turno (no 1º semestre é baseado em estimativas)</label> <br>
+				<input type="text" class="ifChecked" id="day_week" name="day_week" >       					     <label class="ifChecked" for="day_week" name="home-day_week">Dia da Semana</label> <br>
+				<input type="text" class="ifChecked" id="begins_at" name="begins_at" >     					     <label class="ifChecked" for="begins_at" name="home-begins_at">Início</label> <br>
+				<input type="text" class="ifChecked" id="ends" name="ends" >               					  	 <label class="ifChecked" for="ends" name="home-ends">Fim</label> <br>
+				<input type="text" class="ifChecked" id="day" name="day" >                 					 	 <label class="ifChecked" for="day" name="home-day">Dia</label> <br>
+				<input type="text" class="ifChecked" id="characteristics_asked" name="characteristics_asked" >   <label class="ifChecked" for="characteristics_asked" name="home-characteristics_asked">Características da sala pedida para a aula</label> <br>
+				<input type="text" class="ifChecked" id="classroom" name="classroom" >              			 <label class="ifChecked" for="classroom" name="home-classroom">Sala da aula</label> <br>
+				<input type="text" class="ifChecked" id="max_capacity" name="max_capacity" >           			 <label class="ifChecked" for="max_capacity" name="home-max_capacity">Lotação</label> <br>
+				<input type="text" class="ifChecked" id="characteristics_actual" name="characteristics_actual" > <label class="ifChecked" for="characteristics_actual" name="home-characteristics_actual">Características reais da sala</label> <br>
 			</div>
 			<br>
-			<p>Please select the schedule</p>
+			<p id="home-select_schedule" name="home-select_schedule">Please select the schedule</p>
 
 			<input type="file" id="myFile" name="filename" required="required" onchange="csvJSON();">
 			<input type="submit" id="submit" >
