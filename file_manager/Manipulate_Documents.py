@@ -23,8 +23,8 @@ class Manipulate_Documents:
         self.input_classrooms = input_classrooms
 
         self.classroom_list = []
-        
-    def import_schedule_documents(self, file_name: TemporaryUploadedFile, use_classrooms: bool):
+
+    def import_schedule_documents(self, file_name: TemporaryUploadedFile, use_classrooms: bool, encoding='utf-8'):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
@@ -34,8 +34,10 @@ class Manipulate_Documents:
         for classroom in self.classroom_list:
             classroom_dict[classroom.name] = classroom
         schedule = []
-
-        csvreader = csv.reader(io.StringIO(file_name.read().decode('utf-8')))
+        if encoding not in ["utf-8", "ansi"]:
+            csvreader = csv.reader(io.StringIO(file_name.read().decode("utf-8")))
+        else:
+            csvreader = csv.reader(io.StringIO(file_name.read().decode(encoding)))
         next(csvreader)
         for row in csvreader:
             self.read_schedule_row(row, use_classrooms, classroom_dict, schedule)
