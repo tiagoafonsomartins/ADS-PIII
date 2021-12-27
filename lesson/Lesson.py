@@ -108,6 +108,7 @@ class Lesson:
     def datetime_to_string(self, date: str, start: str, end: str) -> str:
         """
         Takes a string with the date, the beginning and finishing hour of this lesson and turns it into a string with this format: "10/16/2015_09:30:00-10:00:00"
+        :param date:
         :param day:
         :param start:
         :param end:
