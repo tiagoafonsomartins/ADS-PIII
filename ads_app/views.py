@@ -12,6 +12,7 @@ from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorith
 from alocate.simple_allocation import simple_allocation
 from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
+from lang_dict.Lang_Dict import Lang_Dict
 from metrics import Metric
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
@@ -26,9 +27,11 @@ import copy
 
 global schedule_simple
 global schedule_overbooking
+global chosen_language
 
 def index(request):
     return render(request, 'index.html')
+
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
@@ -80,9 +83,11 @@ def results(request):
         if not request.POST.get("Overbooking_max"):
             a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible)
         else:
-            a_jmp = overbooking_with_jmp_algorithm( s_copy, c_copy, metrics_jmp_compatible, int(request.POST.get("Overbooking_max")))
+            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible,
+                                                   int(request.POST.get("Overbooking_max")))
 
-        results_metrics = {"Metric":[],"Algorithm - Simple":[],"Algorithm - Weekly":[], "Algorithm - Overbooking": []};
+        results_metrics = {"Metric": [], "Algorithm - Simple": [], "Algorithm - Weekly": [],
+                           "Algorithm - Overbooking": []};
         for m in metrics:
             m.calculate(a_simple)
             print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
@@ -90,20 +95,16 @@ def results(request):
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
 
-
         schedule_andre = []
         for sublist in a_weekly.values():
             for item in sublist:
                 schedule_andre.append(item)
-
 
         for m in metrics:
             m.calculate(schedule_andre)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Weekly"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
- 
-
 
         schedule_nuno = []
         for sublist in a_jmp.values():
@@ -122,27 +123,31 @@ def results(request):
         while i < iterator:
             tmp_dict = {}
             for key, values in results_metrics.items():
-                #print(tmp_dict[key], "inside for", values[i])
+                # print(tmp_dict[key], "inside for", values[i])
                 try:
                     tmp_dict[key] = values[i]
                 except Exception:
-                   print("didn't insert the value")
+                    print("didn't insert the value")
 
             final_dict.append(tmp_dict)
-            i+=1
+            i += 1
         results_metrics = final_dict
 
-        #a_simple represents the schedule from the simple algorithm
-        #schedule_nuno represents the schedule from the overbooking algorithm
+        # a_simple represents the schedule from the simple algorithm
+        # schedule_nuno represents the schedule from the overbooking algorithm
         global schedule_simple
         global schedule_overbooking
         global schedule_weekly
+        global chosen_language
 
+        chosen_language = request.POST.get("chosen_language")
+        page_dict = Lang_Dict(chosen_language)
         schedule_simple = a_simple
         schedule_overbooking = schedule_nuno
         schedule_weekly = schedule_andre
         # table columns
-        headers = {"Metric": "Metrics", "Algorithm - Simple": "Algorithm - Simple", "Algorithm - Weekly": "Algorith - Weekly", "Algorithm - Overbooking": "Algorithm - Overbooking"}
+        headers = {"Metric": "Metrics", "Algorithm - Simple": "Algorithm - Simple",
+                   "Algorithm - Weekly": "Algorith - Weekly", "Algorithm - Overbooking": "Algorithm - Overbooking"}
 
         # content of evaluation table
         context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2": "50%"},
@@ -150,9 +155,11 @@ def results(request):
         context = json.dumps(context)
         results_metrics = json.dumps(results_metrics)
         # content of all algorithms to show on page, append to render
-        return render(request, 'results.html', {"context": context, "table_headers": headers, "results_metrics": results_metrics})
+        return render(request, 'results.html',
+                      {"context": context, "table_headers": headers, "results_metrics": results_metrics})
 
     return render(request, 'index.html')
+
 
 def download_file(request):
     # fill these variables with real values
