@@ -6,7 +6,7 @@ from django.shortcuts import render
 from operator import itemgetter
 from cytoolz import take
 
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, HttpResponseRedirect
 
 from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
 from alocate.simple_allocation import simple_allocation
@@ -28,10 +28,17 @@ import copy
 global schedule_simple
 global schedule_overbooking
 global chosen_language
+chosen_language = "en"
 
 def index(request):
     return render(request, 'index.html')
 
+def choose_language(request):
+    global chosen_language
+
+    chosen_language = request.POST.get("chosen_language")
+    page_dict = Lang_Dict(chosen_language)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict})
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
@@ -81,16 +88,21 @@ def results(request):
         s_copy = copy.deepcopy(schedule)
 
         if not request.POST.get("Overbooking_max"):
-            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible)
+            a_jmp = overbooking_with_jmp_algorithm(s_copy,
+                                                   c_copy,
+                                                   metrics_jmp_compatible)
         else:
-            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible,
+            a_jmp = overbooking_with_jmp_algorithm(s_copy,
+                                                   c_copy,
+                                                   metrics_jmp_compatible,
                                                    int(request.POST.get("Overbooking_max")))
 
-        results_metrics = {"Metric": [], "Algorithm - Simple": [], "Algorithm - Weekly": [],
+        results_metrics = {"Metric": [],
+                           "Algorithm - Simple": [],
+                           "Algorithm - Weekly": [],
                            "Algorithm - Overbooking": []};
         for m in metrics:
             m.calculate(a_simple)
-            print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
@@ -138,6 +150,7 @@ def results(request):
         global schedule_simple
         global schedule_overbooking
         global schedule_weekly
+        # get
         global chosen_language
 
         chosen_language = request.POST.get("chosen_language")
@@ -146,17 +159,26 @@ def results(request):
         schedule_overbooking = schedule_nuno
         schedule_weekly = schedule_andre
         # table columns
-        headers = {"Metric": "Metrics", "Algorithm - Simple": "Algorithm - Simple",
-                   "Algorithm - Weekly": "Algorith - Weekly", "Algorithm - Overbooking": "Algorithm - Overbooking"}
+        headers = {"Metric": "Metrics",
+                   "Algorithm - Simple": "Algorithm - Simple",
+                   "Algorithm - Weekly": "Algorith - Weekly",
+                   "Algorithm - Overbooking": "Algorithm - Overbooking"}
 
         # content of evaluation table
-        context = [{"Metric": "1", "Algorithm - 1": "97.5%", "Algorithm - 2": "50%"},
-                   {"Metric": "2", "Algorithm - 1": "10.5%", "Algorithm - 2": "99.7%"}]
+        context = [{"Metric": "1",
+                    "Algorithm - 1": "97.5%",
+                    "Algorithm - 2": "50%"},
+                   {"Metric": "2",
+                    "Algorithm - 1": "10.5%",
+                    "Algorithm - 2": "99.7%"}]
         context = json.dumps(context)
         results_metrics = json.dumps(results_metrics)
         # content of all algorithms to show on page, append to render
         return render(request, 'results.html',
-                      {"context": context, "table_headers": headers, "results_metrics": results_metrics})
+                      {"context": context,
+                       "table_headers": headers,
+                       "results_metrics": results_metrics,
+                       "page_dict": page_dict})
 
     return render(request, 'index.html')
 
