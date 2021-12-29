@@ -8,5 +8,6 @@ urlpatterns = [
     path('results', views.results, name='results'),
     path('results.html', views.results, name='results'),
     path("download_file", views.download_file, name='download_file'),
+    path("choose_language", views.choose_language, name='choose_language'),
 
 ]

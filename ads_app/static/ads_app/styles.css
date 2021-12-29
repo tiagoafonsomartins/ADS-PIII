@@ -32,6 +32,16 @@ body {
 
 }
 
+/* Side navigation links */
+.lang {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+  list-style: none;
+
+}
+
 ul {
   list-style-type: none;
 }

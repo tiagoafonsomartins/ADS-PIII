@@ -2,27 +2,28 @@ import mimetypes
 from os import read
 import sys
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from operator import itemgetter
-from cytoolz import take
+from cytoolz import take#
 
 from django.http import HttpResponse, FileResponse, HttpResponseRedirect
+from django.urls import reverse
 
-from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
-from alocate.simple_allocation import simple_allocation
-from alocate.weekly_allocation import weekly_allocation
+#from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
+#from alocate.simple_allocation import simple_allocation
+#from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
 from lang_dict.Lang_Dict import Lang_Dict
-from metrics import Metric
-from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
-    BuildingMovements, ClassroomInconsistency
+#from metrics import Metric
+#from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
+    #BuildingMovements, ClassroomInconsistency
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.http import HttpResponse, Http404
 import json
 import io
-from lesson.Lesson import *
+#from lesson.Lesson import *
 import copy
 
 global schedule_simple
@@ -35,10 +36,12 @@ def index(request):
 
 def choose_language(request):
     global chosen_language
-
-    chosen_language = request.POST.get("chosen_language")
+    chosen_language = "pt"
+    #chosen_language = request.POST.get("chosen_language")
     page_dict = Lang_Dict(chosen_language)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict})
+    redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict})
+    return redirect(redirect_to)
+    #return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict})
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
@@ -208,3 +211,6 @@ def download_file(request):
         response.writelines(content)
 
     return response
+
+if __name__ == '__main__':
+    ld = choose_language("pt")

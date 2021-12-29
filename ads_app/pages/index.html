@@ -38,6 +38,13 @@
 			 <li><a href="{% url 'index' %}" id="home" name="home">Home</a></li>
 			 <li><a href="{% url 'results' %}" id="results" name="results">Results</a></li>
 		   </ul>
+			<p>Change language?</p><br>
+				<form class="lang" action="choose_language" method="POST" enctype="multipart/form-data">{% csrf_token %}
+					<select name="chosen_language" id="chosen_language" onchange="this.form.submit()">
+						<option value="en">English</option>
+						<option value="pt">Português</option>
+					</select>
+				</form>
 		   {% endblock %}
 		</div>
 		
