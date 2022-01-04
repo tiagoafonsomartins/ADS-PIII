@@ -2,12 +2,15 @@ import sqlite3
 import os
 from ads_app.models import *
 from django_ads.wsgi import *
-
+from . import *
 class Lang_Dict:
     """We pass lang_chosen, which is the requested language for usage on the webpage.
     Can be "pt", "en", "es", for portuguese, english, spanish and so on..."""
 
-
+    def __init__(self, lang_chosen):
+        lang_chosen = "en"
+        lang = GlossaryLanguage.objects.filter(language=lang_chosen)[0]
+        gloss = GlossaryContent.objects.filter(language=lang)
 
 
 

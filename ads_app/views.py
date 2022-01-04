@@ -9,14 +9,14 @@ from cytoolz import take#
 from django.http import HttpResponse, FileResponse, HttpResponseRedirect
 from django.urls import reverse
 
-#from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
-#from alocate.simple_allocation import simple_allocation
-#from alocate.weekly_allocation import weekly_allocation
+from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
+from alocate.simple_allocation import simple_allocation
+from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
 from lang_dict.Lang_Dict import Lang_Dict
-#from metrics import Metric
-#from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
-    #BuildingMovements, ClassroomInconsistency
+from metrics import Metric
+from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
+    BuildingMovements, ClassroomInconsistency
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -25,6 +25,8 @@ import json
 import io
 #from lesson.Lesson import *
 import copy
+
+from metrics.Metric import RoomlessLessons, Overbooking
 
 global schedule_simple
 global schedule_overbooking
