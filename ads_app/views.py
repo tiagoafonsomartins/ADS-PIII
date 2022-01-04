@@ -34,18 +34,26 @@ global chosen_language
 chosen_language = "en"
 
 def index(request):
-    return render(request, 'index.html')
+    global chosen_language
+    chosen_language
+    page_dict = Lang_Dict(chosen_language)
+    #print(page_dict.dictionary["home"])
+    return render(request, 'index.html', {"context": "context", "page_dict": page_dict.dictionary})
 
 def choose_language(request):
     global chosen_language
-    chosen_language = "pt"
-    #chosen_language = request.POST.get("chosen_language")
+
+    chosen_language = request.POST.get("chosen_language")
     page_dict = Lang_Dict(chosen_language)
-    redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict})
-    return redirect(redirect_to)
-    #return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict})
+    #chosen_language = "pt"
+    #redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict.dictionary})
+    #return redirect(redirect_to)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict.dictionary})
 
 def results(request):
+    global chosen_language
+    chosen_language
+    page_dict = Lang_Dict(chosen_language)
     if request.method == 'POST' and request.FILES['filename']:
         mp = Manipulate_Documents()
         myFile = request.FILES['filename']
@@ -156,10 +164,6 @@ def results(request):
         global schedule_overbooking
         global schedule_weekly
         # get
-        global chosen_language
-
-        chosen_language = request.POST.get("chosen_language")
-        page_dict = Lang_Dict(chosen_language)
         schedule_simple = a_simple
         schedule_overbooking = schedule_nuno
         schedule_weekly = schedule_andre
@@ -183,9 +187,10 @@ def results(request):
                       {"context": context,
                        "table_headers": headers,
                        "results_metrics": results_metrics,
-                       "page_dict": page_dict})
+                       "page_dict": page_dict.dictionary,
+                       })
 
-    return render(request, 'index.html')
+    return render(request, 'index.html', {"page_dict": page_dict.dictionary})
 
 
 def download_file(request):

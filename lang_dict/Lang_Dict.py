@@ -8,11 +8,15 @@ class Lang_Dict:
     Can be "pt", "en", "es", for portuguese, english, spanish and so on..."""
 
     def __init__(self, lang_chosen):
-        lang_chosen = "en"
-        lang = GlossaryLanguage.objects.filter(language=lang_chosen)[0]
+        lang = GlossaryLanguage.objects.get(language=lang_chosen).id
         gloss = GlossaryContent.objects.filter(language=lang)
+        dictionary = {}
+        for query in gloss:
+            field_tmp = GlossaryField.objects.get(id=query.page_field).page_field
+            dictionary[field_tmp] = query.content
 
-
+        #print(dictionary)
+        self.dictionary = dictionary
 
 ''' LEGACY VERSION - 
 # Here we used direct SQL commands to execute onto the DB. We noticed this didn't work,
@@ -49,5 +53,5 @@ class Lang_Dict:
         return glossary
 '''
 
-if __name__ == '__main__':
-    ld = Lang_Dict("en")
+'''if __name__ == '__main__':
+    ld = Lang_Dict("pt")'''
