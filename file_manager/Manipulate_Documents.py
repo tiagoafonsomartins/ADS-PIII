@@ -24,7 +24,8 @@ class Manipulate_Documents:
 
         self.classroom_list = []
 
-    def import_schedule_documents(self, file_name: TemporaryUploadedFile, use_classrooms: bool, encoding='utf-8'):
+    def import_schedule_documents(self, file_name: TemporaryUploadedFile, use_classrooms: bool, dateformat_list: list,
+                                  encoding='utf-8'):
         """
         Imports a csv of a schedule into a list of Lesson objects and Gang (class) objects
 
@@ -40,24 +41,23 @@ class Manipulate_Documents:
             csvreader = csv.reader(io.StringIO(file_name.read().decode(encoding)))
         next(csvreader)
         for row in csvreader:
-            self.read_schedule_row(row, use_classrooms, classroom_dict, schedule)
+            self.read_schedule_row(row, use_classrooms, classroom_dict, schedule, dateformat_list)
 
         file_name.close()
         return schedule
 
-    def read_schedule_row(self, row, use_classrooms, classroom_dict, schedule):
-        '''
+    def read_schedule_row(self, row, use_classrooms, classroom_dict, schedule, dateformat_list):
+        """
         Reads row of schedule file
+        :param dateformat_list:
         :param row:
         :param use_classrooms:
         :param classroom_dict:
         :param schedule:
         :return:
-        '''
+        """
         if row[5] and row[6] and row[8]:
-            lesson = Lesson(row[0], row[1], row[2], row[3],
-                            int(row[4]), row[5], row[6], row[7], row[8], row[9])
-
+            lesson = Lesson(dateformat_list, row[0], row[1], row[2], row[3], int(row[4]), row[5], row[6], row[7], row[8], row[9],)
             if not use_classrooms or not row[10] or row[10] not in classroom_dict.keys():
                 schedule.append((lesson, None))
             else:

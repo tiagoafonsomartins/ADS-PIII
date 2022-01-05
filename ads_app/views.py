@@ -38,8 +38,9 @@ def results(request):
         myFile = request.FILES['filename']
         myFile.seek(0)
         classrooms = mp.import_classrooms()
-        encoding = request.POST.get("encoding")
-        schedule = mp.import_schedule_documents(myFile, False, encoding)
+        encoding = request.POST.get('encoding')
+        dateformat_list = re.split('\W+', request.POST.get('dateformat'))
+        schedule = mp.import_schedule_documents(myFile, False, dateformat_list, encoding)
         metrics_chosen = request.POST.getlist('metrics')
         metrics = []
         metrics_jmp_compatible = []
@@ -67,8 +68,6 @@ def results(request):
             if metric == "ClassroomInconsistency":
                 metrics.append(ClassroomInconsistency())
 
-
-
         c_copy = copy.deepcopy(classrooms)
 
         s_copy = copy.deepcopy(schedule)
@@ -91,7 +90,7 @@ def results(request):
                            "Algorithm - Overbooking": []};
         for m in metrics:
             m.calculate(a_simple)
-            print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
+            # print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()

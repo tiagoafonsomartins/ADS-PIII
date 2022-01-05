@@ -4,9 +4,8 @@ import re
 
 class Lesson:
 
-    def __init__(self, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
-                 week_day: str, start: str, end: str, day: str, requested_characteristics: str):
-
+    def __init__(self, dateformat_list: list, course: str, subject: str, shift: str, gang: str, number_of_enrolled_students: int,
+                 week_day: str, start: str, end: str, day: str, requested_characteristics: str, ):
         self.course = course
         self.subject = subject
         self.shift = shift
@@ -17,7 +16,9 @@ class Lesson:
         self.end = end
         self.day = day
         self.requested_characteristics = requested_characteristics
+        self.dateformat_list = dateformat_list
         self.time_blocks = self.generate_time_blocks()
+
 
     def get_requested_characteristics(self) -> str:
         '''
@@ -114,6 +115,11 @@ class Lesson:
         :param end:
         :return:
         """
+        month_index = self.dateformat_list.index('MM')
+        day_index = self.dateformat_list.index('DD')
+        year_index = self.dateformat_list.index('YYYY')
+        date_split = re.split('\W+', date)
+        date = date_split[month_index] + '/' + date_split[day_index] + '/' + date_split[year_index]
         if not isinstance(date, str) or not isinstance(start, str) or not isinstance(end, str): return ""
         return date + "_" + start + "-" + end
 
