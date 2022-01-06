@@ -4,7 +4,7 @@ import sys
 
 from django.shortcuts import render, redirect
 from operator import itemgetter
-from cytoolz import take#
+from cytoolz import take  #
 
 from django.http import HttpResponse, FileResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -23,7 +23,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 import json
 import io
-#from lesson.Lesson import *
+# from lesson.Lesson import *
 import copy
 
 from metrics.Metric import RoomlessLessons, Overbooking
@@ -33,22 +33,26 @@ global schedule_overbooking
 global chosen_language
 chosen_language = "en"
 
+
 def index(request):
     global chosen_language
     chosen_language
     page_dict = Lang_Dict(chosen_language)
-    #print(page_dict.dictionary["home"])
+    # print(page_dict.dictionary["home"])
     return render(request, 'index.html', {"context": "context", "page_dict": page_dict.dictionary})
+
 
 def choose_language(request):
     global chosen_language
 
     chosen_language = request.POST.get("chosen_language")
     page_dict = Lang_Dict(chosen_language)
-    #chosen_language = "pt"
-    #redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict.dictionary})
-    #return redirect(redirect_to)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {"context": "context", "page_dict": page_dict.dictionary})
+    # chosen_language = "pt"
+    # redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict.dictionary})
+    # return redirect(redirect_to)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'),
+                                {"context": "context", "page_dict": page_dict.dictionary})
+
 
 def results(request):
     global chosen_language
@@ -57,6 +61,14 @@ def results(request):
     if request.method == 'POST' and request.FILES['filename']:
         mp = Manipulate_Documents()
         myFile = request.FILES['filename']
+        db_metrics = []
+
+        '''DownloadSimple
+        DownloadWeekly
+        DownloadOverbooking
+        SelectSimple
+        SelectWeekly
+        SelectOverbooking'''
         myFile.seek(0)
         schedule = mp.import_schedule_documents(myFile, False)
         metrics_chosen = request.POST.getlist('metrics')
@@ -66,25 +78,34 @@ def results(request):
             if metric == "RoomlessLessons":
                 metrics.append(RoomlessLessons())
                 metrics_jmp_compatible.append(RoomlessLessons())
+                db_metrics.append('metric_RoomlessLessons')
             if metric == "Overbooking":
                 metrics.append(Overbooking())
                 metrics_jmp_compatible.append(Overbooking())
+                db_metrics.append('metric_Overbooking')
             if metric == "Underbooking":
                 metrics.append(Underbooking())
                 metrics_jmp_compatible.append(Underbooking())
+                db_metrics.append('metric_Underbooking')
             if metric == "BadClassroom":
                 metrics.append(BadClassroom())
                 metrics_jmp_compatible.append(BadClassroom())
+                db_metrics.append('metric_BadClassroom')
             if metric == "Gaps":
                 metrics.append(Gaps())
+                db_metrics.append('metric_Gaps')
             if metric == "RoomMovements":
                 metrics.append(RoomMovements())
+                db_metrics.append('metric_RoomMovements')
             if metric == "BuildingMovements":
                 metrics.append(BuildingMovements())
+                db_metrics.append('metric_BuildingMovements')
             if metric == "UsedRooms":
                 metrics.append(UsedRooms())
+                db_metrics.append('metric_UsedRooms')
             if metric == "ClassroomInconsistency":
                 metrics.append(ClassroomInconsistency())
+                db_metrics.append('metric_ClassroomInconsistency')
 
         classrooms = mp.import_classrooms()
 
@@ -110,37 +131,47 @@ def results(request):
                                                    metrics_jmp_compatible,
                                                    int(request.POST.get("Overbooking_max")))
 
-        results_metrics = {"Metric": [],
+        results_metrics = {"Metric Description": [],
+                           "Metric": [],
                            "Algorithm - Simple": [],
                            "Algorithm - Weekly": [],
-                           "Algorithm - Overbooking": []};
+                           "Algorithm - Overbooking": []}
+        i = 0
         for m in metrics:
             m.calculate(a_simple)
+            results_metrics["Metric Description"].append(page_dict.dictionary[db_metrics[i]])
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            i += 1
 
         schedule_andre = []
         for sublist in a_weekly.values():
             for item in sublist:
                 schedule_andre.append(item)
 
+        i = 0
         for m in metrics:
             m.calculate(schedule_andre)
+            results_metrics["Metric Description"].append(page_dict.dictionary[db_metrics[i]])
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Weekly"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            i += 1
 
         schedule_nuno = []
         for sublist in a_jmp.values():
             for item in sublist:
                 schedule_nuno.append(item)
 
+        i = 0
         for m in metrics:
             m.calculate(schedule_nuno)
+            results_metrics["Metric Description"].append(page_dict.dictionary[db_metrics[i]])
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            i += 1
 
         iterator = len(results_metrics["Algorithm - Simple"])
         i = 0
@@ -168,10 +199,11 @@ def results(request):
         schedule_overbooking = schedule_nuno
         schedule_weekly = schedule_andre
         # table columns
-        headers = {"Metric": "Metrics",
-                   "Algorithm - Simple": "Algorithm - Simple",
-                   "Algorithm - Weekly": "Algorith - Weekly",
-                   "Algorithm - Overbooking": "Algorithm - Overbooking"}
+        headers = {"Metric Description": str(page_dict.dictionary["MetricDescription"]),
+                   "Metric": str(page_dict.dictionary["Metric"]),
+                   "Algorithm - Simple": str(page_dict.dictionary["algorithm_simple"]),
+                   "Algorithm - Weekly": str(page_dict.dictionary["algorithm_weekly"]),
+                   "Algorithm - Overbooking": str(page_dict.dictionary["algorithm_overbooking"])}
 
         # content of evaluation table
         context = [{"Metric": "1",
@@ -200,17 +232,22 @@ def download_file(request):
     global schedule_simple
     global schedule_overbooking
     global schedule_weekly
-
+    global chosen_language
+    page_dict = Lang_Dict(chosen_language)
+    filename = ""
     if request.method == 'POST':
         if request.POST.get("algorithm") == "simple_algorithm":
+            filename = page_dict.dictionary["DownloadSimple"]
             lines = Manipulate_Documents().export_schedule_str(schedule_simple)
         if request.POST.get("algorithm") == "weekly_algorithm":
+            filename = page_dict.dictionary["DownloadWeekly"]
             lines = Manipulate_Documents().export_schedule_str(schedule_weekly)
         if request.POST.get("algorithm") == "overbooking_algorithm":
+            filename = page_dict.dictionary["DownloadOverbooking"]
             lines = Manipulate_Documents().export_schedule_str(schedule_overbooking)
         response = HttpResponse(content_type='text/csv')
         response['Content-Type'] = 'text/csv'
-        response['Content-Disposition'] = 'attachment; filename=Algorithm_Results.csv'
+        response['Content-Disposition'] = 'attachment; filename=' + filename + '.csv'
 
         content = ""
         for x in lines:
@@ -218,6 +255,7 @@ def download_file(request):
         response.writelines(content)
 
     return response
+
 
 if __name__ == '__main__':
     ld = choose_language("pt")

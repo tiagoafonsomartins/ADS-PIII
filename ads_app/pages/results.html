@@ -50,9 +50,9 @@
 			<label>{{overbooking_algorithm}}</label>
 			<label for="algorithm" id="res_algorithm" name="res_algorithm" >{{ page_dict.res_algorithm }}</label>
 			<select name="algorithm" id="algorithm">
-				<option value="simple_algorithm" name="res_simple">{{ page_dict.res_simple }}</option>
-				<option value="weekly_algorithm" name="res_weekly">{{ page_dict.res_weekly }}</option>
-				<option value="overbooking_algorithm" name="res_overbooking">{{ page_dict.res_overbooking }}</option>
+				<option value="simple_algorithm" name="res_simple">{{ page_dict.SelectSimple }}</option>
+				<option value="weekly_algorithm" name="res_weekly">{{ page_dict.SelectWeekly }}</option>
+				<option value="overbooking_algorithm" name="res_overbooking">{{ page_dict.SelectOverbooking }}</option>
 			</select>
 			<input type="submit" id="submit" >
 
@@ -90,9 +90,12 @@
 				<li><a href="{% url 'results' %}" id="results" name="results">{{ page_dict.results }}</a></li>
 				<p>Change language?</p><br>
 				<form class="lang" action="choose_language" method="POST" enctype="multipart/form-data">{% csrf_token %}
-					<li value="en">English</li>
-					<li value="pt">Português</li>
+					<select name="chosen_language" id="chosen_language" onchange="this.form.submit()">
+						<option value="en">English</option>
+						<option value="pt">Português</option>
+					</select>
 				</form>
+
 			</ul>
 			{% endblock %}
 		</div>
