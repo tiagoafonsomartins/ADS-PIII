@@ -99,11 +99,20 @@
 
 			<label for="dateformat">Set the date format on your file, using MM (month), DD (day), YYYY (year), ordering it by your choice and separating them
 				by any special characters (':', '/'...): </label>
-			<input type="text" id="dateformat" name="dateformat"><br>
+			<input type="text" id="dateformat" name="dateformat" required>
+
+			<br>
+			<br>
+
+			<p>Please select the classroom file to import:</p>
+
+			<input type="file" id="classroom_file" name="classroom_file" onchange="csvJSON();">
+			<br>
+			<br>
 
 			<p>Please select the schedule to import:</p>
 
-			<input type="file" id="myFile" name="filename" required="required" onchange="csvJSON();">
+			<input type="file" id="myFile" name="filename" onchange="csvJSON();" required>
 			<input type="submit" id="submit" >
 			<br>
 		</form>

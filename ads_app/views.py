@@ -37,7 +37,9 @@ def results(request):
         mp = Manipulate_Documents()
         myFile = request.FILES['filename']
         myFile.seek(0)
-        classrooms = mp.import_classrooms()
+        classrooms_file = request.FILES.get('classroom_file')
+        # classrooms_file.seek(0)
+        classrooms = mp.import_classrooms(classrooms_file)
         encoding = request.POST.get('encoding')
         dateformat_list = re.split('\W+', request.POST.get('dateformat'))
         schedule = mp.import_schedule_documents(myFile, False, dateformat_list, encoding)
@@ -175,8 +177,7 @@ def download_file(request):
             lines = Manipulate_Documents().export_schedule_str(schedule_overbooking)
         response = HttpResponse(content_type='text/csv')
         response['Content-Type'] = 'text/csv'
-        response['Content-Disposition'] = 'attachment; filename=Algorithm_Results.csv'
-
+        response['Content-Disposition'] = 'attachment; filename=' + str(request.POST.get("algorithm")) + '.csv'
         content = ""
         for x in lines:
             content += x + "\n"
