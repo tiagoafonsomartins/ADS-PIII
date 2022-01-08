@@ -19,7 +19,6 @@ class Lesson:
         self.dateformat_list = dateformat_list
         self.time_blocks = self.generate_time_blocks()
 
-
     def get_requested_characteristics(self) -> str:
         '''
         Returns classroom characteristics requested by the lesson
