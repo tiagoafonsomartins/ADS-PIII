@@ -8,6 +8,7 @@ from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underb
 from django.shortcuts import render
 
 from django.http import HttpResponse, Http404
+from django.http import JsonResponse
 import json
 
 import copy
@@ -16,19 +17,33 @@ from .forms import UploadForm
 
 global schedule_simple
 global schedule_overbooking
+global teste
+teste = 0
 
 def index(request):
     return render(request, 'index.html')
 
 
 # This might not be needed but it's a placeholder
-def loading(request):
-    form = UploadForm(request.POST or None, request.FILES or None)
-    context = {
-        'form': form,
-    }
+#def loading(request):
+#    form = UploadForm(request.POST or None, request.FILES or None)
+#    if request.is_ajax():
+#        if form.is_valid():
+#            form.save()
+#            return JsonResponse({'message': 'hell yeah'})
+#    context = {
+#        'form': form,
+#    }
+#    return render(request, 'uploads/main.html', context)
 
-    # return render(request, 'uploads/main.html', context)
+def progress_bar(request):
+    if request.method == 'GET':
+        global teste
+        teste += 1
+        print("Teste: ", teste)
+        return JsonResponse({'percent':str(teste), 'error':'0'})
+    else:
+        return JsonResponse({'percent':'0', 'error':'1'})
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
