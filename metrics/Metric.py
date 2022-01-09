@@ -12,7 +12,7 @@ class Metric(ABC):
     def __init__(self, name, prefered_max = 0.4):
         self.name = name
         self.value = []
-        self.prefered_max = 0.4
+        self.prefered_max = prefered_max
         self.weight = 0.5
 
     @abstractmethod
@@ -26,7 +26,7 @@ class Metric(ABC):
 
 class RoomlessLessons(Metric):
 
-    def __init__(self, prefered_max = 0.4):
+    def __init__(self, prefered_max = 0.05):
         super().__init__("Roomless_lessons", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -50,6 +50,7 @@ class RoomlessLessons(Metric):
         return self.value
 
     def get_percentage(self):
+        if self.value == 0: return 0
         return self.value / self.total
 
     def reset_metric(self):
@@ -59,7 +60,7 @@ class RoomlessLessons(Metric):
 
 class Overbooking(Metric):
 
-    def __init__(self, prefered_max = 0.4):
+    def __init__(self, prefered_max = 0.5):
         super().__init__("Overbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -80,6 +81,7 @@ class Overbooking(Metric):
                 self.value.append(0)
 
     def get_percentage(self):
+        if len(self.value) == 0: return 0
         return sum(self.value) / len(self.value)
 
     def reset_metric(self):
@@ -88,7 +90,7 @@ class Overbooking(Metric):
 
 class Underbooking(Metric):
 
-    def __init__(self, prefered_max=0.7):
+    def __init__(self, prefered_max=0.95):
         super().__init__("Underbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -111,6 +113,7 @@ class Underbooking(Metric):
                 self.value.append(0)
 
     def get_percentage(self):
+        if len(self.value) == 0: return 0
         return sum(self.value) / len(self.value)
 
     def reset_metric(self):
@@ -119,7 +122,7 @@ class Underbooking(Metric):
 
 class BadClassroom(Metric):
 
-    def __init__(self, prefered_max = 0.4):
+    def __init__(self, prefered_max = 0.1):
         super().__init__("Bad_classroom", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -141,6 +144,7 @@ class BadClassroom(Metric):
         return self.value
 
     def get_percentage(self):
+        if self.total == 0: return 0
         return self.value / self.total
 
     def reset_metric(self):
@@ -219,7 +223,7 @@ class Gaps(Metric):
 
 class RoomMovements(Metric):
 
-    def __init__(self, prefered_max = 0.4):
+    def __init__(self, prefered_max = 0.7):
         super().__init__("RoomMovements", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "gangs"

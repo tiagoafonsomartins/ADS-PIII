@@ -1,3 +1,6 @@
+import time
+
+from alocate.Progress import Progress
 from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
 from alocate.simple_allocation import simple_allocation
 from alocate.weekly_allocation import weekly_allocation
@@ -13,12 +16,9 @@ import json
 
 import copy
 
-from .forms import UploadForm
-
 global schedule_simple
 global schedule_overbooking
-global teste
-teste = 0
+global progress
 
 def index(request):
     return render(request, 'index.html')
@@ -38,15 +38,19 @@ def index(request):
 
 def progress_bar(request):
     if request.method == 'GET':
-        global teste
-        teste += 1
-        print("Teste: ", teste)
-        return JsonResponse({'percent':str(teste), 'error':'0'})
+        global progress
+        percent = progress.get_progress()
+        #print("Progress: ", percent, "%")
+        return JsonResponse({'percent':str(round(percent, 1)), 'error':'0'})
     else:
+        print("\nNot get, kinda weird\n")
         return JsonResponse({'percent':'0', 'error':'1'})
 
 def results(request):
     if request.method == 'POST' and request.FILES['filename']:
+        global progress
+        progress = Progress()
+        print(progress.get_progress(), "% view")
         mp = Manipulate_Documents()
         myFile = request.FILES['filename']
         myFile.seek(0)
@@ -83,27 +87,34 @@ def results(request):
         c_copy = copy.deepcopy(classrooms)
 
         s_copy = copy.deepcopy(schedule)
-        a_simple = simple_allocation(s_copy, c_copy)
+
+        a_simple = simple_allocation(s_copy, c_copy, progress)
 
         c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
-        a_weekly = weekly_allocation(s_copy, c_copy)
+        a_weekly = weekly_allocation(s_copy, c_copy, progress)
 
+        start = time.time()
         c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
+        print("TIME FOR DEEP COPY: ", time.time() - start)
 
         if not request.POST.get("Overbooking_max"):
-            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible)
+            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible, progress)
         else:
-            a_jmp = overbooking_with_jmp_algorithm( s_copy, c_copy, metrics_jmp_compatible, int(request.POST.get("Overbooking_max")))
+            a_jmp = overbooking_with_jmp_algorithm( s_copy, c_copy, metrics_jmp_compatible, progress, int(request.POST.get("Overbooking_max")))
+
+
+        progress.set_total_tasks_metrics(len(metrics)*3)
 
         results_metrics = {"Metric":[],"Algorithm - Simple":[],"Algorithm - Weekly":[], "Algorithm - Overbooking": []};
         for m in metrics:
             m.calculate(a_simple)
-            print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
+            #print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            progress.inc_cur_tasks_metrics()
 
 
         schedule_andre = []
@@ -111,14 +122,13 @@ def results(request):
             for item in sublist:
                 schedule_andre.append(item)
 
-
         for m in metrics:
             m.calculate(schedule_andre)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Weekly"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            progress.inc_cur_tasks_metrics()
  
-
 
         schedule_nuno = []
         for sublist in a_jmp.values():
@@ -130,6 +140,7 @@ def results(request):
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
+            progress.inc_cur_tasks_metrics()
 
         iterator = len(results_metrics["Algorithm - Simple"])
         i = 0

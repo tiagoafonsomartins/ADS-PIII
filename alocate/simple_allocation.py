@@ -1,7 +1,7 @@
 from alocate.Algorithm_Utils import sorted_lessons, sorted_classrooms
+from alocate import Progress
 
-
-def simple_allocation(schedule: list, classrooms: list) -> list:
+def simple_allocation(schedule: list, classrooms: list, progress: Progress) -> list:
     '''
     Simple allocation algorithm that allocates first room that accommodates the lessons requested characteristics
     and is available at that time
@@ -14,6 +14,8 @@ def simple_allocation(schedule: list, classrooms: list) -> list:
     number_of_roomless_lessons = 0
 
     schedule = []
+    lessons_len = len(lessons_list)
+    progress.set_total_tasks_simple(lessons_len)
 
     for lesson, c in lessons_list:
         if not c:
@@ -34,6 +36,7 @@ def simple_allocation(schedule: list, classrooms: list) -> list:
                     number_of_roomless_lessons += 1
         else:
             schedule.append((lesson, c))
+        progress.inc_cur_tasks_simple()
 
     print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
 

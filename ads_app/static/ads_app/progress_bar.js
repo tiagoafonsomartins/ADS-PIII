@@ -5,11 +5,10 @@ function sleep(ms) {
 var percent = 0;
 
 async function say_cenas() {
-    console.log("Inside say_cenas()")
-    for (let i = 0; i < 10; i++) {
+    while (true) {
+        await sleep(500);
         check_progess();
         update_progress();
-        await sleep(700);
     }
 }
 
