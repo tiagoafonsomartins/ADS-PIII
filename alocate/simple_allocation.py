@@ -38,6 +38,4 @@ def simple_allocation(schedule: list, classrooms: list, progress: Progress) -> l
             schedule.append((lesson, c))
         progress.inc_cur_tasks_simple()
 
-    print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
-
     return schedule

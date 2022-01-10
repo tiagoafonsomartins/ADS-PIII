@@ -71,5 +71,5 @@ def overbooking_with_jmp_algorithm(schedule: list, classrooms: list, metrics: li
         progress.set_total_tasks_overbooking_jmp(1)
         progress.inc_cur_tasks_overbooking_jmp()
 
-    print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
+    #print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
     return lessons30

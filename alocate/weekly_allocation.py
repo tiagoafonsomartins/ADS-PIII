@@ -67,9 +67,8 @@ def weekly_allocation(main_schedule, main_classrooms, progress: Progress, charac
         progress.inc_cur_tasks_weekly_det()
     # print("There are ", number_of_roomless_lessons, " lessons without a classroom.")
     #metrics = [RoomlessLessons(), Overbooking(), Underbooking(), BadClassroom()]
-    start = time.time()
+
     queryresult = query_result(len(metrics))
-    print("query: ", time.time() - start)
 
     count = 0
     blocks_to_improve = []

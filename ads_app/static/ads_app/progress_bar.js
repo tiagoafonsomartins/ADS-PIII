@@ -35,4 +35,13 @@ function check_progess() {
 
 function update_progress() {
     console.log("Progress at " + percent + "%");
+    const myProgressBar = document.querySelector(".progress");
+    updateProgressBar(myProgressBar, percent);
 }
+
+function updateProgressBar(progressBar, value) {
+  value = Math.round(value * 100) / 100;
+  progressBar.querySelector(".progress__fill").style.width = `${value}%`;
+  progressBar.querySelector(".progress__text").textContent = `${value}%`;
+}
+

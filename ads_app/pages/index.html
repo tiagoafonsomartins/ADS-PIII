@@ -97,7 +97,10 @@
 
 			<input type="file" id="myFile" name="filename" required="required" onchange="csvJSON();">
 			<input type="submit" id="submit" >
-			<br>
+			<div class="progress" style="height: 40px; margin-bottom: 20px">
+			  <div class="progress__fill"></div>
+			  <span class="progress__text">0%</span>
+			</div>
 		</form>
 
 		<script src="/static/ads_app/progress_bar.js"></script>

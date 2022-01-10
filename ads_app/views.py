@@ -94,10 +94,8 @@ def results(request):
         s_copy = copy.deepcopy(schedule)
         a_weekly = weekly_allocation(s_copy, c_copy, progress)
 
-        start = time.time()
         c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
-        print("TIME FOR DEEP COPY: ", time.time() - start)
 
         if not request.POST.get("Overbooking_max"):
             a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible, progress)
@@ -135,12 +133,16 @@ def results(request):
             for item in sublist:
                 schedule_nuno.append(item)
 
-        for m in metrics:
+        len_metrics = len(metrics)
+        for i, m in enumerate(metrics):
             m.calculate(schedule_nuno)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
-            progress.inc_cur_tasks_metrics()
+            if i == len_metrics - 2:
+                progress.inc_cur_tasks_metrics()
+            if i != len_metrics - 1:
+                progress.inc_cur_tasks_metrics()
 
         iterator = len(results_metrics["Algorithm - Simple"])
         i = 0

@@ -60,7 +60,7 @@ class RoomlessLessons(Metric):
 
 class Overbooking(Metric):
 
-    def __init__(self, prefered_max = 0.5):
+    def __init__(self, prefered_max = 0.8):
         super().__init__("Overbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
