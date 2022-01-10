@@ -4,21 +4,28 @@ from ads_app.models import *
 from django_ads.wsgi import *
 from . import *
 class Lang_Dict:
-    """We pass lang_chosen, which is the requested language for usage on the webpage.
-    Can be "pt", "en", "es", for portuguese, english, spanish and so on..."""
-
+    '''
+    Object used to retrieve information about the HTML fields in the current language
+    We filter the contents by language and create a dictionary based on this result
+    Then, we place said dictionary as an attribute of the object Lang_Dict so as to access it later
+    '''
     def __init__(self, lang_chosen):
-        lang = GlossaryLanguage.objects.get(language=lang_chosen).id
+        # ID of given language, if it exists. If not, default to English
+        try:
+            lang = GlossaryLanguage.objects.get(language=lang_chosen).id
+        except:
+            lang = GlossaryLanguage.objects.get(language="en").id
+
+        # Retrieve information about fields, filtered by the given language
         gloss = GlossaryContent.objects.filter(language=lang)
         dictionary = {}
         for query in gloss:
+            # Get field from the resulting list of Content and add to dictionary
             field_tmp = GlossaryField.objects.get(id=query.page_field).page_field
             dictionary[field_tmp] = query.content
-
-        #print(dictionary)
         self.dictionary = dictionary
 
-''' LEGACY VERSION - 
+''' LEGACY VERSION - Initial concept
 # Here we used direct SQL commands to execute onto the DB. We noticed this didn't work,
 # So the alternative was the construction of models, in ads_app/models.py, and we use them here
 # Creating QuerySets of the objects we want

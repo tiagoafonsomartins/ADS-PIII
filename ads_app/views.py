@@ -37,19 +37,17 @@ chosen_language = "en"
 def index(request):
     global chosen_language
     chosen_language
+    # Create Dictionary based on global variable chosen_language and pass it to HTML page
     page_dict = Lang_Dict(chosen_language)
-    # print(page_dict.dictionary["home"])
     return render(request, 'index.html', {"context": "context", "page_dict": page_dict.dictionary})
 
 
 def choose_language(request):
     global chosen_language
-
+    # Retrieve chosen language from the dropdown box
     chosen_language = request.POST.get("chosen_language")
+    # Create Dictionary based on global variable chosen_language and pass it to HTML page
     page_dict = Lang_Dict(chosen_language)
-    # chosen_language = "pt"
-    # redirect_to = reverse('', kwargs={"context": "context", "page_dict": page_dict.dictionary})
-    # return redirect(redirect_to)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'),
                                 {"context": "context", "page_dict": page_dict.dictionary})
 
