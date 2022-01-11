@@ -56,8 +56,12 @@
 			</select>
 			<input type="submit" id="submit" >
 
+			<br>
+			<br>
+			<br>
+
 			<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
-			<div id="metric_viewer" class="csv_table" name="metric_viewer">	</div>
+			<div id="metric_viewer" class="csv_table" name="metric_viewer" style="right: 10px;">	</div>
 			<script>
 				var table_data = {{results_metrics|safe}};
 				//create Tabulator on DOM element with id "example-table"
