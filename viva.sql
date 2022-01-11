@@ -1,4 +1,19 @@
 BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "glossary_field" (
+	"page_field"	TEXT
+);
+CREATE TABLE IF NOT EXISTS "glossary_content" (
+	"language"	INTEGER NOT NULL,
+	"page_field"	INTEGER NOT NULL,
+	"content"	TEXT,
+	FOREIGN KEY("page_field") REFERENCES "glossary_field"("page_field")
+);
+CREATE TABLE IF NOT EXISTS "glossary_language" (
+	"language"	TEXT NOT NULL
+);
+COMMIT;
+
+BEGIN TRANSACTION;
 INSERT INTO "glossary_field" VALUES (1,'results');
 INSERT INTO "glossary_field" VALUES (2,'home');
 INSERT INTO "glossary_field" VALUES (3,'res-title');
@@ -166,14 +181,32 @@ INSERT INTO "glossary_field" VALUES (53,'Metric');
 INSERT INTO "glossary_field" VALUES (54,'algorithm_simple');
 INSERT INTO "glossary_field" VALUES (55,'algorithm_weekly');
 INSERT INTO "glossary_field" VALUES (56,'algorithm_overbooking');
-
 INSERT INTO "glossary_content" VALUES (166,1,52,'Metric Description');
 INSERT INTO "glossary_content" VALUES (167,1,53,'Metric');
 INSERT INTO "glossary_content" VALUES (168,1,54,'Simple Algorithm');
 INSERT INTO "glossary_content" VALUES (169,1,55,'Weekly Algorithm');
 INSERT INTO "glossary_content" VALUES (170,1,56,'Overbooking Algorithm');
-
-INSERT INTO "glossary_content" VALUES (171,2,52,'Algoritmo Simples');
+INSERT INTO "glossary_content" VALUES (171,2,52,'Descrição da Métrica');
+INSERT INTO "glossary_content" VALUES (172,2,53,'Métrica');
+INSERT INTO "glossary_content" VALUES (173,2,54,'Algoritmo Simples');
 INSERT INTO "glossary_content" VALUES (174,2,55,'Algoritmo Semanal');
 INSERT INTO "glossary_content" VALUES (175,2,56,'Algoritmo Sobre-alocação');
+COMMIT;
+
+BEGIN TRANSACTION;
+INSERT INTO "glossary_field" VALUES (57,'home_ChangesToFileYes');
+INSERT INTO "glossary_field" VALUES (58,'home_ChangesToFileNo');
+INSERT INTO "glossary_field" VALUES (59,'home_CustomLabel');
+INSERT INTO "glossary_field" VALUES (60,'home_MaxThreshold');
+INSERT INTO "glossary_field" VALUES (61,'home_Submit');
+INSERT INTO "glossary_content" VALUES (176,1,57,'Yes');
+INSERT INTO "glossary_content" VALUES (177,1,58,'No');
+INSERT INTO "glossary_content" VALUES (178,1,59,'Please read each label and insert your custom name for it');
+INSERT INTO "glossary_content" VALUES (179,1,60,'Insert the corresponding maximum thresholds for the Algorithms (0 - 100%)');
+INSERT INTO "glossary_content" VALUES (180,1,61,'Submit');
+INSERT INTO "glossary_content" VALUES (181,2,57,'Sim');
+INSERT INTO "glossary_content" VALUES (182,2,58,'Não');
+INSERT INTO "glossary_content" VALUES (183,2,59,'Por favor lê cada linha e insere o teu nome personalizado');
+INSERT INTO "glossary_content" VALUES (184,2,60,'Insere os limites máximos para os Algoritmos (0 - 100%)');
+INSERT INTO "glossary_content" VALUES (185,2,61,'Submeter');
 COMMIT;
