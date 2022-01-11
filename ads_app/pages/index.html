@@ -16,6 +16,7 @@
 					for(var i = 0; i < divsToHide.length; i++){
 						divsToHide[i].style.visibility = "hidden";
 						divsToHide[i].style.required = 'false';
+
 					}
 
 				}
@@ -29,7 +30,7 @@
 		{% load static %}
 		<link rel="stylesheet" href="{% static 'ads_app/styles.css' %}">
 	</head>
-	<body>
+	<body onload="yesnoCheck();">
 
 		<div class="sidenav">
 		   {% block sidebar %}
@@ -65,15 +66,16 @@
 				<label for="no_changes">No</label>
 
 				<input type="radio" id="yes_changes" name="changed" value="true"
-					checked onclick="yesnoCheck();">
+					 onclick="yesnoCheck();">
 				<label for="yes_changes">Yes</label>
 
 				<br>
-				<p>Insert the corresponding maximum thresholds for the Algorithms (0 - 100%)</p>
-				<input type="text" class="max" id="RoomlessLessons_max" name="RoomlessLessons_max" >    <label class="max" for="RoomlessLessons_max">Roomless Lesson Threshold</label> <br>
-				<input type="text" class="max" id="Overbooking_max" name="Overbooking_max" >            <label class="max" for="Overbooking_max">Overbooking Threshold</label> <br>
-				<input type="text" class="max" id="Underbooking_max" name="Underbooking_max" >          <label class="max" for="Underbooking_max">Underbooking Threshold</label> <br>
-				<input type="text" class="max" id="BadClassroom_max" name="BadClassroom_max" >          <label class="max" for="BadClassroom_max">Bad Classroom Threshold</label> <br>
+				<br>
+				<p>Insert the corresponding maximum constraints for the Algorithms (0 - 100%)</p>
+				<input type="text" class="max" id="RoomlessLessons_max" name="RoomlessLessons_max" >    <label class="max" for="RoomlessLessons_max">Roomless Lesson Constraint</label> <br>
+				<input type="text" class="max" id="Overbooking_max" name="Overbooking_max" >            <label class="max" for="Overbooking_max">Overbooking Constraint</label> <br>
+				<input type="text" class="max" id="Underbooking_max" name="Underbooking_max" >          <label class="max" for="Underbooking_max">Underbooking Constraint</label> <br>
+				<input type="text" class="max" id="BadClassroom_max" name="BadClassroom_max" >          <label class="max" for="BadClassroom_max">Bad Classroom Constraint</label> <br>
 
 				<br>
 				<p>Please read each label and insert your custom name for it</p>
@@ -95,7 +97,10 @@
 			<br>
 
 			<label for="encoding">File encoding type (utf-8,ansi...): </label>
-			<input type="text" id="encoding" name="encoding"><br>
+			<input type="text" id="encoding" name="encoding">
+
+			<br>
+			<br>
 
 			<label for="dateformat">Set the date format on your file, using MM (month), DD (day), YYYY (year), ordering it by your choice and separating them
 				by any special characters (':', '/'...): </label>
@@ -120,7 +125,7 @@
 
 
 		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
-		<div id="csv_table" class="csv_table" name="csv_table">	</div>
+		<div id="csv_table" class="csv_table" name="csv_table" style="left: 200px;">	</div>
 		<script>
 		
 			//create Tabulator on DOM element with id "example-table"

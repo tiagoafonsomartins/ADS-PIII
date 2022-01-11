@@ -67,19 +67,11 @@ class Manipulate_Documents:
 
     def import_classrooms(self, file_name: TemporaryUploadedFile):
         """
-        Imports a csv into a list of Classroom objects
+        Imports a csv into a list of Classroom objects uploaded by the user. If the user doesn't input anything, uses the default file
+        Salas.csv
 
         :return: list of Classroom objects
         """
-
-        '''
-        for root, dirs, files in os.walk(self.input_classrooms):
-            for file in files:
-                if file.endswith(tuple(self.ext)):
-                    file_to_open = os.path.join(self.input_classrooms, file)
-                    f = open(file_to_open, 'r', encoding="utf8")
-                    '''
-
         sum_classroom_characteristics = {}
         if file_name is not None:
             csvreader = csv.reader(io.StringIO(file_name.read().decode("utf-8")))

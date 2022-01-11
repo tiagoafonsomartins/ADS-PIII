@@ -1,31 +1,18 @@
-import mimetypes
-from os import read
-import sys
-
-from django.shortcuts import render
-from operator import itemgetter
-from cytoolz import take
-
-from django.http import HttpResponse, FileResponse
-
 from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
 from alocate.simple_allocation import simple_allocation
 from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
-from metrics import Metric
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
 from django.shortcuts import render
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 import json
-import io
 from lesson.Lesson import *
 import copy
 
 global schedule_simple
 global schedule_overbooking
+global schedule_weekly
 
 
 def index(request):
@@ -89,7 +76,7 @@ def results(request):
                                                    int(request.POST.get("Overbooking_max")))
 
         results_metrics = {"Metric": [], "Algorithm - Simple": [], "Algorithm - Weekly": [],
-                           "Algorithm - Overbooking": []};
+                           "Algorithm - Overbooking": []}
         for m in metrics:
             m.calculate(a_simple)
             # print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
