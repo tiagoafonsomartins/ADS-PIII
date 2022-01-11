@@ -73,7 +73,6 @@ def weekly_allocation(main_schedule, main_classrooms, progress: Progress, charac
     count = 0
     blocks_to_improve = []
     if use_JMP and len(metrics) > 0:
-
         for block, half_hour in lessons30.items():
             old_metric_results = []
             added_to_blocks_to_improve = False

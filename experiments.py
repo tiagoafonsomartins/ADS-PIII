@@ -2,6 +2,11 @@ import sys
 import time
 
 import csv
+
+from alocate import Algorithm_Utils
+from alocate.Progress import Progress
+from alocate.simple_allocation import simple_allocation
+from alocate.weekly_allocation import weekly_allocation
 from metrics import Metric
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
     BuildingMovements, ClassroomInconsistency
@@ -264,5 +269,17 @@ def do_thing(lock):
         global cena
         cena = threading.get_ident()
 
+#sync_test()
 
-sync_test()
+def test_thing():
+    md = Manipulate_Documents()
+    classrooms = md.import_classrooms()
+    schedule = md.import_schedule_documents("Exemplo_de_horario_primeiro_semestre.csv", False)
+    progress = Progress()
+
+    a_weekly = weekly_allocation(schedule, classrooms, progress)
+
+    count = Algorithm_Utils.check_for_collisions(a_weekly)
+    print(count)
+
+#test_thing()

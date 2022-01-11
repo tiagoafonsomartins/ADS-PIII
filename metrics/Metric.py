@@ -1,6 +1,8 @@
 import datetime
 from abc import ABC, abstractmethod
 from jmetal.core.problem import Problem
+
+from alocate import Algorithm_Utils
 from classroom import Classroom
 from lesson import Lesson
 import time
@@ -26,7 +28,7 @@ class Metric(ABC):
 
 class RoomlessLessons(Metric):
 
-    def __init__(self, prefered_max = 0.05):
+    def __init__(self, prefered_max = 0.2):
         super().__init__("Roomless_lessons", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -60,7 +62,7 @@ class RoomlessLessons(Metric):
 
 class Overbooking(Metric):
 
-    def __init__(self, prefered_max = 0.8):
+    def __init__(self, prefered_max = 0.9):
         super().__init__("Overbooking", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -122,7 +124,7 @@ class Underbooking(Metric):
 
 class BadClassroom(Metric):
 
-    def __init__(self, prefered_max = 0.1):
+    def __init__(self, prefered_max = 0.3):
         super().__init__("Bad_classroom", prefered_max)
         self.objective = Problem.MINIMIZE
         self.m_type = "lessons"
@@ -413,3 +415,46 @@ class ClassroomInconsistency(Metric):
 
     def reset_metric(self):
         self.value = []
+
+class ClassroomCollisions(Metric):
+
+    def __init__(self, prefered_max = 0.4):
+        super().__init__("ClassroomCollisions", prefered_max)
+        self.objective = Problem.MAXIMIZE
+        self.m_type = "lessons30"
+        self.value = 0
+        self.total = 0
+
+    def calculate(self, lessons30: list):
+        '''
+        Receives a Schedule and calculates the number of times a classroom is assigned more than once in a half hour block
+        :param schedule:
+        :return:
+        '''
+
+        collisions = 0
+        tuples = 0
+        try:
+            for block, half_hour in lessons30.items():
+                classrooms = set()
+                for lesson, classroom in half_hour:
+                    tuples += 1
+                    if not Algorithm_Utils.add_if_not_exists(classrooms, classroom):
+                        collisions += 1
+            self.value = collisions
+            self.total = tuples
+        except AttributeError:
+            self.value = -1
+            self.total = 1
+
+    def get_total_metric_value(self):
+        return self.value
+
+    def get_percentage(self):
+        if self.value == -1:
+            return "-"
+        return self.value / self.total
+
+    def reset_metric(self):
+        self.value = 0
+        self.total = 0

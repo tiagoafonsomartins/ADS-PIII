@@ -54,6 +54,7 @@
 					<option value="BuildingMovements">BuildingMovements</option>
 					<option value="UsedRooms">UsedRooms</option>
 					<option value="ClassroomInconsistency">ClassroomInconsistency</option>
+					<option values="ClassroomCollisions">ClassroomCollisions</option>
 			</select>
 			<br><br>
 			
@@ -101,17 +102,15 @@
 			  <div class="progress__fill"></div>
 			  <span class="progress__text">0%</span>
 			</div>
-		</form>
+			<script src="/static/ads_app/progress_bar.js"></script>
+			<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+			<div id="csv_table" class="csv_table" name="csv_table">	</div>
 
-		<script src="/static/ads_app/progress_bar.js"></script>
-		<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
-		<div id="csv_table" class="csv_table" name="csv_table">	</div>
+			<script>
 
-		<script>
-		
 			//create Tabulator on DOM element with id "example-table"
 
-			var headers;	
+			var headers;
 
 			//var csv is the CSV file with headers
 			function csvJSON(){
@@ -138,10 +137,10 @@
 					layout:"fitColumns", //fit columns to width of table (optional)
 					columns: my_columns, //Define Table Columns
 					});
-				};			
+				};
 				reader.readAsText(csv);
 			}
-			
+
 
 			// This will parse a delimited string into an array of
 			// arrays. The default delimiter is the comma, but this
@@ -207,25 +206,28 @@
 					// it to the data array.
 					arrData[ arrData.length - 1 ].push( strMatchedValue );
 				}
-				
+
 				//Now that the information is parsed correctly we can send it to the tabulator table
 				var result = [];
 				headers=arrData[0];
-				
+
 				for(var i=1;i<arrData.length;i++){
-				
+
 				  var obj = {};
 				  //var currentline=lines[i].split(/('",'+|','+)/g);
-				
+
 				  for(var j=0;j<headers.length;j++){
 					  obj[headers[j]] = arrData[i][j];
 				  }
-				  result.push(obj);		
-				}	
+				  result.push(obj);
+				}
 				// Return the parsed data.
 				return( result );
-			}		  
-		</script>
+			}
+			</script>
+		</form>
+
+
 	</body>
 	<br>
 </html>

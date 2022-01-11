@@ -66,6 +66,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\output_testing_documents\testingExport.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

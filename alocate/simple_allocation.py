@@ -1,4 +1,4 @@
-from alocate.Algorithm_Utils import sorted_lessons, sorted_classrooms
+from alocate.Algorithm_Utils import sorted_lessons, sorted_classrooms, assign_lessons30
 from alocate import Progress
 
 def simple_allocation(schedule: list, classrooms: list, progress: Progress) -> list:
@@ -13,7 +13,8 @@ def simple_allocation(schedule: list, classrooms: list, progress: Progress) -> l
 
     number_of_roomless_lessons = 0
 
-    schedule = []
+    #schedule = []
+    lessons30 = {}
     lessons_len = len(lessons_list)
     progress.set_total_tasks_simple(lessons_len)
 
@@ -25,17 +26,21 @@ def simple_allocation(schedule: list, classrooms: list, progress: Progress) -> l
                         (lesson.get_number_of_enrolled_students() <= classroom.get_normal_capacity()) and \
                         (classroom.is_available(lesson.generate_time_blocks())):
                     classroom.set_unavailable(lesson.generate_time_blocks())
-                    schedule.append((lesson, classroom))
+                    assign_lessons30(lessons30, lesson, classroom)
+                    #schedule.append((lesson, classroom))
                     classroom_assigned = True
                     break
 
             if not classroom_assigned:
                 if lesson.requested_characteristics != "Não necessita de sala" and \
                         lesson.requested_characteristics != "Lab ISTA":
-                    schedule.append((lesson, None))
+                    assign_lessons30(lessons30, lesson, classroom)
+                    #schedule.append((lesson, None))
                     number_of_roomless_lessons += 1
         else:
-            schedule.append((lesson, c))
+            assign_lessons30(lessons30, lesson, classroom)
+            #schedule.append((lesson, c))
         progress.inc_cur_tasks_simple()
 
-    return schedule
+    return lessons30
+    #return schedule

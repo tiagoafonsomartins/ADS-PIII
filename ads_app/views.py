@@ -1,5 +1,6 @@
 import time
 
+from alocate import Algorithm_Utils
 from alocate.Progress import Progress
 from alocate.overbooking_with_jmp_algorithm import overbooking_with_jmp_algorithm
 from alocate.simple_allocation import simple_allocation
@@ -7,7 +8,7 @@ from alocate.weekly_allocation import weekly_allocation
 from file_manager.Manipulate_Documents import *
 
 from metrics.Metric import Gaps, UsedRooms, RoomlessLessons, Overbooking, Underbooking, BadClassroom, RoomMovements, \
-    BuildingMovements, ClassroomInconsistency
+    BuildingMovements, ClassroomInconsistency, ClassroomCollisions
 from django.shortcuts import render
 
 from django.http import HttpResponse, Http404
@@ -81,6 +82,8 @@ def results(request):
                 metrics.append(UsedRooms())
             if metric == "ClassroomInconsistency":
                 metrics.append(ClassroomInconsistency())
+            if metric == "ClassroomCollisions":
+                metrics.append(ClassroomCollisions())
 
         classrooms = mp.import_classrooms()
 
@@ -92,22 +95,32 @@ def results(request):
 
         c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
-        a_weekly = weekly_allocation(s_copy, c_copy, progress)
+        a_weekly = weekly_allocation(s_copy, c_copy, progress, use_JMP=False) # TODO
+        count = Algorithm_Utils.check_for_collisions(a_weekly)
+
 
         c_copy = copy.deepcopy(classrooms)
         s_copy = copy.deepcopy(schedule)
 
         if not request.POST.get("Overbooking_max"):
-            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible, progress)
+            a_jmp = overbooking_with_jmp_algorithm(s_copy, c_copy, metrics_jmp_compatible, progress, use_jmp=False) # TODO
         else:
-            a_jmp = overbooking_with_jmp_algorithm( s_copy, c_copy, metrics_jmp_compatible, progress, int(request.POST.get("Overbooking_max")))
+            a_jmp = overbooking_with_jmp_algorithm( s_copy, c_copy, metrics_jmp_compatible, progress, int(request.POST.get("Overbooking_max")), use_jmp=False) #TODO
+        count = Algorithm_Utils.check_for_collisions(a_jmp)
 
+        progress.set_total_tasks_metrics(len(metrics)*3-1)
 
-        progress.set_total_tasks_metrics(len(metrics)*3)
+        schedule_s = []
+        for sublist in a_simple.values():
+            for item in sublist:
+                schedule_s.append(item)
 
         results_metrics = {"Metric":[],"Algorithm - Simple":[],"Algorithm - Weekly":[], "Algorithm - Overbooking": []};
         for m in metrics:
-            m.calculate(a_simple)
+            if m.name == "ClassroomCollisions":
+                m.calculate(a_simple)
+            else:
+                m.calculate(schedule_s)
             #print(m.name, ": ", round(m.get_percentage() * 100, 2), "%")
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Simple"].append(str(round(m.get_percentage() * 100, 2)) + "%")
@@ -121,7 +134,10 @@ def results(request):
                 schedule_andre.append(item)
 
         for m in metrics:
-            m.calculate(schedule_andre)
+            if m.name == "ClassroomCollisions":
+                m.calculate(a_weekly)
+            else:
+                m.calculate(schedule_andre)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Weekly"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
@@ -135,7 +151,10 @@ def results(request):
 
         len_metrics = len(metrics)
         for i, m in enumerate(metrics):
-            m.calculate(schedule_nuno)
+            if m.name == "ClassroomCollisions":
+                m.calculate(a_jmp)
+            else:
+                m.calculate(schedule_nuno)
             results_metrics["Metric"].append(m.name)
             results_metrics["Algorithm - Overbooking"].append(str(round(m.get_percentage() * 100, 2)) + "%")
             m.reset_metric()
